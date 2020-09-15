@@ -1,0 +1,219 @@
+#:import tr __main__.tr
+
+ScreenManager:
+    id: screen_manager
+    Screen:
+        name: "schedules"
+        BoxLayout:
+            id: schedules_layout
+            orientation: 'vertical'
+            MDToolbar:
+                title: tr._('My Schedules')
+                md_bg_color: app.theme_cls.primary_color
+                right_action_items: [['settings', lambda x: app.open_settings()]]
+                elevation: 8
+            ScrollView:
+                do_scroll_x: False
+                MDList:
+                    id: schedule_list
+
+        MDFloatingActionButton:
+            icon: "plus"
+            opposite_colors: True
+            elevation_normal: 8
+            pos_hint: {"center_x": .9, "center_y": .1}
+            size: dp(56), dp(56)
+            on_release: app.add_schedule()
+
+    Screen:
+        name: "add_schedule"
+        BoxLayout:
+            id: add_schedule_layout
+            orientation: 'vertical'
+            MDToolbar:
+                id: add_schedule_top_toolbar
+                title: "Add Schedule"
+                elevation: 8
+            ScrollView:
+                do_scroll_x: False
+                GridLayout:
+                    padding: dp(30)
+                    spacing: dp(20)
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDTextField:
+                        id: add_schedule_title
+                        hint_text: 'Title'
+                        padding_y: dp(20)
+                        max_text_length: app.get_config_item('schedule_title_max_len')
+
+    Screen:
+        name: "add_lesson"
+        BoxLayout:
+            id: add_lesson_layout
+            orientation: 'vertical'
+            MDToolbar:
+                id: add_lesson_top_toolbar
+                title: "Add Lesson"
+                elevation: 8
+            ScrollView:
+                do_scroll_x: False
+                GridLayout:
+                    id: add_lesson_grid_layout
+                    padding: dp(30)
+                    spacing: dp(20)
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDTextField:
+                        id: add_lesson_title
+                        hint_text: 'Title'
+                        padding_y: dp(20)
+                        max_text_length: app.get_config_item('lesson_title_max_len')
+
+    Screen:
+        name: 'settings'
+        BoxLayout:
+            orientation: 'vertical'
+            MDToolbar:
+                title: tr._('Settings')
+                md_bg_color: app.theme_cls.primary_color
+                elevation: 8
+            ScrollView:
+                GridLayout:
+                    padding: dp(20)
+                    spacing: dp(10)
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDLabel:
+                        text: tr._('Choose Language:')
+
+                    MDSeparator:
+
+                    MDChooseChip:
+                        id: lang_select
+
+                        MDChip:
+                            label: tr._('English')
+                            icon: ""
+                            callback: app.change_lang
+                            selected_chip_color: app.theme_cls.primary_color
+
+                        MDChip:
+                            label: tr._('Russian')
+                            icon: ""
+                            callback: app.change_lang
+                            selected_chip_color: app.theme_cls.primary_color
+
+                    MDLabel:
+                        text: 'Choose Theme:'
+
+                    MDSeparator:
+
+                    MDChooseChip:
+                        id: theme_select
+
+                        MDChip:
+                            label: 'Light'
+                            icon: ""
+                            callback: app.change_theme
+
+                        MDChip:
+                            label: 'Dark'
+                            icon: ""
+                            callback: app.change_theme
+
+                    MDLabel:
+                        text: 'Homework Notifications:'
+
+                    MDSeparator:
+
+                    MDTextButton:
+                        id: notify_select
+                        text: ""
+                        on_release: app.set_notify_time_setting(self.text)
+
+    Screen:
+        name: "schedule"
+        BoxLayout:
+            id: schedule_screen_layout
+            orientation: 'vertical'
+            MDToolbar:
+                id: schedule_toolbar
+                title: "Schedule"
+                elevation: 8
+                md_bg_color: app.theme_cls.primary_color
+                left_action_items: [['arrow-left', lambda x: app.back_to_main()]]
+
+        MDBottomAppBar:
+            MDToolbar:
+                id: bottom_schedule_toolbar
+                md_bg_color: app.theme_cls.primary_color
+                type: 'bottom'
+                title: 'Week'
+                mode: 'free-end'
+                icon: 'plus'
+                icon_color: app.theme_cls.accent_color
+                on_action_button: app.add_lesson()
+                right_action_items: [['page-previous', lambda x: app.week_back()], ['calendar-today', lambda x: app.week_current()], ['page-next', lambda x: app.week_next()]]
+
+
+    Screen:
+        name: "schedule_timetable"
+        BoxLayout:
+            id: schedule_timetable_layout
+            orientation: 'vertical'
+            MDToolbar:
+                id: schedule_timetable_toolbar
+                title: "Schedule Timetable"
+                elevation: 8
+                md_bg_color: app.theme_cls.primary_color
+                left_action_items: [['arrow-left', lambda x: app.back_to_main()]]
+            ScrollView:
+                do_scroll_x: False
+                MDList:
+                    id: schedule_timetable_list
+
+        MDFloatingActionButton:
+            icon: "plus"
+            opposite_colors: True
+            elevation_normal: 8
+            pos_hint: {"center_x": .9, "center_y": .1}
+            size: dp(56), dp(56)
+            on_release: app.add_schedule_timetable_item()
+
+    Screen:
+        name: "add_homework"
+        BoxLayout:
+            id: add_homework_layout
+            orientation: 'vertical'
+            MDToolbar:
+                id: add_homework_top_toolbar
+                title: "Add Homework"
+                md_bg_color: app.theme_cls.primary_color
+                elevation: 8
+            ScrollView:
+                do_scroll_x: False
+                GridLayout:
+                    padding: dp(30)
+                    spacing: dp(20)
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDLabel:
+                        id: add_homework_subtitle
+                        font_style: 'Subtitle1'
+                        theme_text_color: 'Custom'
+                        text_color: app.theme_cls.primary_color
+
+                    MDTextField:
+                        id: add_homework_desc_text
+                        hint_text: "Describe your Homework here (max 50)"
+                        padding_y: dp(20)
+                        max_text_length: app.get_config_item('homework_desc_max_len')

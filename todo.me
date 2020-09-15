@@ -1,0 +1,68 @@
+-------------------------------
+RECENT CHANGES, IN PROCESS
+-------------------------------
+
+
+
+-------------------------------
+FIXES, IMPROVEMENTS
+-------------------------------
+
+Lessons entity:
+    create and keep lessons db
+
+Text fields:
+    figure out how to do validation, refresh field on next open
+
+Schedule screen:
+	show active date in the toolbar
+
+Generic:
+	Settings: add localization (finish translations)
+
+Timetable:
+	warning if start time more then end
+
+Config:
+	use built-in Config implementation (?)
+	
+-------------------------------
+NEW FEATURES
+-------------------------------
+
+Lesson list:
+    add checkbox to mark homeworks done
+
+Push Notifications
+
+
+Bottom Navigation:
+	first link - Schedules by default
+	second link - link to Tasks screen (new Screen to show upcoming tasks)
+
+
+-------------------------------
+LOCALIZATION
+-------------------------------
+
+po:
+xgettext -Lpython --output=messages.pot main.py main.kv
+msgmerge --update --no-fuzzy-matching --backup=off po/en.po messages.pot
+msgmerge --update --no-fuzzy-matching --backup=off po/ru.po messages.pot
+
+mo:
+
+# if not exist
+mkdir data\locales\en\LC_MESSAGES
+# if not exist
+mkdir data\locales\ru\LC_MESSAGES
+
+msgfmt -c -o data/locales/en/LC_MESSAGES/mainapp.mo po/en.po
+msgfmt -c -o data/locales/ru/LC_MESSAGES/mainapp.mo po/ru.po
+
+-------------------------------
+COLOR DEFINITIONS
+-------------------------------
+Palette:
+	['Red', 'Pink', 'Purple', 'DeepPurple', 'Indigo', 'Blue', 'LightBlue', 'Cyan', 'Teal', 'Green', 'LightGreen', 'Lime', 'Yellow', 'Amber', 'Orange', 'DeepOrange', 'Brown', 'Gray', 'BlueGray']
+-------------------------------
