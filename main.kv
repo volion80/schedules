@@ -10,7 +10,7 @@ ScreenManager:
             MDToolbar:
                 title: tr._('My Schedules')
                 md_bg_color: app.theme_cls.primary_color
-                right_action_items: [['settings', lambda x: app.open_settings()]]
+                right_action_items: [['dots-vertical', lambda x: app.open_settings()]]
                 elevation: 8
             ScrollView:
                 do_scroll_x: False
@@ -149,6 +149,56 @@ ScreenManager:
                 elevation: 8
                 md_bg_color: app.theme_cls.primary_color
                 left_action_items: [['arrow-left', lambda x: app.back_to_main()]]
+
+            MDTabs:
+                id: schedule_tabs
+                tab_indicator_anim: True
+                tab_indicator_height: "4dp"
+                elevation: 8
+
+                Tab:
+                    text: "Tab 0"
+                    ScrollView:
+                        do_scroll_x: False
+                        MDList:
+                            id: lesson_list_day_0
+                Tab:
+                    text: "Tab 1"
+                    ScrollView:
+                        do_scroll_x: False
+                        MDList:
+                            id: lesson_list_day_1
+                Tab:
+                    text: "Tab 2"
+                    ScrollView:
+                        do_scroll_x: False
+                        MDList:
+                            id: lesson_list_day_2
+                Tab:
+                    text: "Tab 3"
+                    ScrollView:
+                        do_scroll_x: False
+                        MDList:
+                            id: lesson_list_day_3
+                Tab:
+                    text: "Tab 4"
+                    ScrollView:
+                        do_scroll_x: False
+                        MDList:
+                            id: lesson_list_day_4
+                Tab:
+                    text: "Tab 5"
+                    ScrollView:
+                        do_scroll_x: False
+                        MDList:
+                            id: lesson_list_day_5
+                Tab:
+                    text: "Tab 6"
+                    ScrollView:
+                        do_scroll_x: False
+                        MDList:
+                            id: lesson_list_day_6
+
 
         MDBottomAppBar:
             MDToolbar:

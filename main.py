@@ -38,6 +38,8 @@ from osc.osc_app_server import OscAppServer
 from service.utils import start_service
 from kivymd.uix.bottomsheet import MDGridBottomSheet
 
+from Util import Util
+
 
 class DayTab(BoxLayout, MDTabsBase):
     pass
@@ -237,7 +239,7 @@ class MainApp(MDApp):
 
     def load_schedules(self):
         schedule_list = self.root.ids.schedule_list
-        schedule_list.clear_widgets()
+        Util.clear_list_items(schedule_list)
         schedules = self.Schedule.all()
         for schedule_id in schedules:
             schedule = self.Schedule.get(schedule_id)
@@ -248,9 +250,9 @@ class MainApp(MDApp):
         action = kwargs['action']
         schedule_id = kwargs['schedule_id']
         if action == 'open':
-            day = self.calc_day_num()
-            week_num = self.calc_week_num()
-            year = self.calc_year()
+            day = Util.calc_day_num()
+            week_num = Util.calc_week_num()
+            year = Util.calc_year()
             self.open_schedule(schedule_id, day, week_num, year)
         elif action == 'edit':
             self.add_schedule(schedule_id)
@@ -267,8 +269,8 @@ class MainApp(MDApp):
         schedule = self.get_schedule(schedule_id)
         lessons = schedule['lessons']
         homeworks = self.Homework.all()
-        year_now = self.calc_year()
-        week_now = self.calc_week_num()
+        year_now = Util.calc_year()
+        week_now = Util.calc_week_num()
         for lesson in lessons:
             future_homeworks = list(x for x in list(homeworks.find(lesson_id=lesson['id'])) if x[1]['year'] >= year_now and x[1]['week_num'] >= week_now)
             if len(future_homeworks) > 0:
@@ -280,8 +282,8 @@ class MainApp(MDApp):
         schedule_id = self.get_active_schedule_id()
         lesson = self.get_lesson(schedule_id, lesson_id)
         homeworks = self.Homework.all()
-        year_now = self.calc_year()
-        week_now = self.calc_week_num()
+        year_now = Util.calc_year()
+        week_now = Util.calc_week_num()
         future_homeworks = list(x for x in list(homeworks.find(lesson_id=lesson['id'])) if x[1]['year'] >= year_now and x[1]['week_num'] >= week_now)
         return len(future_homeworks) > 0
 
@@ -326,7 +328,7 @@ class MainApp(MDApp):
         schedule = self.get_schedule(schedule_id)
         timetable = self.get_schedule_timetable(schedule_id)
         timetable_list = self.root.ids.schedule_timetable_list
-        timetable_list.clear_widgets()
+        Util.clear_list_items(timetable_list)
         for i in range(len(timetable['lessons'])):
             time_start = timetable['lessons'][i]['time_start']
             time_end = timetable['lessons'][i]['time_end']
@@ -343,19 +345,16 @@ class MainApp(MDApp):
 
     def open_schedule(self, schedule_id, day_index=0, week_num=None, year=None):
         if week_num is None:
-            week_num = self.calc_week_num(0)
+            week_num = Util.calc_week_num(0)
         if year is None:
-            year = self.calc_year(0)
+            year = Util.calc_year(0)
         self.set_active_schedule_id(schedule_id)
         self.set_active_week_num(week_num)
         self.set_active_year(year)
-        self.clear_schedule_tabs()
-        schedule_tab_panel = MDTabs(
-            background_color=get_color_from_hex(colors[self.theme_cls.primary_palette]['700']),
-            tab_indicator_anim=True,
-            tab_indicator_height='4dp',
-            elevation=8
-        )
+
+        schedule_tab_panel = self.root.ids.schedule_tabs
+        schedule_tab_panel.background_color = self.get_tabs_color()
+
         schedule = self.get_schedule(schedule_id)
         schedule_lessons = schedule['lessons']
 
@@ -365,9 +364,12 @@ class MainApp(MDApp):
         for i in range(len(WEEK_DAYS)):
             day_lessons = list(filter(lambda d: d['day'] == i, schedule_lessons))
             day_lessons = self.sort_lessons(day_lessons)
-            tab = DayTab(text=WEEK_DAYS[i])
-            day_tab_scrollview = ScrollView()
-            lesson_list = MDList()
+            tab_list = schedule_tab_panel.get_tab_list()
+            tab = tab_list[(len(tab_list) - 1) - i]
+            tab.text = WEEK_DAYS[i]
+            lesson_list = self.root.ids[f'lesson_list_day_{i}']
+            Util.clear_list_items(lesson_list)
+
             for lesson in day_lessons:
                 second_text = '.. - ..'
                 if len(timetable_lessons) >= (lesson['order'] + 1):
@@ -400,11 +402,6 @@ class MainApp(MDApp):
 
                 lesson_list.add_widget(lesson_item)
 
-            day_tab_scrollview.add_widget(lesson_list)
-            tab.add_widget(day_tab_scrollview)
-            schedule_tab_panel.add_widget(tab)
-
-        self.root.ids.schedule_screen_layout.add_widget(schedule_tab_panel)
         schedule_tab_panel.ids.carousel.index = day_index
 
         date_range = self.get_week_date_range(week_num=week_num, year=year)
@@ -430,6 +427,9 @@ class MainApp(MDApp):
             self.add_homework(lesson_id)
         elif action == 'clear_homework':
             self.clear_homework(lesson_id)
+        elif action == 'time_table':
+            schedule_id = self.get_active_schedule_id()
+            self.open_schedule_time_table(schedule_id)
 
     def show_lesson_item_options(self, instance):
         lesson_menu = MDGridBottomSheet()
@@ -497,15 +497,15 @@ class MainApp(MDApp):
             ),
             icon_src='arrow-down-bold',
         )
+        lesson_menu.add_item(
+            tr._('Time Table'),
+            lambda x: self.callback_for_lesson_menu_items(
+                lesson_id=instance.id,
+                action='time_table'
+            ),
+            icon_src='timetable',
+        )
         lesson_menu.open()
-
-    def clear_schedule_tabs(self):
-        for child in self.root.ids.schedule_screen_layout.children:
-            if type(child).__name__ == 'MDToolbar' and child.id == 'schedule_bottom_toolbar':
-                self.root.ids.schedule_screen_layout.remove_widget(child)
-        for child in self.root.ids.schedule_screen_layout.children:
-            if type(child).__name__ == 'MDTabs':
-                self.root.ids.schedule_screen_layout.remove_widget(child)
 
     def schedule_bottom_bar_exists(self):
         exists = False
@@ -582,7 +582,7 @@ class MainApp(MDApp):
                 self.Timetable.save(schedule_id, lessons=[])
             self.load_schedules()
             self.back_to_main()
-            toast(f'Schedule {"created" if is_new else "updated"}')
+            toast(f'Schedule {"added" if is_new else "updated"}')
 
     def save_lesson(self, **kwargs):
         title_field = self.root.ids.add_lesson_title
@@ -620,7 +620,7 @@ class MainApp(MDApp):
                 self.delete_homeworks(lesson_id=lesson_id)
 
             self.open_schedule(schedule_id, day, week_num, year)
-            toast(f'Lesson {"created" if is_new else "updated"}')
+            toast(f'Lesson {"added" if is_new else "updated"}')
 
     def show_confirm_del_schedule_dialog(self, schedule_id):
         schedule = self.get_schedule(schedule_id)
@@ -1035,26 +1035,8 @@ class MainApp(MDApp):
 
     def week_current(self):
         schedule_id = self.get_active_schedule_id()
-        cur_day = self.calc_day_num()
+        cur_day = Util.calc_day_num()
         self.open_schedule(schedule_id, cur_day)
-
-    # todo: use from Util
-    @staticmethod
-    def calc_week_num(add=0):
-        current = int(datetime.datetime.today().strftime("%W"))
-        return current + add
-
-    # todo: use from Util
-    @staticmethod
-    def calc_year(add=0):
-        current = datetime.datetime.today().year
-        return current + add
-
-    # todo: use from Util
-    @staticmethod
-    def calc_day_num(add=0):
-        current = datetime.datetime.today().weekday()
-        return current + add
 
     def get_homework(self, lesson_id, week_num, year):
         homeworks = self.Homework.all()
@@ -1139,6 +1121,9 @@ class MainApp(MDApp):
             self.theme_cls.theme_style = self.cfg['theme'][theme]['style']
         if 'accent' in self.cfg['theme'][theme]:
             self.theme_cls.accent_palette = self.cfg['theme'][theme]['accent']
+
+    def get_tabs_color(self):
+        return get_color_from_hex(colors[self.theme_cls.primary_palette]['700'])
 
     # @staticmethod
     # def do_notify(*args):

@@ -24,7 +24,7 @@ from osc.osc_app_client import OscAppClient
 # from .Settings import Settings
 from Settings import Settings
 from Model import Schedule, Homework
-from Util import calc_day_num, calc_week_num, calc_year
+from Util import Util
 
 
 class MyApp(App):
@@ -115,9 +115,9 @@ class Service:
         current_time = now.strftime("%H:%M")
         notify_time = self.Settings.get('notify')['homework']
         if current_time == notify_time:
-            tomorrow = calc_day_num(1)
-            week_num = calc_week_num()
-            year = calc_year()
+            tomorrow = Util.calc_day_num(1)
+            week_num = Util.calc_week_num()
+            year = Util.calc_year()
 
             self.Schedule = Schedule(table='schedules')
             self.Homework = Homework(table='homeworks')
