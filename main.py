@@ -22,7 +22,7 @@ from kivymd.uix.picker import MDTimePicker
 from kivymd.uix.label import MDLabel
 import uuid
 import datetime
-from Model import WEEK_DAYS, LANGUAGES, THEME_STYLES, Schedule, Timetable, Homework
+from Model import WEEK_DAYS, LANGUAGES, THEME_STYLES, Schedule, Homework
 from kivy.core.window import Window
 from kivy.lang import Observable
 from os.path import join, dirname, realpath
@@ -47,11 +47,6 @@ class DayTab(BoxLayout, MDTabsBase):
 
 class LessonsContainer(GridLayout):
     pass
-
-
-class TimetableTimepicker(MDTimePicker):
-    timetable_item_index = ObjectProperty()
-    timetable_item_mode = ObjectProperty()
 
 
 class NotifyTimepicker(MDTimePicker):
@@ -119,7 +114,6 @@ class MainApp(MDApp):
     def __init__(self, **kwargs):
         self.Settings = None
         self.Schedule = None
-        self.Timetable = None
         self.Homework = None
         self.current_schedule_id = None
         self.current_week_num = None
@@ -134,7 +128,6 @@ class MainApp(MDApp):
     def build(self):
         super(MainApp, self).build()
         self.Schedule = Schedule(table='schedules')
-        self.Timetable = Timetable(table='timetables')
         self.Homework = Homework(table='homeworks')
         self.Settings = Settings()
 
@@ -179,7 +172,7 @@ class MainApp(MDApp):
         if key == 27:
             if self.root.current == 'schedules':
                 return True
-            elif self.root.current in ['add_schedule', 'schedule', 'schedule_timetable', 'settings']:
+            elif self.root.current in ['add_schedule', 'schedule', 'settings']:
                 self.back_to_main()
                 return True
             elif self.root.current in ['add_lesson', 'add_homework']:
@@ -206,43 +199,34 @@ class MainApp(MDApp):
 
     def create_demo_schedules(self):
         self.Schedule.clear()
-        self.Timetable.clear()
         self.Homework.clear()
 
         schedule_key = str(uuid.uuid4())
         self.Schedule.save(schedule_key, name='School schedule',
                        lessons=[
-                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 0, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '08:30', 'time_end': '09:00', 'order': 2},
-                           {'id': str(uuid.uuid4()), 'name': 'Geography', 'day': 0, 'time_start': '', 'time_end': '','order': 4},
-                           {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '', 'time_end': '', 'order': 3},
-                           {'id': str(uuid.uuid4()), 'name': 'Reading', 'day': 0, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'Physics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 1, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'History', 'day': 1, 'time_start': '08:30', 'time_end': '09:00', 'order': 2},
-                           {'id': str(uuid.uuid4()), 'name': 'Writing', 'day': 2, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 2, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 4, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'English', 'day': 4, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'Nature', 'day': 4, 'time_start': '08:30', 'time_end': '09:00', 'order': 2},
-                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 5, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
+                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 0, 'time_start': '07:00', 'time_end': '07:30'},
+                           {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '08:30', 'time_end': '09:00'},
+                           {'id': str(uuid.uuid4()), 'name': 'Geography', 'day': 0, 'time_start': '', 'time_end': ''},
+                           {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '', 'time_end': ''},
+                           {'id': str(uuid.uuid4()), 'name': 'Reading', 'day': 0, 'time_start': '07:45', 'time_end': '08:15'},
+                           {'id': str(uuid.uuid4()), 'name': 'Physics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30'},
+                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 1, 'time_start': '07:45', 'time_end': '08:15'},
+                           {'id': str(uuid.uuid4()), 'name': 'History', 'day': 1, 'time_start': '08:30', 'time_end': '09:00'},
+                           {'id': str(uuid.uuid4()), 'name': 'Writing', 'day': 2, 'time_start': '07:00', 'time_end': '07:30'},
+                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 2, 'time_start': '07:45', 'time_end': '08:15'},
+                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 4, 'time_start': '07:00', 'time_end': '07:30'},
+                           {'id': str(uuid.uuid4()), 'name': 'English', 'day': 4, 'time_start': '07:45', 'time_end': '08:15'},
+                           {'id': str(uuid.uuid4()), 'name': 'Nature', 'day': 4, 'time_start': '08:30', 'time_end': '09:00'},
+                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 5, 'time_start': '07:00', 'time_end': '07:30'},
                        ])
 
         schedule_key = str(uuid.uuid4())
         self.Schedule.save(schedule_key, name='Art school schedule',
                        lessons=[
-                           {'id': str(uuid.uuid4()), 'name': 'Painting', 'day': 0, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'Art History', 'day': 0, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'Graphics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30', 'order': 0}
+                           {'id': str(uuid.uuid4()), 'name': 'Painting', 'day': 0, 'time_start': '07:00', 'time_end': '07:30'},
+                           {'id': str(uuid.uuid4()), 'name': 'Art History', 'day': 0, 'time_start': '07:45', 'time_end': '08:15'},
+                           {'id': str(uuid.uuid4()), 'name': 'Graphics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30'}
                        ])
-
-        for schedule_id in self.Schedule.all():
-            self.Timetable.save(schedule_id,
-                                 lessons=[
-                                     {'time_start': '08:30', 'time_end': '09:35'},
-                                     {'time_start': '09:45', 'time_end': '10:25'},
-                                     {'time_start': '13:15', 'time_end': '14:35'}
-                                 ])
 
     def load_schedules(self):
         schedule_list = self.root.ids.schedule_list
@@ -268,8 +252,6 @@ class MainApp(MDApp):
                 self.show_confirm_del_schedule_dialog(schedule_id)
             else:
                 self.delete_schedule(schedule_id)
-        elif action == 'time_table':
-            self.open_schedule_time_table(schedule_id)
 
     def schedule_has_future_homeworks(self, schedule_id):
         has_homeworks = False
@@ -320,35 +302,7 @@ class MainApp(MDApp):
             ),
             icon_src='delete',
         )
-        schedule_menu.add_item(
-            tr._('Time Table'),
-            lambda x: self.callback_for_schedule_menu_items(
-                schedule_id=instance.id,
-                action='time_table'
-            ),
-            icon_src='timetable',
-        )
         schedule_menu.open()
-
-    def open_schedule_time_table(self, schedule_id):
-        self.set_active_schedule_id(schedule_id)
-        schedule = self.get_schedule(schedule_id)
-        timetable = self.get_schedule_timetable(schedule_id)
-        timetable_list = self.root.ids.schedule_timetable_list
-        Util.clear_list_items(timetable_list)
-        for i in range(len(timetable['lessons'])):
-            time_start = timetable['lessons'][i]['time_start']
-            time_end = timetable['lessons'][i]['time_end']
-            text_color = 'Secondary' if time_start == '' and time_end == '' else 'Primary'
-            if time_start == '':
-                time_start = '..'
-            if time_end == '':
-                time_end = '..'
-            timetable_item = OneLineListItem(text=f'{i + 1}.    {time_start} - {time_end}', theme_text_color=text_color, on_release=self.show_timetable_item_options)
-            timetable_list.add_widget(timetable_item)
-
-        self.root.ids.schedule_timetable_toolbar.title = f'{schedule["name"]} Timetable'
-        self.switch_screen('schedule_timetable')
 
     def open_schedule(self, schedule_id, day_index=0, week_num=None, year=None):
         if week_num is None:
@@ -364,9 +318,6 @@ class MainApp(MDApp):
 
         schedule = self.get_schedule(schedule_id)
         schedule_lessons = schedule['lessons']
-
-        timetable = self.get_schedule_timetable(schedule_id)
-        timetable_lessons = timetable['lessons']
 
         for i in range(len(WEEK_DAYS)):
             day_lessons = list(filter(lambda d: d['day'] == i, schedule_lessons))
@@ -420,10 +371,6 @@ class MainApp(MDApp):
                 self.show_confirm_del_lesson_dialog(lesson_id)
             else:
                 self.delete_lesson(lesson_id)
-        elif action == 'move_up':
-            self.move_lesson(lesson_id, 'up')
-        elif action == 'move_down':
-            self.move_lesson(lesson_id, 'down')
         elif action == 'add_homework':
             self.add_homework(lesson_id)
         elif action == 'clear_homework':
@@ -432,9 +379,8 @@ class MainApp(MDApp):
             self.set_lesson_time(lesson_id, 'time_start')
         elif action == 'set_end_time':
             self.set_lesson_time(lesson_id, 'time_end')
-        elif action == 'time_table':
-            schedule_id = self.get_active_schedule_id()
-            self.open_schedule_time_table(schedule_id)
+        else:
+            toast(f'Action {action} Not implemented')
 
     def show_lesson_item_options(self, instance):
         lesson_menu = MDGridBottomSheet()
@@ -502,30 +448,6 @@ class MainApp(MDApp):
             ),
             icon_src='clock-out',
         )
-        lesson_menu.add_item(
-            'Move Up',
-            lambda x: self.callback_for_lesson_menu_items(
-                lesson_id=instance.id,
-                action='move_up'
-            ),
-            icon_src='arrow-up-bold',
-        )
-        lesson_menu.add_item(
-            'Move Down',
-            lambda x: self.callback_for_lesson_menu_items(
-                lesson_id=instance.id,
-                action='move_down'
-            ),
-            icon_src='arrow-down-bold',
-        )
-        lesson_menu.add_item(
-            tr._('Time Table'),
-            lambda x: self.callback_for_lesson_menu_items(
-                lesson_id=instance.id,
-                action='time_table'
-            ),
-            icon_src='timetable',
-        )
         lesson_menu.open()
 
     def schedule_bottom_bar_exists(self):
@@ -575,9 +497,6 @@ class MainApp(MDApp):
     def get_schedule(self, schedule_id):
         return self.Schedule.get(schedule_id)
 
-    def get_schedule_timetable(self, schedule_id):
-        return self.Timetable.get(schedule_id)
-
     def save_schedule(self, **kwargs):
         title_field = self.root.ids.add_schedule_title
         schedule_id = kwargs['schedule_id']
@@ -599,8 +518,6 @@ class MainApp(MDApp):
                 lessons = []
 
             self.Schedule.save(schedule_id, name=title, lessons=lessons)
-            if is_new:
-                self.Timetable.save(schedule_id, lessons=[])
             self.load_schedules()
             self.back_to_main()
             toast(f'Schedule {"added" if is_new else "updated"}')
@@ -631,10 +548,7 @@ class MainApp(MDApp):
                         lesson['name'] = title
                         break
             else:
-                day_lessons = list(filter(lambda d: d['day'] == day, lessons))
-                day_lessons = self.sort_lessons(day_lessons)
-                order = 0 if len(day_lessons) == 0 else day_lessons[-1]['order'] + 1
-                lessons.append({'id': str(uuid.uuid4()), 'name': title, 'day': day, 'order': order, 'time_start': '', 'time_end': ''})
+                lessons.append({'id': str(uuid.uuid4()), 'name': title, 'day': day, 'time_start': '', 'time_end': ''})
             self.Schedule.save(schedule_id, name=schedule['name'], lessons=lessons)
 
             if not is_new and del_homeworks:
@@ -683,7 +597,6 @@ class MainApp(MDApp):
     def delete_schedule(self, schedule_id):
         self.delete_homeworks(schedule_id=schedule_id)
         self.Schedule.delete(schedule_id)
-        self.Timetable.delete(schedule_id)
         self.load_schedules()
         toast('Schedule deleted')
 
@@ -723,48 +636,12 @@ class MainApp(MDApp):
         day_lessons = self.sort_lessons(day_lessons)
         current_lesson_index = next((index for (index, d) in enumerate(day_lessons) if d['id'] == lesson_id), None)
         del day_lessons[current_lesson_index]
-        for i in range(len(day_lessons)):
-            _lesson_index = next((index for (index, d) in enumerate(lessons) if d['id'] == day_lessons[i]['id']), None)
-            lessons[_lesson_index]['order'] = i
 
         del_lesson_index = next((index for (index, d) in enumerate(lessons) if d['id'] == lesson_id), None)
         del lessons[del_lesson_index]
 
         self.open_schedule(schedule_id, day, week_num, year)
         toast('Lesson deleted')
-
-    def move_lesson(self, current_lesson_id, move_to):
-        schedule_id = self.get_active_schedule_id()
-        day = self.get_current_day_tab_index()
-        week_num = self.get_active_week_num()
-        year = self.get_active_year()
-        schedule = self.get_schedule(schedule_id)
-        lessons = schedule['lessons']
-        day_lessons = list(filter(lambda d: d['day'] == day, lessons))
-        day_lessons = self.sort_lessons(day_lessons)
-        current_lesson_index = next((index for (index, d) in enumerate(day_lessons) if d['id'] == current_lesson_id), None)
-        current_lesson_order = day_lessons[current_lesson_index]['order']
-        target_lesson_order = None
-        target_lesson_id = None
-        if current_lesson_index == (len(day_lessons) - 1) and move_to == 'down':
-            return
-        if current_lesson_index == 0 and move_to == 'up':
-            return
-        if move_to == 'up':
-            target_lesson_order = current_lesson_order - 1
-            target_lesson_id = day_lessons[current_lesson_index - 1]['id']
-        elif move_to == 'down':
-            target_lesson_order = current_lesson_order + 1
-            target_lesson_id = day_lessons[current_lesson_index + 1]['id']
-
-        for lesson in lessons:
-            if lesson['id'] == current_lesson_id:
-                lesson['order'] = target_lesson_order
-            elif lesson['id'] == target_lesson_id:
-                lesson['order'] = current_lesson_order
-
-        self.Schedule.save(schedule_id, name=schedule['name'], lessons=lessons)
-        self.open_schedule(schedule_id, day, week_num, year)
 
     def add_schedule(self, schedule_id=None):
         title_field = self.root.ids.add_schedule_title
@@ -834,116 +711,6 @@ class MainApp(MDApp):
     def show_error(**kwargs):
         Snackbar(text=kwargs['text']).show()
 
-    def add_schedule_timetable_item(self):
-        schedule_id = self.get_active_schedule_id()
-        self.add_timetable_item(schedule_id)
-        self.open_schedule_time_table(schedule_id)
-
-    def show_timetable_item_options(self, instance):
-        item_index = None
-        for i in range(len(instance.parent.children)):
-            if instance == instance.parent.children[i]:
-                item_index = i
-
-        item_menu = MDGridBottomSheet()
-        item_menu.add_item(
-            'Set Start Time',
-            lambda x: self.callback_for_timetable_item_menu(
-                item_index=item_index,
-                action='set_start_time'
-            ),
-            icon_src='clock-in',
-        )
-        item_menu.add_item(
-            'Set End Time',
-            lambda x: self.callback_for_timetable_item_menu(
-                item_index=item_index,
-                action='set_end_time'
-            ),
-            icon_src='clock-out',
-        )
-        item_menu.add_item(
-            'Clear Time',
-            lambda x: self.callback_for_timetable_item_menu(
-                item_index=item_index,
-                action='clear_time'
-            ),
-            icon_src='eraser',
-        )
-        item_menu.add_item(
-            'Remove',
-            lambda x: self.callback_for_timetable_item_menu(
-                item_index=item_index,
-                action='remove'
-            ),
-            icon_src='delete',
-        )
-        item_menu.open()
-
-    def callback_for_timetable_item_menu(self, **kwargs):
-        action = kwargs['action']
-        item_index = kwargs['item_index']
-        if action == 'set_start_time':
-            self.set_timetable_item_time(item_index, 'time_start')
-        if action == 'set_end_time':
-            self.set_timetable_item_time(item_index, 'time_end')
-        elif action == 'clear_time':
-            self.clear_timetable_item_time(item_index)
-        elif action == 'remove':
-            self.del_timetable_item_time(item_index)
-
-    def set_timetable_item_time(self, item_index, mode):
-        schedule_id = self.get_active_schedule_id()
-        timetable = self.get_schedule_timetable(schedule_id)
-        time_dialog = TimetableTimepicker(timetable_item_index=item_index, timetable_item_mode=mode)
-        time_dialog.bind(time=self.get_timepicker_time)
-
-        lessons = list(reversed(timetable['lessons']))
-        if lessons[item_index][mode] != '':
-            time = datetime.datetime.strptime(lessons[item_index][mode], '%H:%M').time()
-            try:
-                time_dialog.set_time(time)
-            except AttributeError:
-                pass
-        time_dialog.open()
-
-    def get_timepicker_time(self, instance, time):
-        schedule_id = self.get_active_schedule_id()
-        item_index = instance.timetable_item_index
-        item_mode = instance.timetable_item_mode
-        self.update_timetable(schedule_id, item_index, item_mode, time)
-        self.open_schedule_time_table(schedule_id)
-
-    def clear_timetable_item_time(self, item_index):
-        schedule_id = self.get_active_schedule_id()
-        self.update_timetable(schedule_id, item_index, 'time_start', '')
-        self.update_timetable(schedule_id, item_index, 'time_end', '')
-        self.open_schedule_time_table(schedule_id)
-
-    def del_timetable_item_time(self, item_index):
-        schedule_id = self.get_active_schedule_id()
-        self.remove_timetable_item(schedule_id, item_index)
-        self.open_schedule_time_table(schedule_id)
-
-    def add_timetable_item(self, schedule_id):
-        timetable = self.get_schedule_timetable(schedule_id)
-        lessons = timetable['lessons']
-        lessons.append({'time_start': '', 'time_end': ''})
-        self.Timetable.save(schedule_id, lessons=lessons)
-
-    def update_timetable(self, schedule_id, item_index, item_mode, time):
-        time_str = time.strftime('%H:%M') if type(time) is datetime.time else time
-        timetable = self.get_schedule_timetable(schedule_id)
-        lessons = list(reversed(timetable['lessons']))
-        lessons[item_index][item_mode] = time_str
-        self.Timetable.save(schedule_id, lessons=list(reversed(lessons)))
-
-    def remove_timetable_item(self, schedule_id, item_index):
-        timetable = self.get_schedule_timetable(schedule_id)
-        lessons = list(reversed(timetable['lessons']))
-        del lessons[item_index]
-        self.Timetable.save(schedule_id, lessons=list(reversed(lessons)))
-
     def set_lesson_time(self, lesson_id, mode):
         schedule_id = self.get_active_schedule_id()
         time_dialog = LessonTimepicker(lesson_id=lesson_id, time_mode=mode)
@@ -971,17 +738,33 @@ class MainApp(MDApp):
         mode = instance.time_mode
         time_str = time.strftime('%H:%M') if type(time) is datetime.time else time
         day = 0
+        week_num = self.get_active_week_num()
+        year = self.get_active_year()
 
         schedule = self.get_schedule(schedule_id)
         lessons = schedule['lessons']
         for lesson in lessons:
             if lesson['id'] == lesson_id:
                 lesson[mode] = time_str
+
+                if mode == 'time_start':
+                    if lesson['time_end'] == '':
+                        lesson['time_end'] = time_str
+                    else:
+                        if datetime.datetime.strptime(time_str, '%H:%M') > datetime.datetime.strptime(lesson['time_end'], '%H:%M'):
+                            lesson['time_end'] = time_str
+                elif mode == 'time_end':
+                    if lesson['time_start'] == '':
+                        lesson['time_start'] = time_str
+                    else:
+                        if datetime.datetime.strptime(time_str, '%H:%M') < datetime.datetime.strptime(lesson['time_start'], '%H:%M'):
+                            lesson['time_end'] = lesson['time_start']
+
                 day = lesson['day']
                 break
 
         self.Schedule.save(schedule_id, name=schedule['name'], lessons=lessons)
-        self.open_schedule(schedule_id, day)
+        self.open_schedule(schedule_id, day, week_num, year)
 
     def set_notify_time_setting(self, current):
         time_dialog = NotifyTimepicker()
@@ -1077,21 +860,23 @@ class MainApp(MDApp):
 
     def week_back(self):
         schedule_id = self.get_active_schedule_id()
+        day = self.get_current_day_tab_index()
         week_num = self.get_active_week_num() - 1
         year = self.get_active_year()
         if week_num == -1:
             week_num += 52
             year -= 1
-        self.open_schedule(schedule_id, 0, week_num, year)
+        self.open_schedule(schedule_id, day, week_num, year)
 
     def week_next(self):
         schedule_id = self.get_active_schedule_id()
+        day = self.get_current_day_tab_index()
         week_num = self.get_active_week_num() + 1
         year = self.get_active_year()
         if week_num == 52:
             week_num -= 52
             year += 1
-        self.open_schedule(schedule_id, 0, week_num, year)
+        self.open_schedule(schedule_id, day, week_num, year)
 
     def week_current(self):
         schedule_id = self.get_active_schedule_id()
