@@ -58,6 +58,11 @@ class NotifyTimepicker(MDTimePicker):
     pass
 
 
+class LessonTimepicker(MDTimePicker):
+    lesson_id = ObjectProperty()
+    time_mode = ObjectProperty()
+
+
 class ConfirmDeleteScheduleDialog(MDDialog):
     schedule_id = StringProperty()
 
@@ -207,26 +212,28 @@ class MainApp(MDApp):
         schedule_key = str(uuid.uuid4())
         self.Schedule.save(schedule_key, name='School schedule',
                        lessons=[
-                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 0, 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'Reading', 'day': 0, 'order': 2},
-                           {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'Physics', 'day': 1, 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 1, 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'History', 'day': 1, 'order': 2},
-                           {'id': str(uuid.uuid4()), 'name': 'Writing', 'day': 2, 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 2, 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 4, 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'English', 'day': 4, 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'Nature', 'day': 4, 'order': 2},
-                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 5, 'order': 0},
+                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 0, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
+                           {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '08:30', 'time_end': '09:00', 'order': 2},
+                           {'id': str(uuid.uuid4()), 'name': 'Geography', 'day': 0, 'time_start': '', 'time_end': '','order': 4},
+                           {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '', 'time_end': '', 'order': 3},
+                           {'id': str(uuid.uuid4()), 'name': 'Reading', 'day': 0, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
+                           {'id': str(uuid.uuid4()), 'name': 'Physics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
+                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 1, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
+                           {'id': str(uuid.uuid4()), 'name': 'History', 'day': 1, 'time_start': '08:30', 'time_end': '09:00', 'order': 2},
+                           {'id': str(uuid.uuid4()), 'name': 'Writing', 'day': 2, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
+                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 2, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
+                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 4, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
+                           {'id': str(uuid.uuid4()), 'name': 'English', 'day': 4, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
+                           {'id': str(uuid.uuid4()), 'name': 'Nature', 'day': 4, 'time_start': '08:30', 'time_end': '09:00', 'order': 2},
+                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 5, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
                        ])
 
         schedule_key = str(uuid.uuid4())
         self.Schedule.save(schedule_key, name='Art school schedule',
                        lessons=[
-                           {'id': str(uuid.uuid4()), 'name': 'Painting', 'day': 0, 'order': 0},
-                           {'id': str(uuid.uuid4()), 'name': 'Art History', 'day': 0, 'order': 1},
-                           {'id': str(uuid.uuid4()), 'name': 'Graphics', 'day': 1, 'order': 0}
+                           {'id': str(uuid.uuid4()), 'name': 'Painting', 'day': 0, 'time_start': '07:00', 'time_end': '07:30', 'order': 0},
+                           {'id': str(uuid.uuid4()), 'name': 'Art History', 'day': 0, 'time_start': '07:45', 'time_end': '08:15', 'order': 1},
+                           {'id': str(uuid.uuid4()), 'name': 'Graphics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30', 'order': 0}
                        ])
 
         for schedule_id in self.Schedule.all():
@@ -371,15 +378,9 @@ class MainApp(MDApp):
             Util.clear_list_items(lesson_list)
 
             for lesson in day_lessons:
-                second_text = '.. - ..'
-                if len(timetable_lessons) >= (lesson['order'] + 1):
-                    time_start = timetable_lessons[lesson['order']]['time_start']
-                    if time_start == '':
-                        time_start = '..'
-                    time_end = timetable_lessons[lesson['order']]['time_end']
-                    if time_end == '':
-                        time_end = '..'
-                    second_text = f'{time_start} - {time_end}'
+                time_start = lesson['time_start'] if lesson['time_start'] != '' else '..'
+                time_end = lesson['time_end'] if lesson['time_end'] != '' else '..'
+                second_text = f'{time_start} - {time_end}'
 
                 homework = self.get_homework(lesson['id'], week_num, year)
                 if homework is None:
@@ -427,6 +428,10 @@ class MainApp(MDApp):
             self.add_homework(lesson_id)
         elif action == 'clear_homework':
             self.clear_homework(lesson_id)
+        elif action == 'set_start_time':
+            self.set_lesson_time(lesson_id, 'time_start')
+        elif action == 'set_end_time':
+            self.set_lesson_time(lesson_id, 'time_end')
         elif action == 'time_table':
             schedule_id = self.get_active_schedule_id()
             self.open_schedule_time_table(schedule_id)
@@ -482,6 +487,22 @@ class MainApp(MDApp):
             icon_src='delete',
         )
         lesson_menu.add_item(
+            'Set Time Start',
+            lambda x: self.callback_for_lesson_menu_items(
+                lesson_id=instance.id,
+                action='set_start_time'
+            ),
+            icon_src='clock-in',
+        )
+        lesson_menu.add_item(
+            'Set Time End',
+            lambda x: self.callback_for_lesson_menu_items(
+                lesson_id=instance.id,
+                action='set_end_time'
+            ),
+            icon_src='clock-out',
+        )
+        lesson_menu.add_item(
             'Move Up',
             lambda x: self.callback_for_lesson_menu_items(
                 lesson_id=instance.id,
@@ -516,7 +537,7 @@ class MainApp(MDApp):
 
     @staticmethod
     def sort_lessons(lessons):
-        return sorted(lessons, key=lambda i: i['order'])
+        return sorted(lessons, key=lambda i: datetime.datetime.strptime((i['time_start'] if i['time_start'] != '' else '23:59'), '%H:%M'))
 
     def back_to_main(self):
         self.reset_active_schedule_id()
@@ -613,7 +634,7 @@ class MainApp(MDApp):
                 day_lessons = list(filter(lambda d: d['day'] == day, lessons))
                 day_lessons = self.sort_lessons(day_lessons)
                 order = 0 if len(day_lessons) == 0 else day_lessons[-1]['order'] + 1
-                lessons.append({'id': str(uuid.uuid4()), 'name': title, 'day': day, 'order': order})
+                lessons.append({'id': str(uuid.uuid4()), 'name': title, 'day': day, 'order': order, 'time_start': '', 'time_end': ''})
             self.Schedule.save(schedule_id, name=schedule['name'], lessons=lessons)
 
             if not is_new and del_homeworks:
@@ -922,6 +943,45 @@ class MainApp(MDApp):
         lessons = list(reversed(timetable['lessons']))
         del lessons[item_index]
         self.Timetable.save(schedule_id, lessons=list(reversed(lessons)))
+
+    def set_lesson_time(self, lesson_id, mode):
+        schedule_id = self.get_active_schedule_id()
+        time_dialog = LessonTimepicker(lesson_id=lesson_id, time_mode=mode)
+        time_dialog.bind(time=self.save_lesson_time)
+
+        lesson_time = ''
+        schedule = self.get_schedule(schedule_id)
+        lessons = schedule['lessons']
+        for lesson in lessons:
+            if lesson['id'] == lesson_id:
+                lesson_time = lesson[mode]
+                break
+
+        if lesson_time != '':
+            time = datetime.datetime.strptime(lesson_time, '%H:%M').time()
+            try:
+                time_dialog.set_time(time)
+            except AttributeError:
+                pass
+        time_dialog.open()
+
+    def save_lesson_time(self, instance, time):
+        schedule_id = self.get_active_schedule_id()
+        lesson_id = instance.lesson_id
+        mode = instance.time_mode
+        time_str = time.strftime('%H:%M') if type(time) is datetime.time else time
+        day = 0
+
+        schedule = self.get_schedule(schedule_id)
+        lessons = schedule['lessons']
+        for lesson in lessons:
+            if lesson['id'] == lesson_id:
+                lesson[mode] = time_str
+                day = lesson['day']
+                break
+
+        self.Schedule.save(schedule_id, name=schedule['name'], lessons=lessons)
+        self.open_schedule(schedule_id, day)
 
     def set_notify_time_setting(self, current):
         time_dialog = NotifyTimepicker()

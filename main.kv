@@ -200,17 +200,17 @@ ScreenManager:
                             id: lesson_list_day_6
 
 
-        MDBottomAppBar:
-            MDToolbar:
-                id: bottom_schedule_toolbar
-                md_bg_color: app.theme_cls.primary_color
-                type: 'bottom'
-                title: 'Week'
-                mode: 'free-end'
-                icon: 'plus'
-                icon_color: app.theme_cls.accent_color
-                on_action_button: app.add_lesson()
-                right_action_items: [['page-previous', lambda x: app.week_back()], ['calendar-today', lambda x: app.week_current()], ['page-next', lambda x: app.week_next()]]
+            MDBottomAppBar:
+                MDToolbar:
+                    id: bottom_schedule_toolbar
+                    md_bg_color: app.theme_cls.primary_color
+                    type: 'bottom'
+                    title: 'Week'
+                    mode: 'free-end'
+                    icon: 'plus'
+                    icon_color: app.theme_cls.accent_color
+                    on_action_button: app.add_lesson()
+                    right_action_items: [['page-previous', lambda x: app.week_back()], ['calendar-today', lambda x: app.week_current()], ['page-next', lambda x: app.week_next()]]
 
 
     Screen:
@@ -226,6 +226,7 @@ ScreenManager:
                 left_action_items: [['arrow-left', lambda x: app.back_to_main()]]
             ScrollView:
                 do_scroll_x: False
+                do_scroll_y: True
                 MDList:
                     id: schedule_timetable_list
 
