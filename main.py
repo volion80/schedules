@@ -703,9 +703,11 @@ class MainApp(MDApp):
         self.switch_screen('add_lesson')
 
     def get_current_day_tab_index(self):
-        for child in self.root.ids.schedule_screen_layout.children:
-            if type(child).__name__ == 'MDTabs':
-                return child.carousel.index
+        schedule_tab_panel = self.root.ids.schedule_tabs
+        return schedule_tab_panel.ids.carousel.index
+        # for child in self.root.ids.schedule_screen_layout.children:
+        #     if type(child).__name__ == 'MDTabs':
+        #         return child.carousel.index
 
     @staticmethod
     def show_error(**kwargs):
@@ -969,6 +971,21 @@ class MainApp(MDApp):
 
     def get_tabs_color(self):
         return get_color_from_hex(colors[self.theme_cls.primary_palette]['700'])
+
+    def on_schedule_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
+        schedule_id = self.get_active_schedule_id()
+        schedule = self.get_schedule(schedule_id)
+        day_index = None
+        for index, day in WEEK_DAYS.items():
+            if day.lower() == tab_text.lower():
+                day_index = index
+
+        week_num = self.get_active_week_num()
+        year = self.get_active_year()
+        if week_num == 52:
+            week_num -= 52
+            year += 1
+        self.root.ids.schedule_toolbar.title = f'{schedule["name"]} [{self.get_date(year, week_num, day_index)}]'
 
     # @staticmethod
     # def do_notify(*args):
