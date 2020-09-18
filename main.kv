@@ -1,7 +1,12 @@
 #:import tr __main__.tr
+#:import WipeTransition kivy.uix.screenmanager.WipeTransition
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
+
+
 
 ScreenManager:
     id: screen_manager
+    transition: SwapTransition(duration=0.25)
     Screen:
         name: "schedules"
         BoxLayout:

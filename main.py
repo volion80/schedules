@@ -66,6 +66,12 @@ class ConfirmDeleteLessonDialog(MDDialog):
     lesson_id = StringProperty()
 
 
+class ScheduleGridBottomSheet(MDGridBottomSheet):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.sheet_list.ids.box_sheet_list.padding = (dp(16), 0, dp(16), dp(16))
+
+
 class Lang(Observable):
     observers = []
     lang = None
@@ -277,7 +283,8 @@ class MainApp(MDApp):
         return len(future_homeworks) > 0
 
     def show_schedule_item_options(self, instance):
-        schedule_menu = MDGridBottomSheet()
+        # schedule_menu = MDGridBottomSheet()
+        schedule_menu = ScheduleGridBottomSheet()
         schedule_menu.add_item(
             tr._('Open'),
             lambda x: self.callback_for_schedule_menu_items(
@@ -383,7 +390,7 @@ class MainApp(MDApp):
             toast(f'Action {action} Not implemented')
 
     def show_lesson_item_options(self, instance):
-        lesson_menu = MDGridBottomSheet()
+        lesson_menu = ScheduleGridBottomSheet()
         week_num = self.get_active_week_num()
         year = self.get_active_year()
         homework_exists = False
