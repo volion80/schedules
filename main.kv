@@ -98,8 +98,11 @@ ScreenManager:
                     height: self.minimum_height
 
                     MDLabel:
-                        text: f'[b]{tr._("Choose Language:")}[/b]'
+                        # text: f'[b]{tr._("Choose Language:")}[/b]'
+                        text: tr._("Choose Language:")
                         markup: True
+                        font_name: 'Android_Font'
+                        font_size: 12
 
                     MDSeparator:
 

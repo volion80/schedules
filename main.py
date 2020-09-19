@@ -44,11 +44,11 @@ from Util import Util
 from kivy.core.text import LabelBase
 KIVY_FONTS = [
     {
-        "name": "RobotoCondensed",
-        "fn_regular": "fonts/RobotoCondensed-Light.ttf",
-        "fn_bold": "fonts/RobotoCondensed-Regular.ttf",
-        "fn_italic": "fonts/RobotoCondensed-LightItalic.ttf",
-        "fn_bolditalic": "fonts/RobotoCondensed-Italic.ttf"
+        "name": "Android_Font",
+        "fn_regular": "fonts/Android_Font_Family/Android 400.ttf",
+        "fn_bold": "fonts/Android_Font_Family/Android Hollow 400.ttf",
+        "fn_italic": "fonts/Android_Font_Family/Android Italic 400.ttf",
+        "fn_bolditalic": "fonts/Android_Font_Family/Android Italic 400.ttf"
     }
 ]
 
