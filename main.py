@@ -41,19 +41,19 @@ from kivymd.uix.bottomsheet import MDGridBottomSheet
 from Util import Util
 
 
-# from kivy.core.text import LabelBase
-# KIVY_FONTS = [
-#     {
-#         "name": "RobotoCondensed",
-#         "fn_regular": "fonts/RobotoCondensed-Light.ttf",
-#         "fn_bold": "fonts/RobotoCondensed-Regular.ttf",
-#         "fn_italic": "fonts/RobotoCondensed-LightItalic.ttf",
-#         "fn_bolditalic": "fonts/RobotoCondensed-Italic.ttf"
-#     }
-# ]
-#
-# for font in KIVY_FONTS:
-#     LabelBase.register(**font)
+from kivy.core.text import LabelBase
+KIVY_FONTS = [
+    {
+        "name": "RobotoCondensed",
+        "fn_regular": "fonts/RobotoCondensed-Light.ttf",
+        "fn_bold": "fonts/RobotoCondensed-Regular.ttf",
+        "fn_italic": "fonts/RobotoCondensed-LightItalic.ttf",
+        "fn_bolditalic": "fonts/RobotoCondensed-Italic.ttf"
+    }
+]
+
+for font in KIVY_FONTS:
+    LabelBase.register(**font)
 
 class DayTab(BoxLayout, MDTabsBase):
     pass
