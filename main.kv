@@ -3,8 +3,7 @@
 #:import SwapTransition kivy.uix.screenmanager.SwapTransition
 
 
-#<Label>:
-#    font_name: 'RobotoCondensed'
+
 
 ScreenManager:
     id: screen_manager
@@ -15,6 +14,7 @@ ScreenManager:
             id: schedules_layout
             orientation: 'vertical'
             MDToolbar:
+                id: schedules_toolbar
                 title: tr._('My Schedules')
                 md_bg_color: app.theme_cls.primary_color
                 right_action_items: [['dots-vertical', lambda x: app.open_settings()]]
@@ -86,6 +86,7 @@ ScreenManager:
         BoxLayout:
             orientation: 'vertical'
             MDToolbar:
+                id: settings_toolbar
                 title: tr._('Settings')
                 md_bg_color: app.theme_cls.primary_color
                 elevation: 8
@@ -98,11 +99,10 @@ ScreenManager:
                     height: self.minimum_height
 
                     MDLabel:
-                        # text: f'[b]{tr._("Choose Language:")}[/b]'
+                        #text: f'[b]{tr._("Choose Language:")}[/b]'
                         text: tr._("Choose Language:")
-                        markup: True
-                        font_name: 'Android_Font'
-                        font_size: 12
+                        #markup: True
+                        #font_style: 'Jura'
 
                     MDSeparator:
 
@@ -123,6 +123,8 @@ ScreenManager:
 
                     MDLabel:
                         text: 'Choose Theme:'
+                        #markup: True
+                        #font_name: 'Jura'
 
                     MDSeparator:
 
@@ -169,42 +171,49 @@ ScreenManager:
                 elevation: 8
 
                 Tab:
+                    id: tab_0
                     text: "Tab 0"
                     ScrollView:
                         do_scroll_x: False
                         MDList:
                             id: lesson_list_day_0
                 Tab:
+                    id: tab_1
                     text: "Tab 1"
                     ScrollView:
                         do_scroll_x: False
                         MDList:
                             id: lesson_list_day_1
                 Tab:
+                    id: tab_2
                     text: "Tab 2"
                     ScrollView:
                         do_scroll_x: False
                         MDList:
                             id: lesson_list_day_2
                 Tab:
+                    id: tab_3
                     text: "Tab 3"
                     ScrollView:
                         do_scroll_x: False
                         MDList:
                             id: lesson_list_day_3
                 Tab:
+                    id: tab_4
                     text: "Tab 4"
                     ScrollView:
                         do_scroll_x: False
                         MDList:
                             id: lesson_list_day_4
                 Tab:
+                    id: tab_5
                     text: "Tab 5"
                     ScrollView:
                         do_scroll_x: False
                         MDList:
                             id: lesson_list_day_5
                 Tab:
+                    id: tab_6
                     text: "Tab 6"
                     ScrollView:
                         do_scroll_x: False

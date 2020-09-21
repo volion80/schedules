@@ -37,6 +37,7 @@ from plyer.utils import platform
 from osc.osc_app_server import OscAppServer
 from service.utils import start_service
 from kivymd.uix.bottomsheet import MDGridBottomSheet
+from kivymd.font_definitions import theme_font_styles
 
 from Util import Util
 
@@ -44,16 +45,15 @@ from Util import Util
 from kivy.core.text import LabelBase
 KIVY_FONTS = [
     {
-        "name": "Android_Font",
-        "fn_regular": "fonts/Android_Font_Family/Android 400.ttf",
-        "fn_bold": "fonts/Android_Font_Family/Android Hollow 400.ttf",
-        "fn_italic": "fonts/Android_Font_Family/Android Italic 400.ttf",
-        "fn_bolditalic": "fonts/Android_Font_Family/Android Italic 400.ttf"
+        "name": "Jura",
+        "fn_regular": "fonts/Jura/static/Jura-Medium.ttf",
+        "fn_bold": "fonts/Jura/static/Jura-Bold.ttf",
+        # "fn_italic": "fonts/Kumbh/Lekton-Italic.ttf",
+        # "fn_bolditalic": "fonts/Lekton/Android Italic 400.ttf"
     }
 ]
 
-for font in KIVY_FONTS:
-    LabelBase.register(**font)
+
 
 class DayTab(BoxLayout, MDTabsBase):
     pass
@@ -147,11 +147,13 @@ class MainApp(MDApp):
 
     def build(self):
         super(MainApp, self).build()
+
         self.Schedule = Schedule(table='schedules')
         self.Homework = Homework(table='homeworks')
         self.Settings = Settings()
 
         self.set_theme()
+        self.set_fonts()
 
         self.create_demo_schedules()
 
@@ -989,6 +991,41 @@ class MainApp(MDApp):
             self.theme_cls.theme_style = self.cfg['theme'][theme]['style']
         if 'accent' in self.cfg['theme'][theme]:
             self.theme_cls.accent_palette = self.cfg['theme'][theme]['accent']
+
+    def set_fonts(self):
+        for font in KIVY_FONTS:
+            LabelBase.register(**font)
+
+        font_name = 'Jura'
+        theme_font_styles.append(font_name)
+
+        self.theme_cls.font_styles["H1"] = [font_name, 96, False, -1.5,]
+        self.theme_cls.font_styles["H2"] = [font_name, 60, False, -0.5,]
+        self.theme_cls.font_styles["H3"] = [font_name, 48, False, 0,]
+        self.theme_cls.font_styles["H4"] = [font_name, 34, False, 0.25,]
+        self.theme_cls.font_styles["H5"] = [font_name, 24, False, 0,]
+        self.theme_cls.font_styles["H6"] = [font_name, 20, False, 0.15,]
+        self.theme_cls.font_styles["Subtitle1"] = [font_name, 16, False, 0.15,]
+        self.theme_cls.font_styles["Subtitle2"] = [font_name, 14, False, 0.1,]
+        self.theme_cls.font_styles["Body1"] = [font_name, 16, False, 0.5, ]
+        self.theme_cls.font_styles["Body2"] = [font_name, 14, False, 0.25, ]
+        self.theme_cls.font_styles["Button"] = [font_name, 14, False, 1.25, ]
+        self.theme_cls.font_styles["Caption"] = [font_name, 12, False, 0.4, ]
+        self.theme_cls.font_styles["Overline"] = [font_name, 10, False, 1.5, ]
+
+        # Toolbar fonts
+        toolbars = ['settings_toolbar', 'schedules_toolbar', 'schedule_toolbar', 'bottom_schedule_toolbar', 'add_schedule_top_toolbar', 'add_lesson_top_toolbar', 'add_homework_top_toolbar']
+        for tb in toolbars:
+            self.root.ids[tb].ids.label_title.font_name = "Jura"
+            self.root.ids[tb].ids.label_title.font_size = "20sp"
+            self.root.ids[tb].ids.label_title.bold = True
+
+        # Tabs label fonts
+        for i in range(0,7):
+            tab_label = self.root.ids[f'tab_{i}'].tab_label
+            tab_label.font_name = "Jura"
+            tab_label.font_size = "16sp"
+            tab_label.bold = True
 
     def get_tabs_color(self):
         return get_color_from_hex(colors[self.theme_cls.primary_palette]['700'])
