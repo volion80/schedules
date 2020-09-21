@@ -8,22 +8,40 @@
 ScreenManager:
     id: screen_manager
     transition: SwapTransition(duration=0.25)
+
     Screen:
-        name: "schedules"
+        name: "start"
         BoxLayout:
-            id: schedules_layout
+            id: start_screen_layout
             orientation: 'vertical'
             MDToolbar:
-                id: schedules_toolbar
-                title: tr._('My Schedules')
+                id: start_top_toolbar
+                title: "The Schedules"
+                elevation: 8
                 md_bg_color: app.theme_cls.primary_color
                 right_action_items: [['dots-vertical', lambda x: app.open_settings()]]
-                elevation: 8
-            ScrollView:
-                do_scroll_x: False
-                MDList:
-                    id: schedule_list
 
+            MDTabs:
+                id: start_tabs
+                #on_tab_switch: app.on_schedule_tab_switch(*args)
+                tab_indicator_anim: True
+                tab_indicator_height: "4dp"
+                elevation: 8
+
+                Tab:
+                    id: schedules_tab
+                    text: "Schedules"
+                    ScrollView:
+                        do_scroll_x: False
+                        MDList:
+                            id: schedule_list
+                Tab:
+                    id: homeworks_tab
+                    text: "Homeworks"
+                    ScrollView:
+                        do_scroll_x: False
+                        MDList:
+                            id: homework_list
         MDFloatingActionButton:
             icon: "plus"
             opposite_colors: True

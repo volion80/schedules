@@ -185,14 +185,14 @@ class MainApp(MDApp):
         return self.cfg[key]
 
     def on_start(self):
-        self.load_schedules()
+        self.load_start()
 
     def on_pause(self):
         return True
 
     def on_key(self, window, key, *args):
         if key == 27:
-            if self.root.current == 'schedules':
+            if self.root.current == 'start':
                 return True
             elif self.root.current in ['add_schedule', 'schedule', 'settings']:
                 self.back_to_main()
@@ -249,6 +249,15 @@ class MainApp(MDApp):
                            {'id': str(uuid.uuid4()), 'name': 'Art History', 'day': 0, 'time_start': '07:45', 'time_end': '08:15'},
                            {'id': str(uuid.uuid4()), 'name': 'Graphics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30'}
                        ])
+
+    def load_start(self):
+        start_tab_panel = self.root.ids.start_tabs
+        start_tab_panel.background_color = self.get_tabs_color()
+
+        self.load_schedules()
+
+
+
 
     def load_schedules(self):
         schedule_list = self.root.ids.schedule_list
@@ -488,7 +497,7 @@ class MainApp(MDApp):
         self.reset_active_schedule_id()
         self.reset_active_week_num()
         self.reset_active_year()
-        self.switch_screen('schedules')
+        self.switch_screen('start')
 
     def get_active_week_num(self):
         return self.current_week_num
@@ -1014,7 +1023,7 @@ class MainApp(MDApp):
         self.theme_cls.font_styles["Overline"] = [font_name, 10, False, 1.5, ]
 
         # Toolbar fonts
-        toolbars = ['settings_toolbar', 'schedules_toolbar', 'schedule_toolbar', 'bottom_schedule_toolbar', 'add_schedule_top_toolbar', 'add_lesson_top_toolbar', 'add_homework_top_toolbar']
+        toolbars = ['start_top_toolbar', 'settings_toolbar', 'schedule_toolbar', 'bottom_schedule_toolbar', 'add_schedule_top_toolbar', 'add_lesson_top_toolbar', 'add_homework_top_toolbar']
         for tb in toolbars:
             self.root.ids[tb].ids.label_title.font_name = "Jura"
             self.root.ids[tb].ids.label_title.font_size = "20sp"
