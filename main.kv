@@ -11,6 +11,7 @@ ScreenManager:
 
     Screen:
         name: "start"
+        on_pre_enter: app.on_screen_pre_enter(self)
         BoxLayout:
             id: start_screen_layout
             orientation: 'vertical'
@@ -48,7 +49,7 @@ ScreenManager:
             elevation_normal: 8
             pos_hint: {"center_x": .9, "center_y": .1}
             size: dp(56), dp(56)
-            on_release: app.add_schedule()
+            on_release: app.on_start_add_button_release()
 
     Screen:
         name: "add_schedule"
@@ -73,6 +74,27 @@ ScreenManager:
                         hint_text: 'Title'
                         padding_y: dp(20)
                         max_text_length: app.get_config_item('schedule_title_max_len')
+
+    Screen:
+        name: "add_homework"
+        BoxLayout:
+            id: add_homework_layout
+            orientation: 'vertical'
+            MDToolbar:
+                id: add_homework_top_toolbar
+                title: "Add Homework"
+                elevation: 8
+            ScrollView:
+                do_scroll_x: False
+                GridLayout:
+                    padding: dp(30)
+                    spacing: dp(20)
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDLabel:
+                        text: "Add Homework screen"
 
     Screen:
         name: "add_lesson"
@@ -252,12 +274,12 @@ ScreenManager:
                     right_action_items: [['page-previous', lambda x: app.week_back()], ['calendar-today', lambda x: app.week_current()], ['page-next', lambda x: app.week_next()]]
 
     Screen:
-        name: "add_homework"
+        name: "add_lesson_homework"
         BoxLayout:
-            id: add_homework_layout
+            id: add_lesson_homework_layout
             orientation: 'vertical'
             MDToolbar:
-                id: add_homework_top_toolbar
+                id: add_lesson_homework_top_toolbar
                 title: "Add Homework"
                 md_bg_color: app.theme_cls.primary_color
                 elevation: 8
@@ -271,13 +293,13 @@ ScreenManager:
                     height: self.minimum_height
 
                     MDLabel:
-                        id: add_homework_subtitle
+                        id: add_lesson_homework_subtitle
                         font_style: 'Subtitle1'
                         theme_text_color: 'Custom'
                         text_color: app.theme_cls.primary_color
 
                     MDTextField:
-                        id: add_homework_desc_text
+                        id: add_lesson_homework_desc_text
                         hint_text: "Describe your Homework here (max 50)"
                         padding_y: dp(20)
                         max_text_length: app.get_config_item('homework_desc_max_len')

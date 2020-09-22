@@ -185,7 +185,7 @@ class MainApp(MDApp):
         return self.cfg[key]
 
     def on_start(self):
-        self.load_start()
+        self.load_start_screen()
 
     def on_pause(self):
         return True
@@ -194,10 +194,10 @@ class MainApp(MDApp):
         if key == 27:
             if self.root.current == 'start':
                 return True
-            elif self.root.current in ['add_schedule', 'schedule', 'settings']:
+            elif self.root.current in ['add_schedule', 'add_homework', 'schedule', 'settings']:
                 self.back_to_main()
                 return True
-            elif self.root.current in ['add_lesson', 'add_homework']:
+            elif self.root.current in ['add_lesson', 'add_lesson_homework']:
                 self.switch_screen('schedule')
                 return True
 
@@ -250,14 +250,16 @@ class MainApp(MDApp):
                            {'id': str(uuid.uuid4()), 'name': 'Graphics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30'}
                        ])
 
-    def load_start(self):
+    def load_start_screen(self):
         start_tab_panel = self.root.ids.start_tabs
         start_tab_panel.background_color = self.get_tabs_color()
 
         self.load_schedules()
+        self.load_homeworks()
 
-
-
+    def on_screen_pre_enter(self, screen):
+        if screen.name == 'start':
+            self.root.ids.start_tabs.background_color = self.get_tabs_color()
 
     def load_schedules(self):
         schedule_list = self.root.ids.schedule_list
@@ -267,6 +269,10 @@ class MainApp(MDApp):
             schedule = self.Schedule.get(schedule_id)
             schedule_item = OneLineListItem(id=schedule_id, text=schedule['name'], on_release=self.show_schedule_item_options)
             self.root.ids.schedule_list.add_widget(schedule_item)
+
+    def load_homeworks(self):
+        # todo
+        pass
 
     def callback_for_schedule_menu_items(self, **kwargs):
         action = kwargs['action']
@@ -404,7 +410,7 @@ class MainApp(MDApp):
             else:
                 self.delete_lesson(lesson_id)
         elif action == 'add_homework':
-            self.add_homework(lesson_id)
+            self.add_lesson_homework(lesson_id)
         elif action == 'clear_homework':
             self.clear_homework(lesson_id)
         elif action == 'set_start_time':
@@ -659,7 +665,7 @@ class MainApp(MDApp):
         self.delete_homeworks(lesson_id=lesson_id)
 
         schedule_id = self.get_active_schedule_id()
-        day = self.get_current_day_tab_index()
+        day = self.get_current_tab_index('schedule')
         week_num = self.get_active_week_num()
         year = self.get_active_year()
         schedule = self.get_schedule(schedule_id)
@@ -674,6 +680,13 @@ class MainApp(MDApp):
 
         self.open_schedule(schedule_id, day, week_num, year)
         toast('Lesson deleted')
+
+    def on_start_add_button_release(self):
+        tab_index = self.get_current_tab_index('start')
+        if tab_index == 0:
+            self.add_schedule()
+        elif tab_index == 1:
+            self.add_homework()
 
     def add_schedule(self, schedule_id=None):
         title_field = self.root.ids.add_schedule_title
@@ -691,12 +704,16 @@ class MainApp(MDApp):
         top_toolbar.title = f'{"Edit" if schedule is not None else "Add"} Schedule'
         self.switch_screen('add_schedule')
 
+    def add_homework(self):
+
+        self.switch_screen('add_homework')
+
     def add_lesson(self, lesson_id=None):
         title_field = self.root.ids.add_lesson_title
         top_toolbar = self.root.ids.add_lesson_top_toolbar
         grid_layout = self.root.ids.add_lesson_grid_layout
 
-        day = self.get_current_day_tab_index()
+        day = self.get_current_tab_index('schedule')
         schedule_id = self.get_active_schedule_id()
         lesson = self.get_lesson(schedule_id, lesson_id) if lesson_id is not None else None
 
@@ -734,12 +751,19 @@ class MainApp(MDApp):
         top_toolbar.title = f'{"Edit" if lesson is not None else "Add"} Lesson for {WEEK_DAYS[day]}'
         self.switch_screen('add_lesson')
 
-    def get_current_day_tab_index(self):
-        schedule_tab_panel = self.root.ids.schedule_tabs
-        return schedule_tab_panel.ids.carousel.index
-        # for child in self.root.ids.schedule_screen_layout.children:
-        #     if type(child).__name__ == 'MDTabs':
-        #         return child.carousel.index
+    def get_current_tab_index(self, tabs_name):
+        tab_panel = None
+        tab_index = 0
+        if tabs_name == 'schedule':
+            tab_panel = self.root.ids.schedule_tabs
+        elif tabs_name == 'start':
+            tab_panel = self.root.ids.start_tabs
+
+        if tab_panel is None:
+            toast('Unable to get tab index: incorrect tabs_name')
+        else:
+            tab_index = tab_panel.ids.carousel.index
+        return tab_index
 
     @staticmethod
     def show_error(**kwargs):
@@ -819,7 +843,7 @@ class MainApp(MDApp):
         self.Settings.save('notify', homework=time_str)
         self.refresh_settings_notify_homework()
 
-    def add_homework(self, lesson_id):
+    def add_lesson_homework(self, lesson_id):
         schedule_id = self.get_active_schedule_id()
         lesson = self.get_lesson(schedule_id, lesson_id)
         desc_field = self.root.ids.add_homework_desc_text
@@ -852,7 +876,7 @@ class MainApp(MDApp):
         top_toolbar.right_action_items = [['check', lambda x: self.save_homework(id=homework_id, lesson_id=lesson_id, desc=desc_field.text)]]
         top_toolbar.title = f'Add Homework'
 
-        self.switch_screen('add_homework')
+        self.switch_screen('add_lesson_homework')
 
     def save_homework(self, **kwargs):
         homework_id = kwargs['id']
@@ -894,7 +918,7 @@ class MainApp(MDApp):
 
     def week_back(self):
         schedule_id = self.get_active_schedule_id()
-        day = self.get_current_day_tab_index()
+        day = self.get_current_tab_index('schedule')
         week_num = self.get_active_week_num() - 1
         year = self.get_active_year()
         if week_num == -1:
@@ -904,7 +928,7 @@ class MainApp(MDApp):
 
     def week_next(self):
         schedule_id = self.get_active_schedule_id()
-        day = self.get_current_day_tab_index()
+        day = self.get_current_tab_index('schedule')
         week_num = self.get_active_week_num() + 1
         year = self.get_active_year()
         if week_num == 52:
@@ -1029,10 +1053,18 @@ class MainApp(MDApp):
             self.root.ids[tb].ids.label_title.font_size = "20sp"
             self.root.ids[tb].ids.label_title.bold = True
 
-        # Tabs label fonts
+        # Schedule Tabs label fonts
         for i in range(0,7):
             tab_label = self.root.ids[f'tab_{i}'].tab_label
-            tab_label.font_name = "Jura"
+            tab_label.font_name = font_name
+            tab_label.font_size = "16sp"
+            tab_label.bold = True
+
+        # Start Tabs label fonts
+        start_tabs = ['schedules_tab', 'homeworks_tab']
+        for st in start_tabs:
+            tab_label = self.root.ids[st].tab_label
+            tab_label.font_name = font_name
             tab_label.font_size = "16sp"
             tab_label.bold = True
 
