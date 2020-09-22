@@ -85,16 +85,52 @@ ScreenManager:
                 title: "Add Homework"
                 elevation: 8
             ScrollView:
-                do_scroll_x: False
-                GridLayout:
-                    padding: dp(30)
-                    spacing: dp(20)
-                    cols: 1
+
+                BoxLayout:
+                    orientation: "vertical"
+                    padding: dp(48)
+                    spacing: 10
                     size_hint_y: None
                     height: self.minimum_height
 
-                    MDLabel:
-                        text: "Add Homework screen"
+                    MDTextField:
+                        hint_text: "No helper text"
+
+                    MDTextField:
+                        hint_text: "Helper text on focus"
+                        helper_text: "This will disappear when you click off"
+                        helper_text_mode: "on_focus"
+
+                    MDTextField:
+                        hint_text: "Persistent helper text"
+                        helper_text: "Text is always here"
+                        helper_text_mode: "persistent"
+
+                    MDTextField:
+                        id: text_field_error
+                        hint_text:
+                            "Helper text on error (Hit Enter with two characters here)"
+                        helper_text: "Two is my least favorite number"
+                        helper_text_mode: "on_error"
+
+                    MDTextField:
+                        hint_text: "Max text length = 10"
+                        max_text_length: 10
+
+                    MDTextField:
+                        hint_text: "required = True"
+                        required: True
+                        helper_text_mode: "on_error"
+
+                    MDTextField:
+                        multiline: True
+                        hint_text: "Multi-line text"
+                        helper_text: "Messages are also supported here"
+                        helper_text_mode: "persistent"
+
+                    MDTextField:
+                        hint_text: "disabled = True"
+                        disabled: True
 
     Screen:
         name: "add_lesson"
@@ -130,6 +166,7 @@ ScreenManager:
                 title: tr._('Settings')
                 md_bg_color: app.theme_cls.primary_color
                 elevation: 8
+                left_action_items: [['arrow-left', lambda x: app.back_to_main()]]
             ScrollView:
                 GridLayout:
                     padding: dp(20)

@@ -499,10 +499,11 @@ class MainApp(MDApp):
     def sort_lessons(lessons):
         return sorted(lessons, key=lambda i: datetime.datetime.strptime((i['time_start'] if i['time_start'] != '' else '23:59'), '%H:%M'))
 
-    def back_to_main(self):
+    def back_to_main(self, tab_index = 0):
         self.reset_active_schedule_id()
         self.reset_active_week_num()
         self.reset_active_year()
+        self.root.ids.start_tabs.ids.carousel.index = tab_index
         self.switch_screen('start')
 
     def get_active_week_num(self):
@@ -705,8 +706,16 @@ class MainApp(MDApp):
         self.switch_screen('add_schedule')
 
     def add_homework(self):
+        top_toolbar = self.root.ids.add_homework_top_toolbar
 
+        top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main(1)]]
+        top_toolbar.right_action_items = [['check', lambda x: self.save_homework()]]
         self.switch_screen('add_homework')
+
+    def save_homework(self):
+        self.load_homeworks()
+        self.back_to_main(1)
+        toast('Homework added')
 
     def add_lesson(self, lesson_id=None):
         title_field = self.root.ids.add_lesson_title
@@ -767,7 +776,7 @@ class MainApp(MDApp):
 
     @staticmethod
     def show_error(**kwargs):
-        Snackbar(text=kwargs['text']).show()
+        Snackbar(text=kwargs['text']).open()
 
     def set_lesson_time(self, lesson_id, mode):
         schedule_id = self.get_active_schedule_id()
@@ -873,12 +882,12 @@ class MainApp(MDApp):
         subtitle.text = f'{lesson["name"]} for {self.get_date(year, week_num, day)}'
 
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.open_schedule(schedule_id, day, week_num, year)]]
-        top_toolbar.right_action_items = [['check', lambda x: self.save_homework(id=homework_id, lesson_id=lesson_id, desc=desc_field.text)]]
+        top_toolbar.right_action_items = [['check', lambda x: self.save_lesson_homework(id=homework_id, lesson_id=lesson_id, desc=desc_field.text)]]
         top_toolbar.title = f'Add Homework'
 
         self.switch_screen('add_lesson_homework')
 
-    def save_homework(self, **kwargs):
+    def save_lesson_homework(self, **kwargs):
         homework_id = kwargs['id']
         lesson_id = kwargs['lesson_id']
         desc = kwargs['desc']
