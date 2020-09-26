@@ -93,8 +93,20 @@ ScreenManager:
                     size_hint_y: None
                     height: self.minimum_height
 
+                    MDTextButton:
+                        id: add_homework_date
+                        text: ""
+                        bold: True
+                        on_release: app.open_add_homework_datepicker()
+
+                    MDDropDownItem:
+                        id: schedules_dropdown_item
+                        text: 'Select Schedule'
+                        on_release: app.schedules_dropdown.open()
+
                     MDTextField:
                         hint_text: "No helper text"
+                        keyboard_suggestions: True
 
                     MDTextField:
                         hint_text: "Helper text on focus"

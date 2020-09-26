@@ -38,6 +38,8 @@ from osc.osc_app_server import OscAppServer
 from service.utils import start_service
 from kivymd.uix.bottomsheet import MDGridBottomSheet
 from kivymd.font_definitions import theme_font_styles
+from kivymd.uix.picker import MDDatePicker
+from kivymd.uix.menu import MDDropdownMenu
 
 from Util import Util
 
@@ -708,9 +710,65 @@ class MainApp(MDApp):
     def add_homework(self):
         top_toolbar = self.root.ids.add_homework_top_toolbar
 
+        hw_date = self.root.ids.add_homework_date
+        today = datetime.datetime.today().date()
+        hw_date.text = str(today)
+        hw_date.font_style = 'Subtitle1'
+        hw_date.padding = [5, 0]
+
+        self.schedules_dropdown = MDDropdownMenu(
+            id='schedules_dropdown',
+            caller=self.root.ids.schedules_dropdown_item,
+            items=[],
+            width_mult=5,
+        )
+        self.schedules_dropdown.bind(on_release=self.set_schedules_dropdown_item)
+
+        self.root.ids.schedules_dropdown_item.text = 'Select Schedule'
+        # self.load_schedules_dropdown_items(today)
+
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main(1)]]
         top_toolbar.right_action_items = [['check', lambda x: self.save_homework()]]
         self.switch_screen('add_homework')
+
+    def set_schedules_dropdown_item(self, instance_menu, instance_menu_item):
+        toast(f'{instance_menu_item.text} selected')
+        self.root.ids.schedules_dropdown_item.set_item(instance_menu_item.text)
+        self.schedules_dropdown.dismiss()
+        # todo: load lessons for selected schedules (on select)
+
+
+    def open_add_homework_datepicker(self):
+        str_date = self.root.ids.add_homework_date.text
+        date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
+        min_date = date - datetime.timedelta(days=1)
+        date_dialog = MDDatePicker(
+            callback=self.get_homework_datepicker_date,
+            year=date.year,
+            month=date.month,
+            day=date.day,
+            min_date=min_date
+        )
+        date_dialog.open()
+
+    def get_homework_datepicker_date(self, date):
+        self.root.ids.add_homework_date.text = str(date)
+        self.load_schedules_dropdown_items(date)
+
+    def load_schedules_dropdown_items(self, date):
+        # self.schedules_dropdown.clear_widgets()
+        weekday = date.weekday()
+        schedule_items = []
+        schedules = self.Schedule.all()
+        for schedule_id in schedules:
+            schedule = self.get_schedule(schedule_id)
+            day_lessons = list(filter(lambda d: d['day'] == weekday, schedule['lessons']))
+            if len(day_lessons):
+                schedule_items.append({"icon": "calendar-arrow-right", "text": schedule['name']})
+
+        self.schedules_dropdown.
+        self.schedules_dropdown.items = schedule_items
+        self.schedules_dropdown.create_menu_items()
 
     def save_homework(self):
         self.load_homeworks()
@@ -855,9 +913,9 @@ class MainApp(MDApp):
     def add_lesson_homework(self, lesson_id):
         schedule_id = self.get_active_schedule_id()
         lesson = self.get_lesson(schedule_id, lesson_id)
-        desc_field = self.root.ids.add_homework_desc_text
-        top_toolbar = self.root.ids.add_homework_top_toolbar
-        subtitle = self.root.ids.add_homework_subtitle
+        desc_field = self.root.ids.add_lesson_homework_desc_text
+        top_toolbar = self.root.ids.add_lesson_homework_top_toolbar
+        subtitle = self.root.ids.add_lesson_homework_subtitle
 
         week_num = self.get_active_week_num()
         year = self.get_active_year()
