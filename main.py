@@ -40,6 +40,8 @@ from kivymd.uix.bottomsheet import MDGridBottomSheet
 from kivymd.font_definitions import theme_font_styles
 from kivymd.uix.picker import MDDatePicker
 from kivymd.uix.menu import MDDropdownMenu
+from kivy.uix.dropdown import DropDown
+from kivy.uix.button import Button
 
 from Util import Util
 
@@ -72,6 +74,10 @@ class NotifyTimepicker(MDTimePicker):
 class LessonTimepicker(MDTimePicker):
     lesson_id = ObjectProperty()
     time_mode = ObjectProperty()
+
+
+class SelectScheduleButton(Button):
+    default_text = StringProperty()
 
 
 class ConfirmDeleteScheduleDialog(MDDialog):
@@ -709,32 +715,29 @@ class MainApp(MDApp):
 
     def add_homework(self):
         top_toolbar = self.root.ids.add_homework_top_toolbar
-
         hw_date = self.root.ids.add_homework_date
         today = datetime.datetime.today().date()
         hw_date.text = str(today)
         hw_date.font_style = 'Subtitle1'
         hw_date.padding = [5, 0]
 
-        self.schedules_dropdown = MDDropdownMenu(
-            id='schedules_dropdown',
-            caller=self.root.ids.schedules_dropdown_item,
-            items=[],
-            width_mult=5,
-        )
-        self.schedules_dropdown.bind(on_release=self.set_schedules_dropdown_item)
+        self.sch_dropdown = DropDown()
+        schedule_select_btn = self.root.ids.schedule_select_btn
+        schedule_select_btn.bind(on_release=self.sch_dropdown.open)
 
-        self.root.ids.schedules_dropdown_item.text = 'Select Schedule'
-        # self.load_schedules_dropdown_items(today)
+        self.sch_dropdown.bind(on_select=self.set_schedules_dropdown_item)
+
+        self.load_schedules_dropdown_items(today)
 
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main(1)]]
         top_toolbar.right_action_items = [['check', lambda x: self.save_homework()]]
         self.switch_screen('add_homework')
 
-    def set_schedules_dropdown_item(self, instance_menu, instance_menu_item):
-        toast(f'{instance_menu_item.text} selected')
-        self.root.ids.schedules_dropdown_item.set_item(instance_menu_item.text)
-        self.schedules_dropdown.dismiss()
+    def set_schedules_dropdown_item(self, dropdown_instance, dropdown_item_text):
+        schedule_select_btn = self.root.ids.schedule_select_btn
+        schedule_select_btn.text = dropdown_item_text
+        toast(f'{dropdown_item_text} selected')
+
         # todo: load lessons for selected schedules (on select)
 
 
@@ -756,19 +759,29 @@ class MainApp(MDApp):
         self.load_schedules_dropdown_items(date)
 
     def load_schedules_dropdown_items(self, date):
-        # self.schedules_dropdown.clear_widgets()
+        self.sch_dropdown.clear_widgets()
         weekday = date.weekday()
-        schedule_items = []
         schedules = self.Schedule.all()
         for schedule_id in schedules:
             schedule = self.get_schedule(schedule_id)
             day_lessons = list(filter(lambda d: d['day'] == weekday, schedule['lessons']))
             if len(day_lessons):
-                schedule_items.append({"icon": "calendar-arrow-right", "text": schedule['name']})
+                dropdown_button = Button(
+                    text=schedule['name'],
+                    size_hint_y=None,
+                    height=30,
+                    background_color=self.get_theme_color(self.theme_cls.primary_palette, '700'),
+                    background_normal=''
+                )
+                dropdown_button.bind(on_release=lambda dropdown_button: self.sch_dropdown.select(dropdown_button.text))
+                self.sch_dropdown.add_widget(dropdown_button)
 
-        self.schedules_dropdown.
-        self.schedules_dropdown.items = schedule_items
-        self.schedules_dropdown.create_menu_items()
+        schedules_exist = len(self.sch_dropdown.container.children) > 0
+        schedule_select_btn = self.root.ids.schedule_select_btn
+        schedule_select_btn.text = schedule_select_btn.default_text if schedules_exist else 'Schedules Not Found...'
+        schedule_select_btn.disabled = schedules_exist is False
+        schedule_select_btn.background_color = self.get_theme_color(self.theme_cls.primary_palette, '600') if schedules_exist else self.get_theme_color(self.theme_cls.primary_palette, '400')
+
 
     def save_homework(self):
         self.load_homeworks()
@@ -1134,6 +1147,9 @@ class MainApp(MDApp):
             tab_label.font_name = font_name
             tab_label.font_size = "16sp"
             tab_label.bold = True
+
+    def get_theme_color(self, palette, hue):
+        return get_color_from_hex(colors[palette][hue])
 
     def get_tabs_color(self):
         return get_color_from_hex(colors[self.theme_cls.primary_palette]['700'])
