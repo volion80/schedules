@@ -79,6 +79,9 @@ class LessonTimepicker(MDTimePicker):
 class SelectScheduleButton(Button):
     default_text = StringProperty()
 
+class SelectLessonButton(Button):
+    default_text = StringProperty()
+
 
 class ConfirmDeleteScheduleDialog(MDDialog):
     schedule_id = StringProperty()
@@ -724,8 +727,12 @@ class MainApp(MDApp):
         self.sch_dropdown = DropDown()
         schedule_select_btn = self.root.ids.schedule_select_btn
         schedule_select_btn.bind(on_release=self.sch_dropdown.open)
-
         self.sch_dropdown.bind(on_select=self.set_schedules_dropdown_item)
+
+        self.lesson_dropdown = DropDown()
+        lesson_select_btn = self.root.ids.lesson_select_btn
+        lesson_select_btn.bind(on_release=self.lesson_dropdown.open)
+        self.lesson_dropdown.bind(on_select=self.set_lessons_dropdown_item)
 
         self.load_schedules_dropdown_items(today)
 
@@ -739,7 +746,15 @@ class MainApp(MDApp):
         toast(f'{dropdown_item_text} selected')
 
         # todo: load lessons for selected schedules (on select)
+        str_date = self.root.ids.add_homework_date.text
+        date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
+        self.load_lessons_dropdown_items(date, dropdown_item_text)
 
+
+    def set_lessons_dropdown_item(self, dropdown_instance, dropdown_item_text):
+        lesson_select_btn = self.root.ids.lesson_select_btn
+        lesson_select_btn.text = dropdown_item_text
+        toast(f'{dropdown_item_text} selected')
 
     def open_add_homework_datepicker(self):
         str_date = self.root.ids.add_homework_date.text
@@ -769,9 +784,10 @@ class MainApp(MDApp):
                 dropdown_button = Button(
                     text=schedule['name'],
                     size_hint_y=None,
-                    height=30,
+                    height=40,
                     background_color=self.get_theme_color(self.theme_cls.primary_palette, '700'),
-                    background_normal=''
+                    background_normal='',
+                    font_size=16
                 )
                 dropdown_button.bind(on_release=lambda dropdown_button: self.sch_dropdown.select(dropdown_button.text))
                 self.sch_dropdown.add_widget(dropdown_button)
@@ -782,6 +798,35 @@ class MainApp(MDApp):
         schedule_select_btn.disabled = schedules_exist is False
         schedule_select_btn.background_color = self.get_theme_color(self.theme_cls.primary_palette, '600') if schedules_exist else self.get_theme_color(self.theme_cls.primary_palette, '400')
 
+    def load_lessons_dropdown_items(self, date, schedule_name):
+        day = date.weekday()
+        schedules = self.Schedule.all()
+        # schedule = next(item for item in schedules if item['name'] == schedule_name)
+        schedules_found = list(schedules.find(name=schedule_name))
+        if len(schedules_found) == 0:
+            toast(f'Cannot find the schedule item: "{schedule_name}"')
+            return
+        schedule = schedules_found[0][1]
+        lessons = list(filter(lambda d: d['day'] == day, schedule['lessons']))
+        if len(lessons):
+            lessons = self.sort_lessons(lessons)
+            for lesson in lessons:
+                dropdown_button = Button(
+                    text=lesson['name'],
+                    size_hint_y=None,
+                    height=40,
+                    background_color=self.get_theme_color(self.theme_cls.primary_palette, 'A400'),
+                    background_normal='',
+                    font_size=16
+                )
+                dropdown_button.bind(on_release=lambda dropdown_button: self.lesson_dropdown.select(dropdown_button.text))
+                self.lesson_dropdown.add_widget(dropdown_button)
+
+        lessons_exist = len(lessons) > 0
+        lesson_select_btn = self.root.ids.lesson_select_btn
+        lesson_select_btn.text = lesson_select_btn.default_text if lessons_exist else 'Lessons Not Found...'
+        lesson_select_btn.disabled = lessons_exist is False
+        lesson_select_btn.background_color = self.get_theme_color(self.theme_cls.primary_palette, '600') if lessons_exist else self.get_theme_color(self.theme_cls.primary_palette, '400')
 
     def save_homework(self):
         self.load_homeworks()

@@ -96,21 +96,39 @@ ScreenManager:
                     MDTextButton:
                         id: add_homework_date
                         size_hint_x: 1
+#                        size_hint: [1,0]
                         text: ""
                         bold: True
                         on_release: app.open_add_homework_datepicker()
+                        font_size: 20
 
                     SelectScheduleButton:
                         id: schedule_select_btn
                         default_text: "Select Schedule..."
                         text: "Select Schedule..."
                         size_hint: [1,0]
-                        height: 30
+                        size_hint_x: 1
+                        height: 40
                         background_color: app.get_theme_color(app.theme_cls.primary_palette, '600')
                         background_normal: ''
                         bold: True
                         disabled_image: ''
                         background_disabled_normal: ''
+                        font_size: 20
+
+                    SelectLessonButton:
+                        id: lesson_select_btn
+                        default_text: "Select Lesson..."
+                        text: "Select Lesson..."
+#                        size_hint: [1,0]
+                        size_hint_x: 1
+                        height: 40
+                        background_color: app.get_theme_color(app.theme_cls.primary_palette, 'A700')
+                        background_normal: ''
+                        bold: True
+                        disabled_image: ''
+                        background_disabled_normal: ''
+                        font_size: 20
 
                     MDTextField:
                         hint_text: "No helper text"
@@ -360,11 +378,3 @@ ScreenManager:
                         hint_text: "Describe your Homework here (max 50)"
                         padding_y: dp(20)
                         max_text_length: app.get_config_item('homework_desc_max_len')
-
-#<SelectScheduleButton>:
-#    id: schedule_select_btn
-#    default_text: "Select Sch"
-#    text: "Select Sch"
-#    size_hint: [0,0]
-#    height: 30
-#    width: 150
