@@ -95,8 +95,9 @@ ScreenManager:
 
                     MDTextButton:
                         id: add_homework_date
+                        size_hint_y: None
                         size_hint_x: 1
-#                        size_hint: [1,0]
+                        height: 40
                         text: ""
                         bold: True
                         on_release: app.open_add_homework_datepicker()
@@ -106,7 +107,7 @@ ScreenManager:
                         id: schedule_select_btn
                         default_text: "Select Schedule..."
                         text: "Select Schedule..."
-                        size_hint: [1,0]
+                        size_hint_y: None
                         size_hint_x: 1
                         height: 40
                         background_color: app.get_theme_color(app.theme_cls.primary_palette, '600')
@@ -120,7 +121,7 @@ ScreenManager:
                         id: lesson_select_btn
                         default_text: "Select Lesson..."
                         text: "Select Lesson..."
-#                        size_hint: [1,0]
+                        size_hint_y: None
                         size_hint_x: 1
                         height: 40
                         background_color: app.get_theme_color(app.theme_cls.primary_palette, 'A700')
@@ -131,44 +132,11 @@ ScreenManager:
                         font_size: 20
 
                     MDTextField:
-                        hint_text: "No helper text"
-                        keyboard_suggestions: True
+                        id: add_homework_desc_text
+                        hint_text: "Describe your Homework here (max 50)"
+                        padding_y: dp(20)
+                        max_text_length: app.get_config_item('homework_desc_max_len')
 
-                    MDTextField:
-                        hint_text: "Helper text on focus"
-                        helper_text: "This will disappear when you click off"
-                        helper_text_mode: "on_focus"
-
-                    MDTextField:
-                        hint_text: "Persistent helper text"
-                        helper_text: "Text is always here"
-                        helper_text_mode: "persistent"
-
-                    MDTextField:
-                        id: text_field_error
-                        hint_text:
-                            "Helper text on error (Hit Enter with two characters here)"
-                        helper_text: "Two is my least favorite number"
-                        helper_text_mode: "on_error"
-
-                    MDTextField:
-                        hint_text: "Max text length = 10"
-                        max_text_length: 10
-
-                    MDTextField:
-                        hint_text: "required = True"
-                        required: True
-                        helper_text_mode: "on_error"
-
-                    MDTextField:
-                        multiline: True
-                        hint_text: "Multi-line text"
-                        helper_text: "Messages are also supported here"
-                        helper_text_mode: "persistent"
-
-                    MDTextField:
-                        hint_text: "disabled = True"
-                        disabled: True
 
     Screen:
         name: "add_lesson"

@@ -744,8 +744,6 @@ class MainApp(MDApp):
         schedule_select_btn = self.root.ids.schedule_select_btn
         schedule_select_btn.text = dropdown_item_text
         toast(f'{dropdown_item_text} selected')
-
-        # todo: load lessons for selected schedules (on select)
         str_date = self.root.ids.add_homework_date.text
         date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
         self.load_lessons_dropdown_items(date, dropdown_item_text)
@@ -793,15 +791,15 @@ class MainApp(MDApp):
                 self.sch_dropdown.add_widget(dropdown_button)
 
         schedules_exist = len(self.sch_dropdown.container.children) > 0
-        schedule_select_btn = self.root.ids.schedule_select_btn
-        schedule_select_btn.text = schedule_select_btn.default_text if schedules_exist else 'Schedules Not Found...'
-        schedule_select_btn.disabled = schedules_exist is False
-        schedule_select_btn.background_color = self.get_theme_color(self.theme_cls.primary_palette, '600') if schedules_exist else self.get_theme_color(self.theme_cls.primary_palette, '400')
+        self.reset_schedules_select_button(schedules_exist)
+
+        self.lesson_dropdown.clear_widgets()
+        self.reset_lessons_select_button(schedules_exist)
 
     def load_lessons_dropdown_items(self, date, schedule_name):
+        self.lesson_dropdown.clear_widgets()
         day = date.weekday()
         schedules = self.Schedule.all()
-        # schedule = next(item for item in schedules if item['name'] == schedule_name)
         schedules_found = list(schedules.find(name=schedule_name))
         if len(schedules_found) == 0:
             toast(f'Cannot find the schedule item: "{schedule_name}"')
@@ -823,10 +821,19 @@ class MainApp(MDApp):
                 self.lesson_dropdown.add_widget(dropdown_button)
 
         lessons_exist = len(lessons) > 0
+        self.reset_lessons_select_button(lessons_exist)
+
+    def reset_schedules_select_button(self, is_active):
+        schedule_select_btn = self.root.ids.schedule_select_btn
+        schedule_select_btn.text = schedule_select_btn.default_text if is_active else 'Schedules Not Found...'
+        schedule_select_btn.disabled = is_active is False
+        schedule_select_btn.background_color = self.get_theme_color(self.theme_cls.primary_palette, '600') if is_active else self.get_theme_color(self.theme_cls.primary_palette, '400')
+
+    def reset_lessons_select_button(self, is_active):
         lesson_select_btn = self.root.ids.lesson_select_btn
-        lesson_select_btn.text = lesson_select_btn.default_text if lessons_exist else 'Lessons Not Found...'
-        lesson_select_btn.disabled = lessons_exist is False
-        lesson_select_btn.background_color = self.get_theme_color(self.theme_cls.primary_palette, '600') if lessons_exist else self.get_theme_color(self.theme_cls.primary_palette, '400')
+        lesson_select_btn.text = lesson_select_btn.default_text if is_active else 'Lessons Not Found...'
+        lesson_select_btn.disabled = is_active is False
+        lesson_select_btn.background_color = self.get_theme_color(self.theme_cls.primary_palette, 'A700') if is_active else self.get_theme_color(self.theme_cls.primary_palette, '400')
 
     def save_homework(self):
         self.load_homeworks()
