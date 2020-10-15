@@ -294,7 +294,11 @@ class MainApp(MDApp):
         schedules = self.Schedule.all()
         for schedule_id in schedules:
             schedule = self.Schedule.get(schedule_id)
-            schedule_item = OneLineListItem(id=schedule_id, text=schedule['name'], on_release=self.show_schedule_item_options)
+            schedule_item = OneLineListItem(
+                id=schedule_id,
+                text=schedule['name'],
+                divider='Inset',
+                on_release=self.show_schedule_item_options)
             schedule_list.add_widget(schedule_item)
 
     def load_homeworks(self):
@@ -339,12 +343,16 @@ class MainApp(MDApp):
             homework_item = ThreeLineListItem(
                 id=home_work['homework_id'],
                 text=f'{home_work["lesson_name"]} ({home_work["schedule_name"]}) {home_work["lesson_time_start"]}',
+                font_style='Body1',
                 secondary_text=home_work['homework_date'].strftime("%a %d %b, %Y"),
+                secondary_theme_text_color='Custom',
+                secondary_text_color=get_color_from_hex(colors[self.theme_cls.primary_palette]['800']),
+                secondary_font_style='Subtitle1',
                 tertiary_text=home_work['description'],
+                tertiary_font_style='Subtitle2',
+                divider='Inset',
                 on_release=self.show_homework_item_options)
             homework_list.add_widget(homework_item)
-
-
 
     def callback_for_schedule_menu_items(self, **kwargs):
         action = kwargs['action']
@@ -366,6 +374,13 @@ class MainApp(MDApp):
         action = kwargs['action']
         homework_id = kwargs['homework_id']
         if action == 'edit':
+            homework = self.Homework.get(homework_id)
+            schedule = None
+            schedules = self.Schedule.all()
+            for schedule_id in schedules:
+                toast('check')
+
+
             toast('todo: edit homework')
         elif action == 'delete':
             toast('todo: delete homework')
