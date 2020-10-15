@@ -24,7 +24,7 @@ ScreenManager:
 
             MDTabs:
                 id: start_tabs
-                #on_tab_switch: app.on_schedule_tab_switch(*args)
+                on_tab_switch: app.on_start_tab_switch(*args)
                 tab_indicator_anim: True
                 tab_indicator_height: "4dp"
                 elevation: 8
@@ -82,7 +82,7 @@ ScreenManager:
             orientation: 'vertical'
             MDToolbar:
                 id: add_homework_top_toolbar
-                title: "Add Homework"
+                title: "Select Date / Schedule / Lesson"
                 elevation: 8
             ScrollView:
 
@@ -106,6 +106,7 @@ ScreenManager:
                     SelectScheduleButton:
                         id: schedule_select_btn
                         default_text: "Select Schedule..."
+                        not_found_text: "Schedules Not Found..."
                         text: "Select Schedule..."
                         size_hint_y: None
                         size_hint_x: 1
@@ -120,6 +121,7 @@ ScreenManager:
                     SelectLessonButton:
                         id: lesson_select_btn
                         default_text: "Select Lesson..."
+                        not_found_text: "Lessons Not Found..."
                         text: "Select Lesson..."
                         size_hint_y: None
                         size_hint_x: 1
@@ -130,13 +132,6 @@ ScreenManager:
                         disabled_image: ''
                         background_disabled_normal: ''
                         font_size: 20
-
-                    MDTextField:
-                        id: add_homework_desc_text
-                        hint_text: "Describe your Homework here (max 50)"
-                        padding_y: dp(20)
-                        max_text_length: app.get_config_item('homework_desc_max_len')
-
 
     Screen:
         name: "add_lesson"

@@ -21,3 +21,15 @@ class Util:
     @staticmethod
     def clear_list_items(mdlist):
         mdlist.clear_widgets(mdlist.children)
+
+    @staticmethod
+    def get_date(year, week_num, day_index):
+        day = day_index + 1
+        if day == 7:
+            day = 0
+        return datetime.datetime.strptime(f'{year}-W{week_num}-{day}', '%Y-W%W-%w').date()
+
+    @staticmethod
+    def get_date_str(year, week_num, day_index):
+        date = Util.get_date(year, week_num, day_index)
+        return f'{date.strftime("%a %d %b, %Y")}'
