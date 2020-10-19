@@ -3,7 +3,7 @@ if config['env'] == 'dev_home':
     import os
     os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 from kivymd.app import MDApp
-from kivymd.uix.list import OneLineListItem, TwoLineListItem, ThreeLineListItem
+from kivymd.uix.list import OneLineListItem, TwoLineListItem, ThreeLineListItem, ThreeLineAvatarIconListItem, ThreeLineRightIconListItem
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivymd.uix.tab import MDTabsBase, MDTabs
@@ -40,6 +40,8 @@ from kivymd.uix.bottomsheet import MDGridBottomSheet
 from kivymd.font_definitions import theme_font_styles
 from kivymd.uix.picker import MDDatePicker
 from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.list import IRightBodyTouch
 from kivy.uix.dropdown import DropDown
 from kivy.uix.button import Button
 
@@ -98,6 +100,8 @@ class ScheduleGridBottomSheet(MDGridBottomSheet):
         super().__init__(**kwargs)
         self.sheet_list.ids.box_sheet_list.padding = (dp(16), 0, dp(16), dp(16))
 
+class HomeworkListItemContainer(IRightBodyTouch, MDBoxLayout):
+    adaptive_width = True
 
 class Lang(Observable):
     observers = []
@@ -340,19 +344,31 @@ class MainApp(MDApp):
 
         hws = self.sort_homeworks(hws)
         for home_work in hws:
-            homework_item = ThreeLineListItem(
+            is_today = datetime.datetime.today().strftime("%Y-%m-%d") == home_work['homework_date'].strftime("%Y-%m-%d")
+            homework_item = ThreeLineRightIconListItem(
                 id=home_work['homework_id'],
                 text=f'{home_work["lesson_name"]} ({home_work["schedule_name"]}) {home_work["lesson_time_start"]}',
                 font_style='Body1',
                 secondary_text=home_work['homework_date'].strftime("%a %d %b, %Y"),
                 secondary_theme_text_color='Custom',
-                secondary_text_color=get_color_from_hex(colors[self.theme_cls.primary_palette]['800']),
+                secondary_text_color=get_color_from_hex(colors[self.theme_cls.primary_palette]['800']) if not is_today else get_color_from_hex(colors['Red']['700']),
                 secondary_font_style='Subtitle1',
                 tertiary_text=home_work['description'],
                 tertiary_font_style='Subtitle2',
                 divider='Inset',
                 on_release=self.show_homework_item_options)
+            homework_item.bind(on_size=self.on_size_homework_list_item)
+
+            homework_item_container = HomeworkListItemContainer(id='homework_item_container')
+            homework_item_container.add_widget(MDIconButton(icon='plus'))
+            homework_item_container.add_widget(MDCheckbox(size_hint=[None, None], size=['48dp', '48dp']))
+            homework_item.add_widget(homework_item_container)
+
             homework_list.add_widget(homework_item)
+
+    def on_size_homework_list_item(self, instance):
+        instance.ids._right_container.width = instance.container.width
+        instance.ids._right_container.x = instance.container.width
 
     def callback_for_schedule_menu_items(self, **kwargs):
         action = kwargs['action']
@@ -375,15 +391,20 @@ class MainApp(MDApp):
         homework_id = kwargs['homework_id']
         if action == 'edit':
             homework = self.Homework.get(homework_id)
-            schedule = None
+            schedule_id = None
             schedules = self.Schedule.all()
-            for schedule_id in schedules:
-                toast('check')
-
-
-            toast('todo: edit homework')
+            for sch_id in schedules:
+                lesson = self.get_lesson(sch_id, homework['lesson_id'])
+                if lesson is not None:
+                    schedule_id = sch_id
+                    break
+            if schedule_id is None:
+                toast('Schedule Not Found')
+            else:
+                self.add_lesson_homework(homework['lesson_id'], schedule_id, homework['week_num'], homework['year'])
         elif action == 'delete':
-            toast('todo: delete homework')
+            self.Homework.delete(homework_id)
+            self.load_homeworks()
 
     def schedule_has_future_homeworks(self, schedule_id):
         has_homeworks = False
@@ -503,6 +524,7 @@ class MainApp(MDApp):
                 lesson_item.id = lesson['id']
                 lesson_item.text = lesson['name']
                 lesson_item.secondary_text = second_text
+                lesson_item.divider = 'Inset'
 
                 lesson_list.add_widget(lesson_item)
 
