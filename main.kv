@@ -3,7 +3,39 @@
 #:import SwapTransition kivy.uix.screenmanager.SwapTransition
 
 
+<OneLineScheduleListItem>:
+    text: ""
 
+    IconLeftWidget:
+        icon: "view-list"
+
+
+    IconRightWidget:
+        icon: "dots-vertical"
+        on_release: app.show_schedule_item_options(root)
+
+
+<ListItemWithCheckbox>:
+
+    HomeworkListItemLeftActionContainer:
+        id: _left_container
+
+        MDCheckbox:
+            on_release: app.mark_homework(root.id, self)
+
+    IconRightWidget:
+        icon: "dots-vertical"
+        on_release: app.show_homework_item_options(root)
+
+<ThreeLineLessonListItem>:
+    text: ""
+
+    IconLeftWidget:
+        icon: "book-open-page-variant"
+
+    IconRightWidget:
+        icon: "dots-vertical"
+        on_release: app.show_lesson_item_options(root)
 
 ScreenManager:
     id: screen_manager
@@ -20,12 +52,12 @@ ScreenManager:
                 title: "The Schedules"
                 elevation: 8
                 md_bg_color: app.theme_cls.primary_color
-                right_action_items: [['dots-vertical', lambda x: app.open_settings()]]
+                right_action_items: [['cog', lambda x: app.open_settings()]]
 
             MDTabs:
                 id: start_tabs
                 on_tab_switch: app.on_start_tab_switch(*args)
-                tab_indicator_anim: True
+                tab_indicator_anim: False
                 tab_indicator_height: "4dp"
                 elevation: 8
 
@@ -76,62 +108,67 @@ ScreenManager:
                         max_text_length: app.get_config_item('schedule_title_max_len')
 
     Screen:
-        name: "add_homework"
+        name: "add_homework_alt"
+
         BoxLayout:
-            id: add_homework_layout
+            id: add_homework_layout_alt
             orientation: 'vertical'
             MDToolbar:
-                id: add_homework_top_toolbar
+                id: add_homework_top_toolbar_alt
                 title: "Select Date / Schedule / Lesson"
                 elevation: 8
-            ScrollView:
 
-                BoxLayout:
+            ScrollView:
+                MDBoxLayout:
                     orientation: "vertical"
                     padding: dp(48)
                     spacing: 10
                     size_hint_y: None
                     height: self.minimum_height
 
-                    MDTextButton:
-                        id: add_homework_date
-                        size_hint_y: None
-                        size_hint_x: 1
-                        height: 40
-                        text: ""
-                        bold: True
-                        on_release: app.open_add_homework_datepicker()
-                        font_size: 20
+                    MDBoxLayout:
+                        pos_hint: {"center_x": .5, "center_y": .5}
+                        orientation: "vertical"
 
-                    SelectScheduleButton:
-                        id: schedule_select_btn
-                        default_text: "Select Schedule..."
-                        not_found_text: "Schedules Not Found..."
-                        text: "Select Schedule..."
-                        size_hint_y: None
-                        size_hint_x: 1
-                        height: 40
-                        background_color: app.get_theme_color(app.theme_cls.primary_palette, '600')
-                        background_normal: ''
-                        bold: True
-                        disabled_image: ''
-                        background_disabled_normal: ''
-                        font_size: 20
+                        MDRoundFlatIconDateButton:
+                            id: add_homework_date_alt
+                            icon: "calendar"
+                            text: ""
+                            pos_hint: {"center_x": .5}
+                            spacing: dp(12)
+                            on_release: app.open_add_homework_datepicker()
 
-                    SelectLessonButton:
-                        id: lesson_select_btn
-                        default_text: "Select Lesson..."
-                        not_found_text: "Lessons Not Found..."
-                        text: "Select Lesson..."
+                    MDSeparator:
+
+                    MDStackLayout:
+                        id: add_homework_schedules_wrapper
+                        adaptive_size: True
+                        pos_hint: {"center_x": .5}
+                        spacing: dp(12)
+                        size_hint: (1, None)
+
+                    MDSeparator:
+
+                    MDStackLayout:
+                        id: add_homework_lessons_wrapper
+                        adaptive_size: True
+                        pos_hint: {"center_x": .5, "center_y": .5}
+                        spacing: dp(12)
+                        size_hint: (1, None)
+
+                    MDSeparator:
+
+                    MDBoxLayout:
+                        orientation: "vertical"
                         size_hint_y: None
-                        size_hint_x: 1
-                        height: 40
-                        background_color: app.get_theme_color(app.theme_cls.primary_palette, 'A700')
-                        background_normal: ''
-                        bold: True
-                        disabled_image: ''
-                        background_disabled_normal: ''
-                        font_size: 20
+                        height: self.minimum_height
+
+                        MDFillRoundFlatProceedButton:
+                            id: add_homework_next_btn
+                            text: "Proceed"
+                            spacing: dp(12)
+                            pos_hint: {"center_x": .5, "center_y": 1}
+                            on_release: app.open_add_homework_alt()
 
     Screen:
         name: "add_lesson"

@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Schedules09141fgs
+title = Schedules1112fgs
 # (str) Package name
 package.name = schedules
 
@@ -28,7 +28,7 @@ source.include_patterns = assets/*,images/*.png
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.9.141
+version = 0.11.12
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -36,9 +36,8 @@ version = 0.9.141
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-# requirements = python3,kivy,plyer,kivymd,pillow,pygments
-# requirements = python3,kivy==7de031428746e8b83712a565fd8b460643746805,plyer,kivymd,pillow,pygments
-requirements = python3,kivy==7de031428746e8b83712a565fd8b460643746805,oscpy,git+https://github.com/kivy/plyer.git,kivymd,pillow,pygments,android
+requirements = python3,kivy==7de031428746e8b83712a565fd8b460643746805,oscpy,git+https://github.com/kivy/plyer.git,kivymd,pillow,pygments,android,sdl2_ttf==2.0.15
+
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -59,7 +58,6 @@ orientation = portrait
 # (list) List of service to declare
 #services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
 services = service:service/main.py:foreground
-#services = service:service/main.py
 
 #
 # OSX Specific
@@ -93,16 +91,16 @@ fullscreen = 0
 android.permissions = INTERNET,FOREGROUND_SERVICE
 
 # (int) Target Android API, should be as high as possible.
-#android.api = 27
+android.api = 28
 
 # (int) Minimum API your APK will support.
-#android.minapi = 21
+android.minapi = 21
 
 # (int) Android SDK version to use
 #android.sdk = 20
 
 # (str) Android NDK version to use
-#android.ndk = 17c
+android.ndk = 19b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 #android.ndk_api = 21
@@ -122,13 +120,13 @@ android.permissions = INTERNET,FOREGROUND_SERVICE
 # (bool) If True, then skip trying to update the Android sdk
 # This can be useful to avoid excess Internet downloads or save time
 # when an update is due and you just want to test/build your package
-# android.skip_update = False
+android.skip_update = False
 
 # (bool) If True, then automatically accept SDK license
 # agreements. This is intended for automation only. If set to False,
 # the default, you will be shown the license when first running
 # buildozer.
-# android.accept_sdk_license = False
+android.accept_sdk_license = True
 
 # (str) Android entry point, default is ok for Kivy-based app
 #android.entrypoint = org.renpy.android.PythonActivity

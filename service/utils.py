@@ -36,7 +36,8 @@ def start_service(arguments=None):
         service = autoclass(service_class)
         mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
         argument = json.dumps(arguments)
-        service.start(mActivity, argument, 'true')
+        # service.start(mActivity, argument, 'true')
+        service.start(mActivity, argument)
     elif platform in ('linux', 'linux2', 'macos', 'win'):
         from runpy import run_path
         from threading import Thread

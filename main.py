@@ -3,21 +3,18 @@ if config['env'] == 'dev_home':
     import os
     os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 from kivymd.app import MDApp
-from kivymd.uix.list import OneLineListItem, TwoLineListItem, ThreeLineListItem, ThreeLineAvatarIconListItem, ThreeLineRightIconListItem
+from kivymd.uix.list import ThreeLineAvatarIconListItem, OneLineAvatarIconListItem
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivymd.uix.tab import MDTabsBase, MDTabs
-from kivymd.uix.list import MDList, TwoLineRightIconListItem
-from kivy.uix.scrollview import ScrollView
-from kivymd.uix.toolbar import MDBottomAppBar, MDToolbar
+from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.snackbar import Snackbar
 from kivy.properties import NumericProperty, ObjectProperty, StringProperty
 from kivy.utils import get_color_from_hex
 from kivymd.toast import toast
-from kivymd.uix.button import MDIconButton
+from kivymd.uix.button import MDFlatButton, MDFillRoundFlatButton, MDRectangleFlatIconButton, MDFillRoundFlatIconButton, MDRoundFlatIconButton, MDTextButton, MDRaisedButton
+from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
 from kivy.metrics import dp
-from kivymd.uix.bottomsheet import MDListBottomSheet
 from kivymd.uix.picker import MDTimePicker
 from kivymd.uix.label import MDLabel
 import uuid
@@ -25,40 +22,36 @@ import datetime
 from Model import WEEK_DAYS, LANGUAGES, THEME_STYLES, Schedule, Homework
 from kivy.core.window import Window
 from kivy.lang import Observable
-from os.path import join, dirname, realpath
+from os.path import join, dirname
 import gettext
 from Settings import Settings
 from kivymd.color_definitions import colors
 from kivymd.uix.selectioncontrol import MDCheckbox
-from plyer import notification
-from plyer.utils import platform
-# from kivy.clock import Clock
-# from functools import partial
+# from plyer import notification
+# from plyer.utils import platform
 from osc.osc_app_server import OscAppServer
 from service.utils import start_service
 from kivymd.uix.bottomsheet import MDGridBottomSheet
 from kivymd.font_definitions import theme_font_styles
 from kivymd.uix.picker import MDDatePicker
-from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.list import IRightBodyTouch
-from kivy.uix.dropdown import DropDown
+from kivymd.uix.list import IRightBodyTouch, ILeftBodyTouch
 from kivy.uix.button import Button
+from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
+from random import randrange, randint
 
 from Util import Util
 
 
 from kivy.core.text import LabelBase
+
 KIVY_FONTS = [
     {
         "name": "Jura",
         "fn_regular": "fonts/Jura/static/Jura-Medium.ttf",
         "fn_bold": "fonts/Jura/static/Jura-Bold.ttf",
-        # "fn_italic": "fonts/Kumbh/Lekton-Italic.ttf",
-        # "fn_bolditalic": "fonts/Lekton/Android Italic 400.ttf"
     }
 ]
-
 
 
 class DayTab(BoxLayout, MDTabsBase):
@@ -82,6 +75,7 @@ class SelectScheduleButton(Button):
     default_text = StringProperty()
     not_found_text = StringProperty()
 
+
 class SelectLessonButton(Button):
     default_text = StringProperty()
     not_found_text = StringProperty()
@@ -100,8 +94,44 @@ class ScheduleGridBottomSheet(MDGridBottomSheet):
         super().__init__(**kwargs)
         self.sheet_list.ids.box_sheet_list.padding = (dp(16), 0, dp(16), dp(16))
 
-class HomeworkListItemContainer(IRightBodyTouch, MDBoxLayout):
+
+class ListItemWithCheckbox(ThreeLineAvatarIconListItem):
+    icon = StringProperty("home-lightbulb")
+
+
+class HomeworkListItemLeftActionContainer(ILeftBodyTouch, MDBoxLayout):
     adaptive_width = True
+
+
+class RightCheckbox(IRightBodyTouch, MDCheckbox):
+    pass
+
+
+class OneLineScheduleListItem(OneLineAvatarIconListItem):
+    pass
+
+
+class ThreeLineLessonListItem(ThreeLineAvatarIconListItem):
+    pass
+
+
+class RoundFlatToggleButton(MDFillRoundFlatIconButton, MDToggleButton):
+    def __init__(self, **kwargs):
+        self._radius = "5dp"
+        self.ripple_alpha = 0
+        super().__init__(**kwargs)
+
+
+class MDRoundFlatIconDateButton(MDRoundFlatIconButton):
+    def __init__(self, **kwargs):
+        self._radius = "5dp"
+        super().__init__(**kwargs)
+
+
+class MDFillRoundFlatProceedButton(MDRaisedButton):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
 
 class Lang(Observable):
     observers = []
@@ -159,10 +189,8 @@ class MainApp(MDApp):
         self.cfg = config
         self.init_lang_chip_color = True
         self.init_theme_chip_color = True
-        self.sch_dropdown = None
-        self.schedule_select_btn = None
-        self.lesson_dropdown = None
-        self.lesson_select_btn = None
+        self.confirm_delete_schedule_dialog = None
+        self.confirm_delete_lesson_dialog = None
         super(MainApp, self).__init__(**kwargs)
         print("User data dir: %s" % self.user_data_dir)
         Window.bind(on_keyboard=self.on_key)
@@ -173,8 +201,6 @@ class MainApp(MDApp):
         self.Schedule = Schedule(table='schedules')
         self.Homework = Homework(table='homeworks')
         self.Settings = Settings()
-
-        self.init_add_homework_controls()
 
         self.set_theme()
         self.set_fonts()
@@ -218,15 +244,16 @@ class MainApp(MDApp):
         if key == 27:
             if self.root.current == 'start':
                 return True
-            elif self.root.current in ['add_schedule', 'add_homework', 'schedule', 'settings']:
-                self.back_to_main()
+            elif self.root.current in ['add_schedule', 'add_homework_alt', 'schedule', 'settings']:
+                index = 1 if self.root.current == 'add_homework_alt' else 0
+                self.back_to_main(index)
                 return True
             elif self.root.current in ['add_lesson']:
                 self.switch_screen('schedule')
                 return True
             elif self.root.current == 'add_lesson_homework':
                 if self.previous_screen is not None:
-                    self.switch_screen(self.previous_screen)
+                    self.back_to_main(1) if self.previous_screen == 'homeworks' else self.switch_screen(self.previous_screen)
                 else:
                     self.switch_screen('schedule')
                 return True
@@ -255,31 +282,57 @@ class MainApp(MDApp):
         self.Homework.clear()
 
         schedule_key = str(uuid.uuid4())
-        self.Schedule.save(schedule_key, name='School schedule',
-                       lessons=[
-                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 0, 'time_start': '07:00', 'time_end': '07:30'},
-                           {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '08:30', 'time_end': '09:00'},
-                           {'id': str(uuid.uuid4()), 'name': 'Geography', 'day': 0, 'time_start': '', 'time_end': ''},
-                           {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '', 'time_end': ''},
-                           {'id': str(uuid.uuid4()), 'name': 'Reading', 'day': 0, 'time_start': '07:45', 'time_end': '08:15'},
-                           {'id': str(uuid.uuid4()), 'name': 'Physics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30'},
-                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 1, 'time_start': '07:45', 'time_end': '08:15'},
-                           {'id': str(uuid.uuid4()), 'name': 'History', 'day': 1, 'time_start': '08:30', 'time_end': '09:00'},
-                           {'id': str(uuid.uuid4()), 'name': 'Writing', 'day': 2, 'time_start': '07:00', 'time_end': '07:30'},
-                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 2, 'time_start': '07:45', 'time_end': '08:15'},
-                           {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 4, 'time_start': '07:00', 'time_end': '07:30'},
-                           {'id': str(uuid.uuid4()), 'name': 'English', 'day': 4, 'time_start': '07:45', 'time_end': '08:15'},
-                           {'id': str(uuid.uuid4()), 'name': 'Nature', 'day': 4, 'time_start': '08:30', 'time_end': '09:00'},
-                           {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 5, 'time_start': '07:00', 'time_end': '07:30'},
-                       ])
+        lessons = [
+            {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 0, 'time_start': '07:00', 'time_end': '07:30'},
+            {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '08:30', 'time_end': '09:00'},
+            {'id': str(uuid.uuid4()), 'name': 'Geography', 'day': 0, 'time_start': '', 'time_end': ''},
+            {'id': str(uuid.uuid4()), 'name': 'Literature', 'day': 0, 'time_start': '', 'time_end': ''},
+            {'id': str(uuid.uuid4()), 'name': 'Reading', 'day': 0, 'time_start': '07:45', 'time_end': '08:15'},
+            {'id': str(uuid.uuid4()), 'name': 'Physics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30'},
+            {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 1, 'time_start': '07:45', 'time_end': '08:15'},
+            {'id': str(uuid.uuid4()), 'name': 'History', 'day': 1, 'time_start': '08:30', 'time_end': '09:00'},
+            {'id': str(uuid.uuid4()), 'name': 'Writing', 'day': 2, 'time_start': '07:00', 'time_end': '07:30'},
+            {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 2, 'time_start': '07:45', 'time_end': '08:15'},
+            {'id': str(uuid.uuid4()), 'name': 'Math', 'day': 4, 'time_start': '07:00', 'time_end': '07:30'},
+            {'id': str(uuid.uuid4()), 'name': 'English', 'day': 4, 'time_start': '07:45', 'time_end': '08:15'},
+            {'id': str(uuid.uuid4()), 'name': 'Nature', 'day': 4, 'time_start': '08:30', 'time_end': '09:00'},
+            {'id': str(uuid.uuid4()), 'name': 'Music', 'day': 5, 'time_start': '07:00', 'time_end': '07:30'},
+        ]
+        self.Schedule.save(schedule_key, name='School schedule', lessons=lessons)
+
+        lessons_has_hw = []
+        for i in range(10):
+            lesson = lessons[randrange(len(lessons))]
+            week_num = Util.calc_week_num(randrange(1, 10))
+            year = Util.calc_year()
+            if week_num >= 52:
+                week_num -= 52
+                year += 1
+            exists = next((item for item in lessons_has_hw if item['lesson_id'] == lesson['id'] and item['week_num'] == week_num and item['year'] == year), None)
+            if exists is None:
+                self.Homework.save(str(uuid.uuid4()), lesson_id=lesson['id'], desc=f'test homework for {lesson["name"]}', week_num=week_num, year=year, notified=0, done=randint(0, 1))
+                lessons_has_hw.append({'lesson_id': lesson['id'], 'week_num': week_num, 'year': year})
 
         schedule_key = str(uuid.uuid4())
-        self.Schedule.save(schedule_key, name='Art school schedule',
-                       lessons=[
-                           {'id': str(uuid.uuid4()), 'name': 'Painting', 'day': 0, 'time_start': '07:00', 'time_end': '07:30'},
-                           {'id': str(uuid.uuid4()), 'name': 'Art History', 'day': 0, 'time_start': '07:45', 'time_end': '08:15'},
-                           {'id': str(uuid.uuid4()), 'name': 'Graphics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30'}
-                       ])
+        lessons = [
+            {'id': str(uuid.uuid4()), 'name': 'Painting', 'day': 0, 'time_start': '07:00', 'time_end': '07:30'},
+            {'id': str(uuid.uuid4()), 'name': 'Art History', 'day': 0, 'time_start': '07:45', 'time_end': '08:15'},
+            {'id': str(uuid.uuid4()), 'name': 'Graphics', 'day': 1, 'time_start': '07:00', 'time_end': '07:30'}
+        ]
+        self.Schedule.save(schedule_key, name='Art school schedule', lessons=lessons)
+
+        lessons_has_hw = []
+        for i in range(10):
+            lesson = lessons[randrange(len(lessons))]
+            week_num = Util.calc_week_num(randrange(1, 10))
+            year = Util.calc_year()
+            if week_num >= 52:
+                week_num -= 52
+                year += 1
+            exists = next((item for item in lessons_has_hw if item['lesson_id'] == lesson['id'] and item['week_num'] == week_num and item['year'] == year), None)
+            if exists is None:
+                self.Homework.save(str(uuid.uuid4()), lesson_id=lesson['id'], desc=f'test homework for {lesson["name"]}', week_num=week_num, year=year, notified=0, done=randint(0, 1))
+                lessons_has_hw.append({'lesson_id': lesson['id'], 'week_num': week_num, 'year': year})
 
     def load_start_screen(self):
         start_tab_panel = self.root.ids.start_tabs
@@ -298,11 +351,10 @@ class MainApp(MDApp):
         schedules = self.Schedule.all()
         for schedule_id in schedules:
             schedule = self.Schedule.get(schedule_id)
-            schedule_item = OneLineListItem(
+            schedule_item = OneLineScheduleListItem(
                 id=schedule_id,
-                text=schedule['name'],
-                divider='Inset',
-                on_release=self.show_schedule_item_options)
+                text=schedule['name']
+            )
             schedule_list.add_widget(schedule_item)
 
     def load_homeworks(self):
@@ -331,6 +383,7 @@ class MainApp(MDApp):
                         'week_num': homework['week_num'],
                         'year': homework['year'],
                         'notified': homework['notified'],
+                        'done': homework['done'],
                         'homework_id': homework_id,
                         'schedule_id': schedule_id,
                         'schedule_name': schedule['name'],
@@ -345,7 +398,7 @@ class MainApp(MDApp):
         hws = self.sort_homeworks(hws)
         for home_work in hws:
             is_today = datetime.datetime.today().strftime("%Y-%m-%d") == home_work['homework_date'].strftime("%Y-%m-%d")
-            homework_item = ThreeLineRightIconListItem(
+            homework_item = ListItemWithCheckbox(
                 id=home_work['homework_id'],
                 text=f'{home_work["lesson_name"]} ({home_work["schedule_name"]}) {home_work["lesson_time_start"]}',
                 font_style='Body1',
@@ -354,21 +407,10 @@ class MainApp(MDApp):
                 secondary_text_color=get_color_from_hex(colors[self.theme_cls.primary_palette]['800']) if not is_today else get_color_from_hex(colors['Red']['700']),
                 secondary_font_style='Subtitle1',
                 tertiary_text=home_work['description'],
-                tertiary_font_style='Subtitle2',
-                divider='Inset',
-                on_release=self.show_homework_item_options)
-            homework_item.bind(on_size=self.on_size_homework_list_item)
-
-            homework_item_container = HomeworkListItemContainer(id='homework_item_container')
-            homework_item_container.add_widget(MDIconButton(icon='plus'))
-            homework_item_container.add_widget(MDCheckbox(size_hint=[None, None], size=['48dp', '48dp']))
-            homework_item.add_widget(homework_item_container)
-
+                tertiary_font_style='Subtitle2')
+            done_checkbox = homework_item.ids._left_container.children[0]
+            done_checkbox.state = 'down' if home_work['done'] == 1 else 'normal'
             homework_list.add_widget(homework_item)
-
-    def on_size_homework_list_item(self, instance):
-        instance.ids._right_container.width = instance.container.width
-        instance.ids._right_container.x = instance.container.width
 
     def callback_for_schedule_menu_items(self, **kwargs):
         action = kwargs['action']
@@ -514,17 +556,13 @@ class MainApp(MDApp):
                     toast(f'warning: duplicated homeworks found. lesson_id: {lesson["id"]}, week_num: {week_num}, year: {year}')
                 else:
                     hw_desc = homework[1]['desc']
-                if hw_desc is not None:
-                    lesson_item = ThreeLineListItem(
-                        tertiary_text=hw_desc,
-                        on_release=self.show_lesson_item_options)
-                else:
-                    lesson_item = TwoLineListItem(
-                        on_release=self.show_lesson_item_options)
-                lesson_item.id = lesson['id']
-                lesson_item.text = lesson['name']
-                lesson_item.secondary_text = second_text
-                lesson_item.divider = 'Inset'
+
+                lesson_item = ThreeLineLessonListItem(
+                    id=lesson['id'],
+                    text=lesson['name'],
+                    secondary_text=second_text,
+                    tertiary_text=' ' if hw_desc is None else hw_desc
+                )
 
                 lesson_list.add_widget(lesson_item)
 
@@ -738,45 +776,72 @@ class MainApp(MDApp):
 
     def show_confirm_del_schedule_dialog(self, schedule_id):
         schedule = self.get_schedule(schedule_id)
-        dialog = ConfirmDeleteScheduleDialog(
+        self.confirm_delete_schedule_dialog = ConfirmDeleteScheduleDialog(
             title=f'Delete {schedule["name"]}?',
             size_hint=(0.8, 0.4),
-            text_button_ok='Confirm',
-            text=f'There are homeworks assigned to lessons for future dates within schedule.\nDelete anyway?',
-            text_button_cancel="Cancel",
-            events_callback=self.callback_confirm_del_schedule,
-            schedule_id=schedule_id
+            text=f'There are homeworks assigned to lessons for future dates within schedule.\n\nDelete anyway?',
+            schedule_id=schedule_id,
+            buttons=[
+                MDFlatButton(
+                    text="CANCEL",
+                    text_color=self.theme_cls.primary_color,
+                    on_release=self.callback_confirm_del_schedule
+                ),
+                MDFlatButton(
+                    text="ACCEPT",
+                    text_color=self.theme_cls.primary_color,
+                    on_release=self.callback_confirm_del_schedule
+                ),
+            ],
         )
-        dialog.open()
+        self.confirm_delete_schedule_dialog.open()
 
     def show_confirm_del_lesson_dialog(self, lesson_id):
         schedule_id = self.get_active_schedule_id()
         lesson = self.get_lesson(schedule_id, lesson_id)
-        dialog = ConfirmDeleteLessonDialog(
+        self.confirm_delete_lesson_dialog = ConfirmDeleteLessonDialog(
             title=f'Delete {lesson["name"]}?',
             size_hint=(0.8, 0.4),
-            text_button_ok='Confirm',
-            text=f'There are homeworks assigned to the lesson for future dates.\nDelete anyway?',
-            text_button_cancel="Cancel",
-            events_callback=self.callback_confirm_del_lesson,
-            lesson_id=lesson_id
+            text=f'There are homeworks assigned to the lesson for future dates.\n\nDelete anyway?',
+            lesson_id=lesson_id,
+            buttons=[
+                MDFlatButton(
+                    text="CANCEL",
+                    text_color=self.theme_cls.primary_color,
+                    on_release=self.callback_confirm_del_lesson
+                ),
+                MDFlatButton(
+                    text="ACCEPT",
+                    text_color=self.theme_cls.primary_color,
+                    on_release=self.callback_confirm_del_lesson
+                ),
+            ],
         )
-        dialog.open()
+        self.confirm_delete_lesson_dialog.open()
 
     def callback_confirm_del_schedule(self, *args):
-        schedule_id = args[1].schedule_id
-        if args[0] == 'Confirm':
+        button = args[0]
+        confirm = button.text == 'ACCEPT'
+        if confirm:
+            schedule_id = self.confirm_delete_schedule_dialog.schedule_id
             self.delete_schedule(schedule_id)
+        self.confirm_delete_schedule_dialog.dismiss()
+        self.confirm_delete_schedule_dialog = None
 
     def callback_confirm_del_lesson(self, *args):
-        lesson_id = args[1].lesson_id
-        if args[0] == 'Confirm':
+        button = args[0]
+        confirm = button.text == 'ACCEPT'
+        if confirm:
+            lesson_id = self.confirm_delete_lesson_dialog.lesson_id
             self.delete_lesson(lesson_id)
+        self.confirm_delete_lesson_dialog.dismiss()
+        self.confirm_delete_lesson_dialog = None
 
     def delete_schedule(self, schedule_id):
         self.delete_homeworks(schedule_id=schedule_id)
         self.Schedule.delete(schedule_id)
         self.load_schedules()
+        self.load_homeworks()
         toast('Schedule deleted')
 
     def delete_homeworks(self, **kwargs):
@@ -819,6 +884,7 @@ class MainApp(MDApp):
         del_lesson_index = next((index for (index, d) in enumerate(lessons) if d['id'] == lesson_id), None)
         del lessons[del_lesson_index]
 
+        self.load_homeworks()
         self.open_schedule(schedule_id, day, week_num, year)
         toast('Lesson deleted')
 
@@ -827,7 +893,7 @@ class MainApp(MDApp):
         if tab_index == 0:
             self.add_schedule()
         elif tab_index == 1:
-            self.add_homework()
+            self.add_homework_alt()
 
     def add_schedule(self, schedule_id=None):
         title_field = self.root.ids.add_schedule_title
@@ -845,70 +911,75 @@ class MainApp(MDApp):
         top_toolbar.title = f'{"Edit" if schedule is not None else "Add"} Schedule'
         self.switch_screen('add_schedule')
 
-    def init_add_homework_controls(self):
-        self.sch_dropdown = DropDown()
-        self.schedule_select_btn = self.root.ids.schedule_select_btn
-        self.schedule_select_btn.bind(on_release=self.sch_dropdown.open)
-        self.sch_dropdown.bind(on_select=self.set_schedules_dropdown_item)
-
-        self.lesson_dropdown = DropDown()
-        self.lesson_select_btn = self.root.ids.lesson_select_btn
-        self.lesson_select_btn.bind(on_release=self.lesson_dropdown.open)
-        self.lesson_dropdown.bind(on_select=self.set_lessons_dropdown_item)
-
-    def add_homework(self):
-        top_toolbar = self.root.ids.add_homework_top_toolbar
-        hw_date = self.root.ids.add_homework_date
+    def add_homework_alt(self):
+        top_toolbar = self.root.ids.add_homework_top_toolbar_alt
+        hw_date = self.root.ids.add_homework_date_alt
         today = datetime.datetime.today().date()
         hw_date.text = str(today)
-        hw_date.font_style = 'Subtitle1'
-        hw_date.padding = [5, 0]
-
-        self.load_schedules_dropdown_items(today)
-
+        self.add_homework_load_schedules(today)
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main(1)]]
-        top_toolbar.right_action_items = [['arrow-right', lambda x: self.open_add_homework()]]
-        self.switch_screen('add_homework')
+        self.switch_screen('add_homework_alt')
 
-    def open_add_homework(self):
-        str_date = self.root.ids.add_homework_date.text
+    def open_add_homework_alt(self):
+        str_date = self.root.ids.add_homework_date_alt.text
         date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
-        schedule_name = self.schedule_select_btn.text
-        lesson_name = self.lesson_select_btn.text
-        if schedule_name in [self.schedule_select_btn.default_text, self.schedule_select_btn.not_found_text] or lesson_name in [self.lesson_select_btn.default_text, self.lesson_select_btn.not_found_text]:
-            toast('Please select Schedule and Lesson')
-        else:
-            week_num = int(date.strftime("%W"))
-            year = date.year
-            day = date.weekday()
-            schedules = self.Schedule.all()
-            schedules_found = list(schedules.find(name=schedule_name))
-            if len(schedules_found) == 0:
-                toast(f'Cannot find the schedule item: "{schedule_name}"')
-                return
-            schedule_id = schedules_found[0][0]
-            schedule = schedules_found[0][1]
-            lessons = list(filter(lambda d: d['day'] == day and d['name'] == lesson_name, schedule['lessons']))
-            lesson_id = lessons[0]['id']
+        schedule_name = self.add_homework_get_selected_schedule()
+        lesson_name = None
 
-            self.add_lesson_homework(lesson_id, schedule_id, week_num, year)
+        lesson_widgets = ToggleButtonBehavior.get_widgets('lesson')
+        for lw in lesson_widgets:
+            if lw.state == 'down':
+                lesson_name = lw.text
+        del lesson_widgets
 
-    def set_schedules_dropdown_item(self, dropdown_instance, dropdown_item_text):
-        self.schedule_select_btn.text = dropdown_item_text
-        toast(f'{dropdown_item_text} selected')
-        str_date = self.root.ids.add_homework_date.text
-        date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
-        self.load_lessons_dropdown_items(date, dropdown_item_text)
+        if schedule_name is None:
+            toast('Unable get selected Schedule')
+            return
+        if lesson_name is None:
+            toast('Unable get selected Lesson')
+            return
 
+        week_num = int(date.strftime("%W"))
+        year = date.year
+        day = date.weekday()
+        schedules = self.Schedule.all()
+        schedules_found = list(schedules.find(name=schedule_name))
+        if len(schedules_found) == 0:
+            toast(f'Cannot find the schedule item: "{schedule_name}"')
+            return
+        schedule_id = schedules_found[0][0]
+        schedule = schedules_found[0][1]
+        lessons = list(filter(lambda d: d['day'] == day and d['name'] == lesson_name, schedule['lessons']))
+        if len(lessons) == 0:
+            toast(f'Cannot find the lesson item: "{lesson_name}" within schedule "{schedule_name}"')
+            return
+        lesson_id = lessons[0]['id']
 
-    def set_lessons_dropdown_item(self, dropdown_instance, dropdown_item_text):
-        self.lesson_select_btn.text = dropdown_item_text
-        toast(f'{dropdown_item_text} selected')
+        self.add_lesson_homework(lesson_id, schedule_id, week_num, year)
+
+    def add_homework_get_selected_schedule(self):
+        schedule_name = None
+        widgets = ToggleButtonBehavior.get_widgets('schedule')
+        for w in widgets:
+            if w.state == 'down':
+                schedule_name = w.text
+        del widgets
+        return schedule_name
+
+    def add_homework_get_selected_lesson(self):
+        lesson_name = None
+        widgets = ToggleButtonBehavior.get_widgets('lesson')
+        for w in widgets:
+            if w.state == 'down':
+                lesson_name = w.text
+        del widgets
+        return lesson_name
 
     def open_add_homework_datepicker(self):
-        str_date = self.root.ids.add_homework_date.text
+        str_date = self.root.ids.add_homework_date_alt.text
         date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
-        min_date = date - datetime.timedelta(days=1)
+        today = datetime.datetime.today().date()
+        min_date = today - datetime.timedelta(days=1)
         date_dialog = MDDatePicker(
             callback=self.get_homework_datepicker_date,
             year=date.year,
@@ -919,36 +990,62 @@ class MainApp(MDApp):
         date_dialog.open()
 
     def get_homework_datepicker_date(self, date):
-        self.root.ids.add_homework_date.text = str(date)
-        self.load_schedules_dropdown_items(date)
+        self.root.ids.add_homework_date_alt.text = str(date)
+        self.add_homework_load_schedules(date)
 
-    def load_schedules_dropdown_items(self, date):
-        self.sch_dropdown.clear_widgets()
+    def add_homework_load_schedules(self, date):
+        self.add_homework_reset_schedules()
+        self.add_homework_reset_lessons()
+        self.add_homework_toggle_next_button(True)
+
+        schedules_wrapper = self.root.ids.add_homework_schedules_wrapper
         weekday = date.weekday()
         schedules = self.Schedule.all()
+
         for schedule_id in schedules:
             schedule = self.get_schedule(schedule_id)
             day_lessons = list(filter(lambda d: d['day'] == weekday, schedule['lessons']))
             if len(day_lessons):
-                dropdown_button = Button(
+                schedule_button = RoundFlatToggleButton(
                     text=schedule['name'],
-                    size_hint_y=None,
-                    height=40,
-                    background_color=self.get_theme_color(self.theme_cls.primary_palette, '700'),
-                    background_normal='',
-                    font_size=16
+                    icon="view-list",
+                    group="schedule",
+                    pos_hint={"center_x": .5},
+                    background_down=self.theme_cls.accent_color,
+                    on_release=self.add_homework_schedule_button_click
                 )
-                dropdown_button.bind(on_release=lambda dropdown_button: self.sch_dropdown.select(dropdown_button.text))
-                self.sch_dropdown.add_widget(dropdown_button)
+                schedules_wrapper.add_widget(schedule_button)
 
-        schedules_exist = len(self.sch_dropdown.container.children) > 0
-        self.reset_schedules_select_button(schedules_exist)
+        if len(schedules_wrapper.children) == 0:
+            not_found_btn = MDTextButton(text="No Schedules available")
+            schedules_wrapper.add_widget(not_found_btn)
 
-        self.lesson_dropdown.clear_widgets()
-        self.reset_lessons_select_button(schedules_exist)
+        self.add_homework_add_lessons_hint()
 
-    def load_lessons_dropdown_items(self, date, schedule_name):
-        self.lesson_dropdown.clear_widgets()
+    def add_homework_add_lessons_hint(self):
+        hint_btn = MDTextButton(text="Select a Schedule")
+        self.root.ids.add_homework_lessons_wrapper.add_widget(hint_btn)
+
+    def add_homework_reset_lessons(self):
+        self.root.ids.add_homework_lessons_wrapper.clear_widgets()
+
+    def add_homework_reset_schedules(self):
+        self.root.ids.add_homework_schedules_wrapper.clear_widgets()
+
+    def add_homework_schedule_button_click(self, button):
+        schedule_name = button.text
+        str_date = self.root.ids.add_homework_date_alt.text
+        date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
+        is_down = button.state == 'down'
+        self.add_homework_load_lessons(date, schedule_name, is_down)
+
+    def add_homework_load_lessons(self, date, schedule_name, btn_is_down):
+        lessons_wrapper = self.root.ids.add_homework_lessons_wrapper
+        self.add_homework_reset_lessons()
+        self.add_homework_toggle_next_button(True)
+        if not btn_is_down:
+            self.add_homework_add_lessons_hint()
+            return
         day = date.weekday()
         schedules = self.Schedule.all()
         schedules_found = list(schedules.find(name=schedule_name))
@@ -960,29 +1057,22 @@ class MainApp(MDApp):
         if len(lessons):
             lessons = self.sort_lessons(lessons)
             for lesson in lessons:
-                dropdown_button = Button(
+                lesson_button = RoundFlatToggleButton(
                     text=lesson['name'],
-                    size_hint_y=None,
-                    height=40,
-                    background_color=self.get_theme_color(self.theme_cls.primary_palette, 'A400'),
-                    background_normal='',
-                    font_size=16
+                    icon="book-open-page-variant",
+                    group="lesson",
+                    pos_hint={"center_x": .5},
+                    background_down=self.theme_cls.accent_dark,
+                    on_release=self.add_homework_lesson_button_click
                 )
-                dropdown_button.bind(on_release=lambda dropdown_button: self.lesson_dropdown.select(dropdown_button.text))
-                self.lesson_dropdown.add_widget(dropdown_button)
+                lessons_wrapper.add_widget(lesson_button)
 
-        lessons_exist = len(lessons) > 0
-        self.reset_lessons_select_button(lessons_exist)
+    def add_homework_lesson_button_click(self, button):
+        disable = button.state != 'down'
+        self.add_homework_toggle_next_button(disable)
 
-    def reset_schedules_select_button(self, is_active):
-        self.schedule_select_btn.text = self.schedule_select_btn.default_text if is_active else self.schedule_select_btn.not_found_text
-        self.schedule_select_btn.disabled = is_active is False
-        self.schedule_select_btn.background_color = self.get_theme_color(self.theme_cls.primary_palette, '600') if is_active else self.get_theme_color(self.theme_cls.primary_palette, '400')
-
-    def reset_lessons_select_button(self, is_active):
-        self.lesson_select_btn.text = self.lesson_select_btn.default_text if is_active else self.lesson_select_btn.not_found_text
-        self.lesson_select_btn.disabled = is_active is False
-        self.lesson_select_btn.background_color = self.get_theme_color(self.theme_cls.primary_palette, 'A700') if is_active else self.get_theme_color(self.theme_cls.primary_palette, '400')
+    def add_homework_toggle_next_button(self, disable):
+        self.root.ids.add_homework_next_btn.disabled = disable
 
     def add_lesson(self, lesson_id=None):
         title_field = self.root.ids.add_lesson_title
@@ -1120,9 +1210,8 @@ class MainApp(MDApp):
         self.refresh_settings_notify_homework()
 
     def add_lesson_homework(self, lesson_id, schedule_id=None, week_num=None, year=None):
-        add_mode = 'schedule' if schedule_id is None and week_num is None and year is None else 'homeworks'
-
-        previous_screen = 'add_homework' if add_mode == 'homeworks' else None
+        screen_from = 'schedule' if schedule_id is None and week_num is None and year is None else 'homeworks'
+        previous_screen = None
 
         if schedule_id is None:
             schedule_id = self.get_active_schedule_id()
@@ -1138,26 +1227,49 @@ class MainApp(MDApp):
         homework = self.get_homework(lesson_id, week_num, year)
         if homework is None:
             desc = ''
+            if screen_from == 'homeworks':
+                previous_screen = 'add_homework_alt'
         elif homework is False:
             toast(f'warning: duplicated homeworks found. lesson_id: {lesson_id}, week_num: {week_num}, year: {year}')
             desc = ''
         else:
             desc = homework[1]['desc']
+            if screen_from == 'homeworks':
+                previous_screen = 'homeworks'
 
         desc_field.text = desc
 
-        # hack to fix validation on open
+        # todo: improve - hack to fix validation on open
         desc_field.focus = True
         desc_field.focus = False
 
         homework_id = None if not homework else homework[0]
+        done = 0 if not homework else homework[1]['done']
+        notified = 0 if not homework else homework[1]['notified']
 
         day = lesson['day']
         subtitle.text = f'{lesson["name"]} for {Util.get_date_str(year, week_num, day)}'
 
-        top_toolbar.left_action_items = [['arrow-left', lambda x: self.open_schedule(schedule_id, day, week_num, year) if add_mode == 'schedule' else self.switch_screen('add_homework')]]
-        top_toolbar.right_action_items = [['check', lambda x: self.save_lesson_homework(id=homework_id, lesson_id=lesson_id, desc=desc_field.text, schedule_id=schedule_id, week_num=week_num, year=year, add_mode=add_mode)]]
-        top_toolbar.title = f'Add Homework'
+        top_toolbar.left_action_items = [[
+            'arrow-left',
+            lambda x: self.open_schedule(schedule_id, day, week_num, year) if screen_from == 'schedule' else self.switch_screen(previous_screen) if previous_screen == 'add_homework_alt' else self.back_to_main(1)
+        ]]
+        top_toolbar.right_action_items = [[
+            'check',
+            lambda x: self.save_lesson_homework(
+                id=homework_id,
+                lesson_id=lesson_id,
+                desc=desc_field.text,
+                schedule_id=schedule_id,
+                week_num=week_num,
+                year=year,
+                done=done,
+                notified=notified,
+                screen_from=screen_from
+            )]]
+
+        title = 'Add Homework' if homework_id is None else 'Edit Homework'
+        top_toolbar.title = title
 
         self.switch_screen('add_lesson_homework', previous_screen)
 
@@ -1170,7 +1282,8 @@ class MainApp(MDApp):
         year = kwargs['year']
         lesson = self.get_lesson(schedule_id, lesson_id)
         day = lesson['day']
-        notified = 0
+        done = kwargs['done']
+        notified = kwargs['notified']
 
         if desc.strip() == '':
             if homework_id is not None and self.Homework.exists(homework_id):
@@ -1181,9 +1294,9 @@ class MainApp(MDApp):
 
             text_limit = self.get_config_item('homework_desc_max_len')
             desc = desc[:text_limit]
-            self.Homework.save(homework_id, lesson_id=lesson_id, desc=desc, week_num=week_num, year=year, notified=notified)
-        if 'add_mode' in kwargs and kwargs['add_mode'] == 'homeworks':
-            self.load_homeworks()
+            self.Homework.save(homework_id, lesson_id=lesson_id, desc=desc, week_num=week_num, year=year, notified=notified, done=done)
+        self.load_homeworks()
+        if 'screen_from' in kwargs and kwargs['screen_from'] == 'homeworks':
             self.back_to_main(1)
         else:
             self.open_schedule(schedule_id, day, week_num, year)
@@ -1324,7 +1437,7 @@ class MainApp(MDApp):
         self.theme_cls.font_styles["Overline"] = [font_name, 10, False, 1.5, ]
 
         # Toolbar fonts
-        toolbars = ['start_top_toolbar', 'settings_toolbar', 'schedule_toolbar', 'bottom_schedule_toolbar', 'add_schedule_top_toolbar', 'add_lesson_top_toolbar', 'add_homework_top_toolbar']
+        toolbars = ['start_top_toolbar', 'settings_toolbar', 'schedule_toolbar', 'bottom_schedule_toolbar', 'add_schedule_top_toolbar', 'add_lesson_top_toolbar', 'add_homework_top_toolbar_alt']
         for tb in toolbars:
             self.root.ids[tb].ids.label_title.font_name = "Jura"
             self.root.ids[tb].ids.label_title.font_size = "20sp"
@@ -1367,31 +1480,13 @@ class MainApp(MDApp):
         self.root.ids.schedule_toolbar.title = f'{schedule["name"]} [{Util.get_date_str(year, week_num, day_index)}]'
 
     def on_start_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
-        if tab_text == 'Homeworks':
-            self.load_homeworks()
+        pass
 
-    # @staticmethod
-    # def do_notify(*args):
-    #     keys = ['title', 'message', 'ticker', 'mode']
-    #     params = dict(zip(keys, list(args[:-1])))
-    #
-    #     title = params['title']
-    #     message = params['message']
-    #     ticker = params['ticker']
-    #     mode = params['mode']
-    #
-    #     kwargs = {'title': title, 'message': message, 'ticker': ticker}
-    #
-    #     if mode == 'fancy':
-    #         kwargs['app_name'] = "Schedules"
-    #         if platform == "win":
-    #             kwargs['app_icon'] = join(dirname(realpath(__file__)), 'plyer-icon.ico')
-    #             kwargs['timeout'] = 5
-    #         else:
-    #             kwargs['app_icon'] = join(dirname(realpath(__file__)), 'plyer-icon.png')
-    #     elif mode == 'toast':
-    #         kwargs['toast'] = True
-    #     notification.notify(**kwargs)
+    def mark_homework(self, homework_id, checkbox):
+        val = checkbox.state
+        homework = self.Homework.get(homework_id)
+        homework['done'] = 1 if val == 'down' else 0
+        self.Homework.save(homework_id, **homework)
 
 
 settings = Settings()
