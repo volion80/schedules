@@ -14,19 +14,6 @@
         icon: "dots-vertical"
         on_release: app.show_schedule_item_options(root)
 
-
-<ListItemWithCheckbox>:
-
-    HomeworkListItemLeftActionContainer:
-        id: _left_container
-
-        MDCheckbox:
-            on_release: app.mark_homework(root.id, self)
-
-    IconRightWidget:
-        icon: "dots-vertical"
-        on_release: app.show_homework_item_options(root)
-
 <ThreeLineLessonListItem>:
     text: ""
 
@@ -37,6 +24,36 @@
         icon: "dots-vertical"
         on_release: app.show_lesson_item_options(root)
 
+<ThreeLineHomeworkListItem>:
+    text: ""
+
+    IconLeftWidget:
+        icon: "home-lightbulb"
+
+    IconRightWidget:
+        icon: "dots-vertical"
+        on_release: app.show_homework_item_options(root)
+
+<ScheduleLessonListRV>:
+    data: root.data
+    viewclass: 'ThreeLineLessonListItem'
+    RecycleBoxLayout:
+        default_size: None, dp(82)
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        orientation: 'vertical'
+
+<HomeworkListRV>:
+    data: root.data
+    viewclass: 'ThreeLineHomeworkListItem'
+    RecycleBoxLayout:
+        default_size: None, dp(82)
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        orientation: 'vertical'
+
 ScreenManager:
     id: screen_manager
     transition: SwapTransition(duration=0.25)
@@ -44,7 +61,7 @@ ScreenManager:
     Screen:
         name: "start"
         on_pre_enter: app.on_screen_pre_enter(self)
-        BoxLayout:
+        MDBoxLayout:
             id: start_screen_layout
             orientation: 'vertical'
             MDToolbar:
@@ -71,10 +88,9 @@ ScreenManager:
                 Tab:
                     id: homeworks_tab
                     text: "Homeworks"
-                    ScrollView:
-                        do_scroll_x: False
-                        MDList:
-                            id: homework_list
+                    HomeworkListRV:
+                        id: homework_list
+
         MDFloatingActionButton:
             icon: "plus"
             opposite_colors: True
@@ -268,7 +284,7 @@ ScreenManager:
 
     Screen:
         name: "schedule"
-        BoxLayout:
+        MDBoxLayout:
             id: schedule_screen_layout
             orientation: 'vertical'
             MDToolbar:
@@ -288,58 +304,44 @@ ScreenManager:
                 Tab:
                     id: tab_0
                     text: "Tab 0"
-                    ScrollView:
-                        do_scroll_x: False
-                        MDList:
-                            id: lesson_list_day_0
+                    ScheduleLessonListRV:
+                        id: lesson_list_day_0
+
                 Tab:
                     id: tab_1
                     text: "Tab 1"
-                    ScrollView:
-                        do_scroll_x: False
-                        MDList:
-                            id: lesson_list_day_1
+                    ScheduleLessonListRV:
+                        id: lesson_list_day_1
                 Tab:
                     id: tab_2
                     text: "Tab 2"
-                    ScrollView:
-                        do_scroll_x: False
-                        MDList:
-                            id: lesson_list_day_2
+                    ScheduleLessonListRV:
+                        id: lesson_list_day_2
                 Tab:
                     id: tab_3
                     text: "Tab 3"
-                    ScrollView:
-                        do_scroll_x: False
-                        MDList:
-                            id: lesson_list_day_3
+                    ScheduleLessonListRV:
+                        id: lesson_list_day_3
                 Tab:
                     id: tab_4
                     text: "Tab 4"
-                    ScrollView:
-                        do_scroll_x: False
-                        MDList:
-                            id: lesson_list_day_4
+                    ScheduleLessonListRV:
+                        id: lesson_list_day_4
                 Tab:
                     id: tab_5
                     text: "Tab 5"
-                    ScrollView:
-                        do_scroll_x: False
-                        MDList:
-                            id: lesson_list_day_5
+                    ScheduleLessonListRV:
+                        id: lesson_list_day_5
                 Tab:
                     id: tab_6
                     text: "Tab 6"
-                    ScrollView:
-                        do_scroll_x: False
-                        MDList:
-                            id: lesson_list_day_6
+                    ScheduleLessonListRV:
+                        id: lesson_list_day_6
 
 
             MDBottomAppBar:
                 MDToolbar:
                     id: bottom_schedule_toolbar
-                    md_bg_color: app.theme_cls.primary_color
                     type: 'bottom'
                     title: 'Week'
                     mode: 'free-end'

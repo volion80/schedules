@@ -18,13 +18,9 @@ from datetime import datetime
 from kivy.app import App
 from kivy.utils import platform
 from plyer import notification
-
 from osc.osc_app_client import OscAppClient
-
-# from .Settings import Settings
-from Settings import Settings
-from Model import Schedule, Homework
 from Util import Util
+from Database import Database
 
 
 class MyApp(App):
@@ -60,18 +56,12 @@ class MyApp(App):
 class Service:
 
     def __init__(self, osc_server_port=None):
-        """
-        Set `osc_server_port` to enable UI synchronization with service.
-        """
-        self.last_notify = None
+        # Set `osc_server_port` to enable UI synchronization with service.
         self.osc_app_client = None
         if osc_server_port is not None:
             self.osc_app_client = OscAppClient('localhost', osc_server_port)
         # so that the `App._running_app` singleton is available
-
-        self.Settings = None
-        self.Schedule = None
-        self.Homework = None
+        self.db = Database()
 
         if platform == 'android':
             MyApp()
@@ -81,11 +71,9 @@ class Service:
         Blocking pull loop call.
         Service will stop after a period of time with no roll activity.
         """
-        self.last_notify = datetime.now()
         while True:
             self.check_homework_notify()
-            # self.check_notify()
-            sleep(5)
+            sleep(10)
         # service decided to die naturally after no roll activity
         self.set_auto_restart_service(False)
 
@@ -100,41 +88,20 @@ class Service:
         PythonService = autoclass('org.kivy.android.PythonService')
         PythonService.mService.setAutoRestartService(restart)
 
-    def check_notify(self):
-        now = datetime.now()
-        dt = now - self.last_notify
-
-        if dt.seconds > 10:
-            self.last_notify = now
-            t = now.strftime("%m/%d/%Y, %H:%M:%S")
-            self.do_notify(t)
-
     def check_homework_notify(self):
-        self.Settings = Settings()
         now = datetime.now()
         current_time = now.strftime("%H:%M")
-        notify_time = self.Settings.get('notify')['homework']
+        notify_time = self.db.get_setting('remind_homework_time')
         if current_time == notify_time:
-            tomorrow = Util.calc_day_num(1)
+            day = Util.calc_day_num(1)
             week_num = Util.calc_week_num()
             year = Util.calc_year()
 
-            self.Schedule = Schedule(table='schedules')
-            self.Homework = Homework(table='homeworks')
-            schedules = self.Schedule.all()
-            for schedule_id in schedules:
-                schedule = self.Schedule.get(schedule_id)
-                day_lessons = list(filter(lambda d: d['day'] == tomorrow, schedule['lessons']))
-                for lesson in day_lessons:
-                    homeworks = self.Homework.all()
-                    hw = list(homeworks.find(week_num=week_num, lesson_id=lesson['id'], year=year, notified=0))
-                    if len(hw) == 1:
-                        hw_id = hw[0][0]
-                        hw_info = hw[0][1]
-                        notify_text = f'Homework for tomorrow: {lesson["name"]} - {hw_info["desc"]}'
-                        self.do_notify(notify_text)
-                        self.Homework.save(hw_id, lesson_id=lesson['id'], desc=hw_info["desc"], week_num=week_num,
-                                           year=year, notified=1)
+            homeworks = self.db.get_homeworks(year=year, week_num=week_num, day=day, notified=0, done=0)
+            for homework in homeworks:
+                notify_text = f'Homework for tomorrow reminder: {homework["schedule_name"]} / {homework["lesson_name"]} - {homework["desc"]}'
+                self.do_notify(notify_text)
+                self.db.update_homework(id=homework['id'], notified=1)
 
     def do_notify(self, message_text):
         """
@@ -159,7 +126,6 @@ def main():
         service.set_auto_restart_service()
         service.run()
     except Exception:
-        # avoid auto-restart loop
         service.set_auto_restart_service(False)
 
 
