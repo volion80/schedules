@@ -61,14 +61,6 @@ SETTINGS_DEFAULTS = [
 ]
 
 
-class DayTab(BoxLayout, MDTabsBase):
-    pass
-
-
-class LessonsContainer(GridLayout):
-    pass
-
-
 class NotifyTimepicker(MDTimePicker):
     pass
 
@@ -76,16 +68,6 @@ class NotifyTimepicker(MDTimePicker):
 class LessonTimepicker(MDTimePicker):
     lesson_id = ObjectProperty()
     time_mode = ObjectProperty()
-
-
-class SelectScheduleButton(Button):
-    default_text = StringProperty()
-    not_found_text = StringProperty()
-
-
-class SelectLessonButton(Button):
-    default_text = StringProperty()
-    not_found_text = StringProperty()
 
 
 class ConfirmDeleteScheduleDialog(MDDialog):
@@ -112,10 +94,6 @@ class ThreeLineLessonListItem(ThreeLineAvatarIconListItem):
 
 class ThreeLineHomeworkListItem(ThreeLineAvatarIconListItem):
     done = BooleanProperty()
-    pass
-
-
-class OneLineLessonListItem(OneLineAvatarIconListItem):
     pass
 
 
