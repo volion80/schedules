@@ -1,6 +1,7 @@
 #:import tr __main__.tr
 #:import WipeTransition kivy.uix.screenmanager.WipeTransition
 #:import SwapTransition kivy.uix.screenmanager.SwapTransition
+#:import NoTransition kivy.uix.screenmanager.NoTransition
 
 
 <OneLineScheduleListItem>:
@@ -56,7 +57,7 @@
 
 ScreenManager:
     id: screen_manager
-    transition: SwapTransition(duration=0.25)
+    transition: NoTransition()
 
     Screen:
         name: "start"
@@ -212,7 +213,7 @@ ScreenManager:
                         max_text_length: app.get_config_item('lesson_title_max_len')
 
     Screen:
-        name: 'settings'
+        name: "settings"
         BoxLayout:
             orientation: 'vertical'
             MDToolbar:
@@ -221,66 +222,135 @@ ScreenManager:
                 md_bg_color: app.theme_cls.primary_color
                 elevation: 8
                 left_action_items: [['arrow-left', lambda x: app.back_to_main()]]
-            ScrollView:
-                GridLayout:
-                    padding: dp(20)
-                    spacing: dp(10)
-                    cols: 1
+
+            MDStackLayout:
+                spacing: dp(10)
+                padding: dp(10)
+
+                MDLabel:
+                    text: "Theme Color:"
                     size_hint_y: None
-                    height: self.minimum_height
+                    size_hint_x: 1
+                    size: [0, 20]
 
-                    MDLabel:
-                        #text: f'[b]{tr._("Choose Language:")}[/b]'
-                        text: tr._("Choose Language:")
-                        #markup: True
-                        #font_style: 'Jura'
+                SettingsThemeColorToggleButton:
+                    text: "Red"
+                    setting_value: "Red"
 
-                    MDSeparator:
+                SettingsThemeColorToggleButton:
+                    text: "Pink"
+                    setting_value: "Pink"
 
-                    MDChooseChip:
-                        id: lang_select
+                SettingsThemeColorToggleButton:
+                    text: "Purple"
+                    setting_value: "Purple"
 
-                        MDChip:
-                            label: tr._('English')
-                            icon: ""
-                            callback: app.change_lang
-                            selected_chip_color: app.theme_cls.primary_color
+                SettingsThemeColorToggleButton:
+                    text: "Deep Purple"
+                    setting_value: "DeepPurple"
 
-                        MDChip:
-                            label: tr._('Russian')
-                            icon: ""
-                            callback: app.change_lang
-                            selected_chip_color: app.theme_cls.primary_color
+                SettingsThemeColorToggleButton:
+                    text: "Indigo"
+                    setting_value: "Indigo"
 
-                    MDLabel:
-                        text: 'Choose Theme:'
-                        #markup: True
-                        #font_name: 'Jura'
+                SettingsThemeColorToggleButton:
+                    text: "Blue"
+                    setting_value: "Blue"
 
-                    MDSeparator:
+                SettingsThemeColorToggleButton:
+                    text: "LightBlue"
+                    setting_value: "LightBlue"
 
-                    MDChooseChip:
-                        id: theme_select
+                SettingsThemeColorToggleButton:
+                    text: "Cyan"
+                    setting_value: "Cyan"
 
-                        MDChip:
-                            label: 'Light'
-                            icon: ""
-                            callback: app.change_theme
+                SettingsThemeColorToggleButton:
+                    text: "Teal"
+                    setting_value: "Teal"
 
-                        MDChip:
-                            label: 'Dark'
-                            icon: ""
-                            callback: app.change_theme
+                SettingsThemeColorToggleButton:
+                    text: "Green"
+                    setting_value: "Green"
 
-                    MDLabel:
-                        text: 'Homework Notifications:'
+                SettingsThemeColorToggleButton:
+                    text: "Light Green"
+                    setting_value: "LightGreen"
 
-                    MDSeparator:
+                SettingsThemeColorToggleButton:
+                    text: "Lime"
+                    setting_value: "Lime"
 
-                    MDTextButton:
-                        id: notify_select
-                        text: ""
-                        on_release: app.set_notify_time_setting(self.text)
+                SettingsThemeColorToggleButton:
+                    text: "Yellow"
+                    setting_value: "Yellow"
+
+                SettingsThemeColorToggleButton:
+                    text: "Amber"
+                    setting_value: "Amber"
+
+                SettingsThemeColorToggleButton:
+                    text: "Orange"
+                    setting_value: "Orange"
+
+                SettingsThemeColorToggleButton:
+                    text: "DeepOrange"
+                    setting_value: "DeepOrange"
+
+                SettingsThemeColorToggleButton:
+                    text: "Brown"
+                    setting_value: "Brown"
+
+                SettingsThemeColorToggleButton:
+                    text: "Gray"
+                    setting_value: "Gray"
+
+                SettingsThemeColorToggleButton:
+                    text: "BlueGray"
+                    setting_value: "BlueGray"
+
+                MDLabel:
+                    text: "Theme Style:"
+                    size_hint_y: None
+                    size_hint_x: 1
+                    size: [0, 20]
+
+                SettingsThemeStyleToggleButton:
+                    text: "Light"
+                    setting_value: "Light"
+
+                SettingsThemeStyleToggleButton:
+                    text: "Dark"
+                    setting_value: "Dark"
+
+                MDSeparator:
+
+                MDLabel:
+                    text: "Language:"
+                    size_hint_y: None
+                    size_hint_x: 1
+                    size: [0, 20]
+
+                SettingsLangToggleButton:
+                    text: "En"
+                    setting_value: "en"
+
+                SettingsLangToggleButton:
+                    text: "Ru"
+                    setting_value: "ru"
+
+                MDSeparator:
+
+                MDLabel:
+                    text: "Homework Reminder:"
+                    size_hint_y: None
+                    size_hint_x: 1
+                    size: [0, 20]
+
+                MDFillRoundFlatButton:
+                    id: notify_select
+                    text: ""
+                    on_release: app.set_notify_time_setting(self.text)
 
     Screen:
         name: "schedule"
@@ -380,3 +450,24 @@ ScreenManager:
                         hint_text: "Describe your Homework here (max 50)"
                         padding_y: dp(20)
                         max_text_length: app.get_config_item('homework_desc_max_len')
+
+<SettingsThemeColorToggleButton>:
+    group: "theme_color"
+    background_down: app.theme_cls.primary_light
+    background_normal: app.theme_cls.primary_color
+    on_release: app.change_theme_color(root)
+    allow_no_selection: False
+
+<SettingsThemeStyleToggleButton>:
+    group: "theme_style"
+    background_down: app.theme_cls.primary_light
+    background_normal: app.theme_cls.primary_color
+    on_release: app.change_theme_style(root)
+    allow_no_selection: False
+
+<SettingsLangToggleButton>:
+    group: "lang"
+    background_down: app.theme_cls.primary_light
+    background_normal: app.theme_cls.primary_color
+    on_release: app.change_lang(root)
+    allow_no_selection: False

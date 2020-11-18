@@ -52,12 +52,11 @@ KIVY_FONTS = [
 ]
 
 WEEK_DAYS = {0: 'Mon', 1: 'Tue', 2: 'Wed', 3: 'Thu', 4: 'Fri', 5: 'Sat', 6: 'Sun'}
-LANGUAGES = {'en': ['English', 'Английский'], 'ru': ['Russian', 'Русский']}
-THEME_STYLES = {'light': ['Light', 'Светлая'], 'dark': ['Dark', 'Темная']}
 SETTINGS_DEFAULTS = [
     {'name': 'lang', 'val': 'en'},
-    {'name': 'theme', 'val': 'light'},
-    {'name': 'remind_homework_time', 'val': '16:00'}
+    {'name': 'remind_homework_time', 'val': '16:00'},
+    {'name': 'theme_color', 'val': 'LightGreen'},
+    {'name': 'theme_style', 'val': 'Light'}
 ]
 
 
@@ -119,6 +118,25 @@ class RoundFlatToggleButton(MDFillRoundFlatIconButton, MDToggleButton):
     def __init__(self, **kwargs):
         self._radius = "5dp"
         self.ripple_alpha = 0
+        super().__init__(**kwargs)
+
+
+class SettingsThemeColorToggleButton(MDFillRoundFlatButton, MDToggleButton):
+    setting_value = StringProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+class SettingsThemeStyleToggleButton(MDFillRoundFlatButton, MDToggleButton):
+    setting_value = StringProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+class SettingsLangToggleButton(MDFillRoundFlatButton, MDToggleButton):
+    setting_value = StringProperty()
+
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
@@ -184,8 +202,6 @@ class MainApp(MDApp):
         self.current_year = None
         self.previous_screen= None
         self.cfg = config
-        self.init_lang_chip_color = True
-        self.init_theme_chip_color = True
         self.confirm_delete_schedule_dialog = None
         self.confirm_delete_lesson_dialog = None
         self.db = None
@@ -200,7 +216,8 @@ class MainApp(MDApp):
 
         self.check_settings()
 
-        self.set_theme()
+        self.set_theme_color()
+        self.set_theme_style()
         self.set_fonts()
 
         self.create_demo_schedules()
@@ -256,21 +273,20 @@ class MainApp(MDApp):
                     self.switch_screen('schedule')
                 return True
 
-    def change_lang(self, chip, lang_name):
-        if lang_name in LANGUAGES['en']:
-            self.lang = 'en'
-        elif lang_name in LANGUAGES['ru']:
-            self.lang = 'ru'
-        self.db.update_setting('lang', self.lang)
-        self.init_settings_lang_chip()
+    def change_lang(self, btn):
+        lang = btn.setting_value
+        self.db.update_setting('lang', lang)
+        self.lang = lang
 
-    def change_theme(self, chip, theme):
-        theme = theme.lower()
-        self.set_theme(theme)
-        self.db.update_setting('theme', theme)
-        self.init_settings_theme_chip()
-        self.init_settings_lang_chip()
-        self.refresh_theme_colors()
+    def change_theme_color(self, btn):
+        theme_color = btn.setting_value
+        self.db.update_setting('theme_color', theme_color)
+        self.set_theme_color(cb=self.refresh_settings)
+
+    def change_theme_style(self, btn):
+        theme_style = btn.setting_value
+        self.db.update_setting('theme_style', theme_style)
+        self.set_theme_style(cb=self.refresh_settings)
 
     def switch_screen(self, screen, previous_screen=None):
         self.root.current = screen
@@ -1038,7 +1054,6 @@ class MainApp(MDApp):
     def set_notify_time_setting(self, current):
         time_dialog = NotifyTimepicker()
         time_dialog.bind(time=self.get_notify_timepicker_time)
-
         time = datetime.datetime.strptime(current, '%H:%M').time()
         try:
             time_dialog.set_time(time)
@@ -1194,59 +1209,76 @@ class MainApp(MDApp):
             return False
 
     def open_settings(self):
-        self.init_settings_theme_chip()
-        self.init_settings_lang_chip()
-        self.refresh_settings_notify_homework()
+        self.refresh_settings()
         self.switch_screen('settings')
 
-    def init_settings_lang_chip(self):
-        current_lang = self.db.get_setting('lang')
-        lang_select = self.root.ids.lang_select
-        for chip in lang_select.children:
-            if chip.label in LANGUAGES[current_lang]:
-                chip.color = self.theme_cls.primary_color
-            else:
-                chip.color = [0.4, 0.4, 0.4, 1]
+    def refresh_settings(self):
+        self.refresh_theme_color_settings()
+        self.refresh_theme_style_settings()
+        self.refresh_lang_settings()
+        self.refresh_settings_notify_homework()
 
-    def init_settings_theme_chip(self):
-        current_theme = self.db.get_setting('theme')
-        theme_select = self.root.ids.theme_select
-        for chip in theme_select.children:
-            if chip.label in THEME_STYLES[current_theme]:
-                chip.color = self.theme_cls.primary_color
-            else:
-                chip.color = [0.4, 0.4, 0.4, 1]
+    def refresh_theme_color_settings(self):
+        self.reset_theme_color_settings()
+        current_theme_color = self.db.get_setting('theme_color')
+        widgets = ToggleButtonBehavior.get_widgets('theme_color')
+        for w in widgets:
+            if w.setting_value == current_theme_color:
+                w.state = 'down'
+        del widgets
+
+    def refresh_theme_style_settings(self):
+        self.reset_theme_style_settings()
+        current_theme_style = self.db.get_setting('theme_style')
+        widgets = ToggleButtonBehavior.get_widgets('theme_style')
+        for w in widgets:
+            if w.setting_value == current_theme_style:
+                w.state = 'down'
+        del widgets
+
+    def refresh_lang_settings(self):
+        self.reset_lang_settings()
+        current_lang = self.db.get_setting('lang')
+        widgets = ToggleButtonBehavior.get_widgets('lang')
+        for w in widgets:
+            if w.setting_value == current_lang:
+                w.state = 'down'
+        del widgets
 
     def refresh_settings_notify_homework(self):
         current_value = self.db.get_setting('remind_homework_time')
         control = self.root.ids.notify_select
         control.text = current_value
 
-    def reset_lang_chip_color(self, selected_lang):
-        if self.init_lang_chip_color is True:
-            current_lang = self.db.get_setting('lang')
-            lang_select = self.root.ids.lang_select
-            chip_to_reset = next(chip for chip in lang_select.children if chip.label in LANGUAGES[current_lang])
-            chip_to_reset.color = [0.4, 0.4, 0.4, 1]
-            self.init_lang_chip_color = False
+    def reset_theme_color_settings(self):
+        widgets = ToggleButtonBehavior.get_widgets('theme_color')
+        for w in widgets:
+            w.state = 'normal'
+        del widgets
 
-    def reset_theme_chip_color(self, selected_theme):
-        if self.init_theme_chip_color is True:
-            current_theme = self.db.get_setting('theme')
-            theme_select = self.root.ids.theme_select
-            chip_to_reset = next(chip for chip in theme_select.children if chip.label in THEME_STYLES[current_theme])
-            chip_to_reset.color = [0.4, 0.4, 0.4, 1]
-            self.init_theme_chip_color = False
+    def reset_theme_style_settings(self):
+        widgets = ToggleButtonBehavior.get_widgets('theme_style')
+        for w in widgets:
+            w.state = 'normal'
+        del widgets
 
-    def set_theme(self, theme=None):
-        if theme is None:
-            theme = self.db.get_setting('theme')
-        if self.cfg['theme'][theme]['palette']:
-            self.theme_cls.primary_palette = self.cfg['theme'][theme]['palette']
-        if 'style' in self.cfg['theme'][theme]:
-            self.theme_cls.theme_style = self.cfg['theme'][theme]['style']
-        if 'accent' in self.cfg['theme'][theme]:
-            self.theme_cls.accent_palette = self.cfg['theme'][theme]['accent']
+    def reset_lang_settings(self):
+        widgets = ToggleButtonBehavior.get_widgets('lang')
+        for w in widgets:
+            w.state = 'normal'
+        del widgets
+
+    def set_theme_color(self, **kwargs):
+        theme_color = self.db.get_setting('theme_color')
+        self.theme_cls.primary_palette = theme_color
+        if 'cb' in kwargs:
+            kwargs['cb']()
+
+    def set_theme_style(self, **kwargs):
+        theme_style = self.db.get_setting('theme_style')
+        self.theme_cls.theme_style = theme_style
+        if 'cb' in kwargs:
+            kwargs['cb']()
 
     def set_fonts(self):
         for font in KIVY_FONTS:
