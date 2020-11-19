@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-13 00:12+0200\n"
+"POT-Creation-Date: 2020-11-20 00:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,38 +17,46 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.py:209
+#: main.py:440
 msgid "Open"
 msgstr ""
 
-#: main.py:217
+#: main.py:448 main.py:468
 msgid "Edit"
 msgstr ""
 
-#: main.py:225
+#: main.py:456 main.py:476
 msgid "Delete"
 msgstr ""
 
-#: main.py:233
-msgid "Time Table"
+#: main.py:820
+msgid "Edit Schedule"
 msgstr ""
 
-#: main.kv:11
-msgid "My Schedules"
+#: main.py:820 main.kv:110
+msgid "Add Schedule"
 msgstr ""
 
-#: main.kv:33
+#: main.kv:84
+msgid "Schedules"
+msgstr ""
+
+#: main.kv:91
+msgid "Homeworks"
+msgstr ""
+
+#: main.kv:123
+msgid "Title"
+msgstr ""
+
+#: main.kv:128
+msgid "maximum"
+msgstr ""
+
+#: main.kv:128
+msgid "chars length"
+msgstr ""
+
+#: main.kv:229
 msgid "Settings"
-msgstr ""
-
-#: main.kv:44
-msgid "Choose Language:"
-msgstr ""
-
-#: main.kv:52
-msgid "English"
-msgstr ""
-
-#: main.kv:57
-msgid "Russian"
 msgstr ""

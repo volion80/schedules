@@ -817,7 +817,7 @@ class MainApp(MDApp):
 
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main()]]
         top_toolbar.right_action_items = [['check', lambda x: self.save_schedule(schedule_id=schedule_id, title=title_field.text, cb=self.back_to_main)]]
-        top_toolbar.title = f'{"Edit" if schedule is not None else "Add"} Schedule'
+        top_toolbar.title = tr._('Edit Schedule') if schedule is not None else tr._('Add Schedule')
         self.switch_screen('add_schedule')
 
     def add_homework(self):

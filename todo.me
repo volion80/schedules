@@ -38,18 +38,27 @@ Remote Schedules:
 LOCALIZATION GUIDE
 -------------------------------
 
-po:
+*** STEP 0 ***
+Update text in py and kv to be translated using tr._('<some text>')
+
+*** STEP 1 ***
+# generate messages.pot with the last text changes on STEP 0
 xgettext -Lpython --output=messages.pot main.py main.kv
+
+# merge messages.pot with existing *.po files
 msgmerge --update --no-fuzzy-matching --backup=off po/en.po messages.pot
 msgmerge --update --no-fuzzy-matching --backup=off po/ru.po messages.pot
 
-mo:
+*** STEP 2 ***
+# update translation in *.po files
 
+*** STEP 3 ***
 # if not exist
 mkdir data\locales\en\LC_MESSAGES
 # if not exist
 mkdir data\locales\ru\LC_MESSAGES
 
+# generate *.mo files from *.po
 msgfmt -c -o data/locales/en/LC_MESSAGES/mainapp.mo po/en.po
 msgfmt -c -o data/locales/ru/LC_MESSAGES/mainapp.mo po/ru.po
 

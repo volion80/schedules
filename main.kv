@@ -81,14 +81,14 @@ ScreenManager:
 
                 Tab:
                     id: schedules_tab
-                    text: "Schedules"
+                    text: tr._('Schedules')
                     ScrollView:
                         do_scroll_x: False
                         MDList:
                             id: schedule_list
                 Tab:
                     id: homeworks_tab
-                    text: "Homeworks"
+                    text: tr._('Homeworks')
                     HomeworkListRV:
                         id: homework_list
 
@@ -107,7 +107,7 @@ ScreenManager:
             orientation: 'vertical'
             MDToolbar:
                 id: add_schedule_top_toolbar
-                title: "Add Schedule"
+                title: tr._("Add Schedule")
                 elevation: 8
             ScrollView:
                 do_scroll_x: False
@@ -120,12 +120,12 @@ ScreenManager:
 
                     TitleTextField:
                         id: add_schedule_title
-                        hint_text: 'Title'
+                        hint_text: tr._('Title')
                         text_max: app.get_config_item('schedule_title_max_len')
                         fill_color: 0, 0, 0, .1
                         mode: 'fill'
                         helper_text_mode: "on_focus"
-                        helper_text: f'maximum {app.get_config_item("schedule_title_max_len")} chars length'
+                        helper_text: tr._("maximum") + f' {app.get_config_item("schedule_title_max_len")} ' + tr._("chars length")
 
     Screen:
         name: "add_homework"
