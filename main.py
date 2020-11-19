@@ -691,7 +691,8 @@ class MainApp(MDApp):
                 self.db.add_schedule(name=title)
 
             self.load_schedules()
-            self.back_to_main()
+            if 'cb' in kwargs:
+                kwargs['cb']()
 
     def save_lesson(self, **kwargs):
         title_field = self.root.ids.add_lesson_title
@@ -700,8 +701,6 @@ class MainApp(MDApp):
         day = kwargs['day']
         title = kwargs['title']
         del_homeworks = kwargs['del_homeworks']
-        week_num = self.get_active_week_num()
-        year = self.get_active_year()
 
         title_limit = self.get_config_item('lesson_title_max_len')
         title = title[:title_limit]
@@ -716,7 +715,9 @@ class MainApp(MDApp):
             else:
                 lessons = [{'name': title, 'day': day, 'time_start': '', 'time_end': '', 'schedule_id': schedule_id}]
                 self.db.add_lessons(lessons)
-            self.open_schedule(schedule_id, day, week_num, year)
+
+                if 'cb' in kwargs:
+                    kwargs['cb']()
 
     def show_confirm_del_schedule_dialog(self, schedule_id):
         schedule = self.db.get_schedule(schedule_id)
@@ -815,7 +816,7 @@ class MainApp(MDApp):
         title_field.focus = True
 
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main()]]
-        top_toolbar.right_action_items = [['check', lambda x: self.save_schedule(schedule_id=schedule_id, title=title_field.text)]]
+        top_toolbar.right_action_items = [['check', lambda x: self.save_schedule(schedule_id=schedule_id, title=title_field.text, cb=self.back_to_main)]]
         top_toolbar.title = f'{"Edit" if schedule is not None else "Add"} Schedule'
         self.switch_screen('add_schedule')
 
@@ -962,6 +963,8 @@ class MainApp(MDApp):
         top_toolbar = self.root.ids.add_lesson_top_toolbar
         grid_layout = self.root.ids.add_lesson_grid_layout
 
+        week_num = self.get_active_week_num()
+        year = self.get_active_year()
         day = self.get_current_tab_index('schedule')
         schedule_id = self.get_active_schedule_id()
         lesson = self.db.get_lesson(id=lesson_id, schedule_id=schedule_id) if lesson_id is not None else None
@@ -994,7 +997,7 @@ class MainApp(MDApp):
             grid_layout.add_widget(del_homeworks_wrapper)
 
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.switch_screen('schedule')]]
-        top_toolbar.right_action_items = [['check', lambda x: self.save_lesson(schedule_id=schedule_id, lesson_id=lesson_id, day=day, title=title_field.text, del_homeworks=(del_chkbx.state == 'down' if del_chkbx is not None else False))]]
+        top_toolbar.right_action_items = [['check', lambda x: self.save_lesson(cb=lambda: self.open_schedule(schedule_id, day, week_num, year), schedule_id=schedule_id, lesson_id=lesson_id, day=day, title=title_field.text, del_homeworks=(del_chkbx.state == 'down' if del_chkbx is not None else False))]]
         top_toolbar.title = f'{"Edit" if lesson is not None else "Add"} Lesson for {WEEK_DAYS[day]}'
         self.switch_screen('add_lesson')
 
@@ -1125,18 +1128,25 @@ class MainApp(MDApp):
             'arrow-left',
             lambda x: self.open_schedule(schedule_id, day, week_num, year) if screen_from == 'schedule' else self.switch_screen(previous_screen) if previous_screen == 'add_homework' else self.back_to_main(1)
         ]]
+
+        def cb ():
+            self.load_homeworks()
+            if screen_from == 'homeworks':
+                self.back_to_main(1)
+            else:
+                self.open_schedule(schedule_id, day, week_num, year)
+
         top_toolbar.right_action_items = [[
             'check',
             lambda x: self.save_lesson_homework(
                 id=homework_id,
                 lesson_id=lesson_id,
                 desc=desc_field.text,
-                schedule_id=schedule_id,
                 week_num=week_num,
                 year=year,
                 done=done,
                 notified=notified,
-                screen_from=screen_from
+                cb=cb
             )]]
 
         title = 'Add Homework' if homework_id is None else 'Edit Homework'
@@ -1148,11 +1158,8 @@ class MainApp(MDApp):
         homework_id = kwargs['id']
         lesson_id = kwargs['lesson_id']
         desc = kwargs['desc']
-        schedule_id = kwargs['schedule_id']
         week_num = kwargs['week_num']
         year = kwargs['year']
-        lesson = self.db.get_lesson(schedule_id=schedule_id, id=lesson_id)
-        day = lesson['day']
         done = kwargs['done']
         notified = kwargs['notified']
 
@@ -1166,11 +1173,8 @@ class MainApp(MDApp):
                 self.db.add_homework(lesson_id=lesson_id, desc=desc, week_num=week_num, year=year, notified=notified, done=done)
             else:
                 self.db.update_homework(id=homework_id, desc=desc)
-        self.load_homeworks()
-        if 'screen_from' in kwargs and kwargs['screen_from'] == 'homeworks':
-            self.back_to_main(1)
-        else:
-            self.open_schedule(schedule_id, day, week_num, year)
+        if 'cb' in kwargs:
+            kwargs['cb']()
 
     def clear_homework(self, lesson_id):
         schedule_id = self.get_active_schedule_id()

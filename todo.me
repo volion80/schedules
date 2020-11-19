@@ -8,43 +8,31 @@ RECENT CHANGES, IN PROCESS
 FIXES, IMPROVEMENTS
 -------------------------------
 
-App Font:
-    setup custom font (refer to kivy/config.py:236 for defaults):
-        Config.set('graphics', 'default_font', '["Arial", "C:/Windows/Fonts/arial.ttf", "C:/Windows/Fonts/ariali.ttf", "C:/Windows/Fonts/arialbd.ttf", "C:/Windows/Fonts/arialbi.ttf"]')
-        Config.write()
-
 Lessons entity:
-    create and keep lessons db
-
-Text fields:
-    figure out how to do validation, refresh field on next open
-
-Schedule screen:
-	-
+    create and keep lessons db (?) or use autocomplete with existing lessons
 
 Generic:
 	Settings: add localization (finish translations)
 
 Config:
 	use built-in Config implementation (?)
-	
+
+Demo schedules:
+    on application start - remove only demo schedules
+
+Generic:
+    Back Button behavior
+
+Service:
+    fix ability to start app from Service notification
+
 -------------------------------
 NEW FEATURES
 -------------------------------
 
-Demo schedules:
-    on application start - remove only demo schedules (by name)
-
-Lesson list:
-    add checkbox to mark homeworks done
-
-Push Notifications
-
-
-Bottom Navigation:
-	first link - Schedules by default
-	second link - link to Tasks screen (new Screen to show upcoming tasks)
-
+Remote Schedules:
+    API to fetch changes
+    Notification about changes
 
 -------------------------------
 LOCALIZATION GUIDE
