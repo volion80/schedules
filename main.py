@@ -42,6 +42,7 @@ from kivy.core.text import LabelBase
 from decorators import log_time
 from demo_data import lesson_names, time_ranges
 from kivy.uix.recycleview import RecycleView
+from kivymd.uix.textfield import MDTextField
 
 KIVY_FONTS = [
     {
@@ -93,7 +94,9 @@ class ThreeLineLessonListItem(ThreeLineAvatarIconListItem):
 
 class ThreeLineHomeworkListItem(ThreeLineAvatarIconListItem):
     done = BooleanProperty()
-    pass
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 class ScheduleLessonListRV(RecycleView):
@@ -149,6 +152,18 @@ class MDRoundFlatIconDateButton(MDRoundFlatIconButton):
 class MDFillRoundFlatProceedButton(MDRaisedButton):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+
+class TitleTextField(MDTextField):
+    text_max = NumericProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def on_text(self, instance, val):
+        if len(val) > self.text_max:
+            self.text = val[:self.text_max]
+        super().on_text(instance, val)
 
 
 class Lang(Observable):
@@ -259,8 +274,8 @@ class MainApp(MDApp):
         if key == 27:
             if self.root.current == 'start':
                 return True
-            elif self.root.current in ['add_schedule', 'add_homework_alt', 'schedule', 'settings']:
-                index = 1 if self.root.current == 'add_homework_alt' else 0
+            elif self.root.current in ['add_schedule', 'add_homework', 'schedule', 'settings']:
+                index = 1 if self.root.current == 'add_homework' else 0
                 self.back_to_main(index)
                 return True
             elif self.root.current in ['add_lesson']:
@@ -282,11 +297,13 @@ class MainApp(MDApp):
         theme_color = btn.setting_value
         self.db.update_setting('theme_color', theme_color)
         self.set_theme_color(cb=self.refresh_settings)
+        self.load_homeworks()
 
     def change_theme_style(self, btn):
         theme_style = btn.setting_value
         self.db.update_setting('theme_style', theme_style)
         self.set_theme_style(cb=self.refresh_settings)
+        self.load_homeworks()
 
     def switch_screen(self, screen, previous_screen=None):
         self.root.current = screen
@@ -706,7 +723,7 @@ class MainApp(MDApp):
         self.confirm_delete_schedule_dialog = ConfirmDeleteScheduleDialog(
             title=f'Delete {schedule["name"]}?',
             size_hint=(0.8, 0.4),
-            text=f'There are homeworks assigned to lessons for future dates within schedule.\n\nDelete anyway?',
+            text=f'There are homeworks assigned related to the schedule.\n\nDelete anyway?',
             schedule_id=schedule_id,
             buttons=[
                 MDFlatButton(
@@ -728,7 +745,7 @@ class MainApp(MDApp):
         self.confirm_delete_lesson_dialog = ConfirmDeleteLessonDialog(
             title=f'Delete {lesson["name"]}?',
             size_hint=(0.8, 0.4),
-            text=f'There are homeworks assigned to the lesson for future dates.\n\nDelete anyway?',
+            text=f'There are homeworks assigned to the lesson.\n\nDelete anyway?',
             lesson_id=lesson_id,
             buttons=[
                 MDFlatButton(
@@ -786,7 +803,7 @@ class MainApp(MDApp):
         if tab_index == 0:
             self.add_schedule()
         elif tab_index == 1:
-            self.add_homework_alt()
+            self.add_homework()
 
     def add_schedule(self, schedule_id=None):
         title_field = self.root.ids.add_schedule_title
@@ -795,26 +812,24 @@ class MainApp(MDApp):
         schedule = self.db.get_schedule(schedule_id) if schedule_id else None
 
         title_field.text = '' if not schedule else schedule['name']
-        # hack to fix validation on open
         title_field.focus = True
-        title_field.focus = False
 
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main()]]
         top_toolbar.right_action_items = [['check', lambda x: self.save_schedule(schedule_id=schedule_id, title=title_field.text)]]
         top_toolbar.title = f'{"Edit" if schedule is not None else "Add"} Schedule'
         self.switch_screen('add_schedule')
 
-    def add_homework_alt(self):
-        top_toolbar = self.root.ids.add_homework_top_toolbar_alt
-        hw_date = self.root.ids.add_homework_date_alt
+    def add_homework(self):
+        top_toolbar = self.root.ids.add_homework_top_toolbar
+        hw_date = self.root.ids.add_homework_date
         today = datetime.datetime.today().date()
         hw_date.text = str(today)
         self.add_homework_load_schedules(today)
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main(1)]]
-        self.switch_screen('add_homework_alt')
+        self.switch_screen('add_homework')
 
-    def open_add_homework_alt(self):
-        str_date = self.root.ids.add_homework_date_alt.text
+    def open_add_homework(self):
+        str_date = self.root.ids.add_homework_date.text
         date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
         schedule_id = self.add_homework_get_selected_schedule()
         lesson_id = self.add_homework_get_selected_lesson()
@@ -851,7 +866,7 @@ class MainApp(MDApp):
         return lesson_id
 
     def open_add_homework_datepicker(self):
-        str_date = self.root.ids.add_homework_date_alt.text
+        str_date = self.root.ids.add_homework_date.text
         date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
         today = datetime.datetime.today().date()
         min_date = today - datetime.timedelta(days=1)
@@ -865,7 +880,7 @@ class MainApp(MDApp):
         date_dialog.open()
 
     def get_homework_datepicker_date(self, date):
-        self.root.ids.add_homework_date_alt.text = str(date)
+        self.root.ids.add_homework_date.text = str(date)
         self.add_homework_load_schedules(date)
 
     def add_homework_load_schedules(self, date):
@@ -885,6 +900,7 @@ class MainApp(MDApp):
                 group="schedule",
                 pos_hint={"center_x": .5},
                 background_down=self.theme_cls.accent_color,
+                font_name=self.get_app_font(),
                 on_release=self.add_homework_schedule_button_click
             )
             schedules_wrapper.add_widget(schedule_button)
@@ -896,7 +912,7 @@ class MainApp(MDApp):
         self.add_homework_add_lessons_hint()
 
     def add_homework_add_lessons_hint(self):
-        hint_btn = MDTextButton(text="Select a Schedule")
+        hint_btn = MDTextButton(text="Select a Schedule...", font_name=self.get_app_font())
         self.root.ids.add_homework_lessons_wrapper.add_widget(hint_btn)
 
     def add_homework_reset_lessons(self):
@@ -907,7 +923,7 @@ class MainApp(MDApp):
 
     def add_homework_schedule_button_click(self, button):
         schedule_id = button.item_id
-        str_date = self.root.ids.add_homework_date_alt.text
+        str_date = self.root.ids.add_homework_date.text
         date = datetime.datetime.strptime(str_date, '%Y-%m-%d').date()
         is_down = button.state == 'down'
         self.add_homework_load_lessons(date, schedule_id, is_down)
@@ -929,6 +945,7 @@ class MainApp(MDApp):
                 group="lesson",
                 pos_hint={"center_x": .5},
                 background_down=self.theme_cls.accent_dark,
+                font_name=self.get_app_font(),
                 on_release=self.add_homework_lesson_button_click
             )
             lessons_wrapper.add_widget(lesson_button)
@@ -950,9 +967,7 @@ class MainApp(MDApp):
         lesson = self.db.get_lesson(id=lesson_id, schedule_id=schedule_id) if lesson_id is not None else None
 
         title_field.text = '' if not lesson else lesson['name']
-        # hack to fix validation on open
         title_field.focus = True
-        title_field.focus = False
 
         for child in grid_layout.children:
             if type(child).__name__ == 'BoxLayout' and child.id == 'add_lesson_del_homeworks_layout':
@@ -1088,7 +1103,7 @@ class MainApp(MDApp):
         if homework is None:
             desc = ''
             if screen_from == 'homeworks':
-                previous_screen = 'add_homework_alt'
+                previous_screen = 'add_homework'
         elif homework is False:
             toast(f'warning: duplicated homeworks found. lesson_id: {lesson_id}, week_num: {week_num}, year: {year}')
             desc = ''
@@ -1098,19 +1113,17 @@ class MainApp(MDApp):
                 previous_screen = 'homeworks'
 
         desc_field.text = desc
-        # todo: improve - hack to fix validation on open
         desc_field.focus = True
-        desc_field.focus = False
 
         homework_id = None if homework is None else homework['id']
         done = 0 if homework is None else homework['done']
         notified = 0 if homework is None else homework['notified']
         day = lesson['day']
-        subtitle.text = f'{lesson["name"]} for {Util.get_date_str(year, week_num, day)}'
+        subtitle.text = f'{lesson["name"]} on {Util.get_date_str(year, week_num, day)}'
 
         top_toolbar.left_action_items = [[
             'arrow-left',
-            lambda x: self.open_schedule(schedule_id, day, week_num, year) if screen_from == 'schedule' else self.switch_screen(previous_screen) if previous_screen == 'add_homework_alt' else self.back_to_main(1)
+            lambda x: self.open_schedule(schedule_id, day, week_num, year) if screen_from == 'schedule' else self.switch_screen(previous_screen) if previous_screen == 'add_homework' else self.back_to_main(1)
         ]]
         top_toolbar.right_action_items = [[
             'check',
@@ -1280,11 +1293,14 @@ class MainApp(MDApp):
         if 'cb' in kwargs:
             kwargs['cb']()
 
+    def get_app_font(self):
+        return 'Jura'
+
     def set_fonts(self):
         for font in KIVY_FONTS:
             LabelBase.register(**font)
 
-        font_name = 'Jura'
+        font_name = self.get_app_font()
         theme_font_styles.append(font_name)
 
         self.theme_cls.font_styles["H1"] = [font_name, 96, False, -1.5,]
@@ -1302,7 +1318,15 @@ class MainApp(MDApp):
         self.theme_cls.font_styles["Overline"] = [font_name, 10, False, 1.5, ]
 
         # Toolbar fonts
-        toolbars = ['start_top_toolbar', 'settings_toolbar', 'schedule_toolbar', 'bottom_schedule_toolbar', 'add_schedule_top_toolbar', 'add_lesson_top_toolbar', 'add_homework_top_toolbar_alt']
+        toolbars = [
+            'start_top_toolbar',
+            'settings_toolbar',
+            'schedule_toolbar',
+            'bottom_schedule_toolbar',
+            'add_schedule_top_toolbar',
+            'add_lesson_top_toolbar',
+            'add_homework_top_toolbar'
+        ]
         for tb in toolbars:
             self.root.ids[tb].ids.label_title.font_name = "Jura"
             self.root.ids[tb].ids.label_title.font_size = "20sp"
@@ -1351,9 +1375,6 @@ class MainApp(MDApp):
         val = checkbox.state
         done = 1 if val == 'down' else 0
         self.db.update_homework(id=homework_id, done=done)
-        self.load_homeworks()
-
-    def refresh_theme_colors(self):
         self.load_homeworks()
 
 

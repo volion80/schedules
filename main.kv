@@ -113,25 +113,28 @@ ScreenManager:
                 do_scroll_x: False
                 GridLayout:
                     padding: dp(30)
-                    spacing: dp(20)
+#                    spacing: dp(20)
                     cols: 1
                     size_hint_y: None
                     height: self.minimum_height
 
-                    MDTextField:
+                    TitleTextField:
                         id: add_schedule_title
                         hint_text: 'Title'
-                        padding_y: dp(20)
-                        max_text_length: app.get_config_item('schedule_title_max_len')
+                        text_max: app.get_config_item('schedule_title_max_len')
+                        fill_color: 0, 0, 0, .1
+                        mode: 'fill'
+                        helper_text_mode: "on_focus"
+                        helper_text: f'maximum {app.get_config_item("schedule_title_max_len")} chars length'
 
     Screen:
-        name: "add_homework_alt"
+        name: "add_homework"
 
         BoxLayout:
-            id: add_homework_layout_alt
+            id: add_homework_layout
             orientation: 'vertical'
             MDToolbar:
-                id: add_homework_top_toolbar_alt
+                id: add_homework_top_toolbar
                 title: "Select Date / Schedule / Lesson"
                 elevation: 8
 
@@ -148,11 +151,12 @@ ScreenManager:
                         orientation: "vertical"
 
                         MDRoundFlatIconDateButton:
-                            id: add_homework_date_alt
+                            id: add_homework_date
                             icon: "calendar"
                             text: ""
                             pos_hint: {"center_x": .5}
                             spacing: dp(12)
+                            font_name: app.get_app_font()
                             on_release: app.open_add_homework_datepicker()
 
                     MDSeparator:
@@ -185,7 +189,8 @@ ScreenManager:
                             text: "Proceed"
                             spacing: dp(12)
                             pos_hint: {"center_x": .5, "center_y": 1}
-                            on_release: app.open_add_homework_alt()
+                            font_name: app.get_app_font()
+                            on_release: app.open_add_homework()
 
     Screen:
         name: "add_lesson"
@@ -206,11 +211,14 @@ ScreenManager:
                     size_hint_y: None
                     height: self.minimum_height
 
-                    MDTextField:
+                    TitleTextField:
                         id: add_lesson_title
                         hint_text: 'Title'
-                        padding_y: dp(20)
-                        max_text_length: app.get_config_item('lesson_title_max_len')
+                        text_max: app.get_config_item('lesson_title_max_len')
+                        fill_color: 0, 0, 0, .1
+                        mode: 'fill'
+                        helper_text_mode: "on_focus"
+                        helper_text: f'maximum {app.get_config_item("lesson_title_max_len")} chars length'
 
     Screen:
         name: "settings"
@@ -294,7 +302,7 @@ ScreenManager:
                     setting_value: "Orange"
 
                 SettingsThemeColorToggleButton:
-                    text: "DeepOrange"
+                    text: "Deep Orange"
                     setting_value: "DeepOrange"
 
                 SettingsThemeColorToggleButton:
@@ -306,7 +314,7 @@ ScreenManager:
                     setting_value: "Gray"
 
                 SettingsThemeColorToggleButton:
-                    text: "BlueGray"
+                    text: "Blue Gray"
                     setting_value: "BlueGray"
 
                 MDLabel:
@@ -445,11 +453,15 @@ ScreenManager:
                         theme_text_color: 'Custom'
                         text_color: app.theme_cls.primary_color
 
-                    MDTextField:
+                    TitleTextField:
                         id: add_lesson_homework_desc_text
-                        hint_text: "Describe your Homework here (max 50)"
-                        padding_y: dp(20)
-                        max_text_length: app.get_config_item('homework_desc_max_len')
+                        hint_text: 'Describe your Homework'
+                        text_max: app.get_config_item('homework_desc_max_len')
+                        fill_color: 0, 0, 0, .1
+                        mode: 'fill'
+                        helper_text_mode: "on_focus"
+                        helper_text: f'maximum {app.get_config_item("homework_desc_max_len")} chars length'
+
 
 <SettingsThemeColorToggleButton>:
     group: "theme_color"
@@ -457,6 +469,7 @@ ScreenManager:
     background_normal: app.theme_cls.primary_color
     on_release: app.change_theme_color(root)
     allow_no_selection: False
+    font_name: app.get_app_font()
 
 <SettingsThemeStyleToggleButton>:
     group: "theme_style"
@@ -464,6 +477,7 @@ ScreenManager:
     background_normal: app.theme_cls.primary_color
     on_release: app.change_theme_style(root)
     allow_no_selection: False
+    font_name: app.get_app_font()
 
 <SettingsLangToggleButton>:
     group: "lang"
@@ -471,3 +485,4 @@ ScreenManager:
     background_normal: app.theme_cls.primary_color
     on_release: app.change_lang(root)
     allow_no_selection: False
+    font_name: app.get_app_font()
