@@ -6,6 +6,7 @@ from kivymd.app import MDApp
 from kivymd.uix.list import ThreeLineAvatarIconListItem, OneLineAvatarIconListItem
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivymd.uix.tab import MDTabsBase
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.snackbar import Snackbar
@@ -44,6 +45,7 @@ from demo_data import lesson_names, time_ranges
 from kivy.uix.recycleview import RecycleView
 from kivymd.uix.textfield import MDTextField
 
+
 KIVY_FONTS = [
     {
         "name": "Jura",
@@ -59,7 +61,6 @@ SETTINGS_DEFAULTS = [
     {'name': 'theme_color', 'val': 'LightGreen'},
     {'name': 'theme_style', 'val': 'Light'}
 ]
-
 
 class NotifyTimepicker(MDTimePicker):
     pass
@@ -343,7 +344,7 @@ class MainApp(MDApp):
             homework_exists = self.db.homework_exists(lesson_id=lesson_row['id'], week_num=week_num, year=year)
             if not homework_exists:
                 self.db.add_homework(lesson_id=lesson_row['id'], week_num=week_num, year=year,
-                                     desc=f'test homework for {lesson_row["name"]}', done=randint(0, 1))
+                                     desc=f'test homework for {lesson_row["name"]}', done=randint(0, 1), notifiable=randint(0, 1))
 
     def load_start_screen(self):
         start_tab_panel = self.root.ids.start_tabs
@@ -1097,6 +1098,7 @@ class MainApp(MDApp):
         desc_field = self.root.ids.add_lesson_homework_desc_text
         top_toolbar = self.root.ids.add_lesson_homework_top_toolbar
         subtitle = self.root.ids.add_lesson_homework_subtitle
+        notifiable_field = self.root.ids.add_lesson_homework_notifiable
 
         if week_num is None:
             week_num = self.get_active_week_num()
@@ -1105,18 +1107,23 @@ class MainApp(MDApp):
         homework = self.db.find_homework(lesson_id=lesson_id, week_num=week_num, year=year)
         if homework is None:
             desc = ''
+            notifiable = True
             if screen_from == 'homeworks':
                 previous_screen = 'add_homework'
         elif homework is False:
             toast(f'warning: duplicated homeworks found. lesson_id: {lesson_id}, week_num: {week_num}, year: {year}')
             desc = ''
+            notifiable = True
         else:
             desc = homework['desc']
+            notifiable = homework['notifiable']
             if screen_from == 'homeworks':
                 previous_screen = 'homeworks'
 
         desc_field.text = desc
         desc_field.focus = True
+
+        notifiable_field.active = notifiable
 
         homework_id = None if homework is None else homework['id']
         done = 0 if homework is None else homework['done']
@@ -1146,6 +1153,7 @@ class MainApp(MDApp):
                 year=year,
                 done=done,
                 notified=notified,
+                notifiable=int(notifiable_field.active),
                 cb=cb
             )]]
 
@@ -1162,6 +1170,7 @@ class MainApp(MDApp):
         year = kwargs['year']
         done = kwargs['done']
         notified = kwargs['notified']
+        notifiable = kwargs['notifiable']
 
         if desc.strip() == '':
             if homework_id is not None:
@@ -1170,9 +1179,9 @@ class MainApp(MDApp):
             text_limit = self.get_config_item('homework_desc_max_len')
             desc = desc[:text_limit]
             if homework_id is None:
-                self.db.add_homework(lesson_id=lesson_id, desc=desc, week_num=week_num, year=year, notified=notified, done=done)
+                self.db.add_homework(lesson_id=lesson_id, desc=desc, week_num=week_num, year=year, notified=notified, done=done, notifiable=notifiable)
             else:
-                self.db.update_homework(id=homework_id, desc=desc)
+                self.db.update_homework(id=homework_id, desc=desc, notifiable=notifiable)
         if 'cb' in kwargs:
             kwargs['cb']()
 

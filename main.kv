@@ -75,7 +75,7 @@ ScreenManager:
             MDTabs:
                 id: start_tabs
                 on_tab_switch: app.on_start_tab_switch(*args)
-                tab_indicator_anim: False
+                tab_indicator_anim: True
                 tab_indicator_height: "4dp"
                 elevation: 8
 
@@ -94,7 +94,7 @@ ScreenManager:
 
         MDFloatingActionButton:
             icon: "plus"
-            opposite_colors: True
+#            opposite_colors: True
             elevation_normal: 8
             pos_hint: {"center_x": .9, "center_y": .1}
             size: dp(56), dp(56)
@@ -451,7 +451,7 @@ ScreenManager:
                         id: add_lesson_homework_subtitle
                         font_style: 'Subtitle1'
                         theme_text_color: 'Custom'
-                        text_color: app.theme_cls.primary_color
+                        text_color: app.theme_cls.accent_color
 
                     TitleTextField:
                         id: add_lesson_homework_desc_text
@@ -461,6 +461,19 @@ ScreenManager:
                         mode: 'fill'
                         helper_text_mode: "on_focus"
                         helper_text: f'maximum {app.get_config_item("homework_desc_max_len")} chars length'
+                    GridLayout:
+                        cols: 2
+
+                        MDLabel:
+                            font_style: 'Subtitle1'
+                            theme_text_color: 'Custom'
+                            text_color: app.theme_cls.primary_color
+                            text: "Enable reminder"
+                            size_hint_x: 0.8
+
+                        MDSwitch:
+                            id: add_lesson_homework_notifiable
+                            active: True
 
 
 <SettingsThemeColorToggleButton>:

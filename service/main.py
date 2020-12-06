@@ -93,13 +93,22 @@ class Service:
         current_time = now.strftime("%H:%M")
         notify_time = self.db.get_setting('remind_homework_time')
         if current_time == notify_time:
+            add_week = 0
+            add_year = 0
             day = Util.calc_day_num(1)
-            week_num = Util.calc_week_num()
-            year = Util.calc_year()
+            if day == 7:
+                day = 0
+                add_week = 1
+            week_num = Util.calc_week_num(add_week)
+            if week_num >= 52:
+                week_num -= 52
+                add_year = 1
+            year = Util.calc_year(add_year)
 
-            homeworks = self.db.get_homeworks(year=year, week_num=week_num, day=day, notified=0, done=0)
-            for homework in homeworks:
-                notify_text = f'Homework for tomorrow reminder: {homework["schedule_name"]} / {homework["lesson_name"]} - {homework["desc"]}'
+            homeworks = self.db.get_homeworks(year=year, week_num=week_num, day=day, notified=0, done=0, notifiable=1)
+            if len(homeworks):
+                homework = homeworks[0]
+                notify_text = f'You have a task for tomorrow: {homework["lesson_name"]} - {homework["desc"]}'
                 self.do_notify(notify_text)
                 self.db.update_homework(id=homework['id'], notified=1)
 
@@ -113,6 +122,7 @@ class Service:
         kwargs = {'title': title, 'message': message, 'ticker': ticker}
         if self.osc_app_client is not None:
             self.osc_app_client.send_refresh()
+        print('Sending homework notification')
         notification.notify(**kwargs)
 
 

@@ -553,6 +553,7 @@ Builder.load_string(
     background_palette: "Primary"
     text_color_normal: self.specific_secondary_text_color
     text_color_active: self.specific_text_color
+    allow_stretch: True
 
     MDTabsMain:
         padding: 0, tab_bar.height, 0, 0

@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Schedules1118
+title = Schedules1206
 # (str) Package name
 package.name = schedules
 
@@ -28,7 +28,7 @@ source.include_patterns = assets/*,images/*.png
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.11.18
+version = 0.12.06
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -47,16 +47,18 @@ requirements.source.kivymd = ./kivymd
 #garden_requirements =
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/data/presplash.png
+presplash.filename = ./schedules_splash.png
 
 # (str) Icon of the application
 #icon.filename = %(source.dir)s/data/icon.png
+icon.filename = ./schedules_icon.png
 
 # (str) Supported orientation (one of landscape, sensorLandscape, portrait or all)
 orientation = portrait
 
 # (list) List of service to declare
 #services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
+#services = service:service/main.py:foreground
 services = service:service/main.py:foreground
 
 #
@@ -88,7 +90,7 @@ fullscreen = 0
 
 # (list) Permissions
 #android.permissions = INTERNET
-android.permissions = INTERNET,FOREGROUND_SERVICE
+android.permissions = INTERNET,FOREGROUND_SERVICE,KILL_BACKGROUND_PROCESSES
 
 # (int) Target Android API, should be as high as possible.
 android.api = 28
@@ -173,6 +175,7 @@ android.accept_sdk_license = True
 
 # (str) launchMode to set for the main activity
 #android.manifest.launch_mode = standard
+android.manifest.launch_mode = singleTop
 
 # (list) Android additional libraries to copy into libs/armeabi
 #android.add_libs_armeabi = libs/android/*.so

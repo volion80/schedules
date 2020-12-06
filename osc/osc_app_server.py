@@ -57,7 +57,6 @@ def main():
     """Test main for running the OSC app server."""
     osc_app_server, sockname = OscAppServer.get_or_create()
     print(sockname)
-    sleep(100)
 
 
 if __name__ == '__main__':

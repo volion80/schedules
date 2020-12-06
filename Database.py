@@ -49,6 +49,7 @@ class Database:
                                     desc text,
                                     week_num integer not null,
                                     year integer not null,
+                                    notifiable integer default 1 not null,
                                     notified integer default 0 not null,
                                     done integer default 0 not null
                                 )''')
@@ -251,6 +252,9 @@ class Database:
         if 'done' in kwargs:
             w.append('h.done = ?')
             v.append(kwargs['done'])
+        if 'notifiable' in kwargs:
+            w.append('h.notifiable = ?')
+            v.append(kwargs['notifiable'])
         if len(w) > 0:
             q += ' where ' + ' and '.join(w)
         self.cursor.execute(q, v)
@@ -296,6 +300,9 @@ class Database:
     def add_homework(self, **kwargs):
         f = ['lesson_id', 'desc', 'week_num', 'year']
         v = [kwargs['lesson_id'], kwargs['desc'], kwargs['week_num'], kwargs['year']]
+        if 'notifiable' in kwargs:
+            f.append('notifiable')
+            v.append(kwargs['notifiable'])
         if 'notified' in kwargs:
             f.append('notified')
             v.append(kwargs['notified'])
@@ -372,6 +379,9 @@ class Database:
         if 'notified' in kwargs:
             f.append('notified = ?')
             v.append(kwargs['notified'])
+        if 'notifiable' in kwargs:
+            f.append('notifiable = ?')
+            v.append(kwargs['notifiable'])
         v.append(kwargs['id'])
         self.cursor.execute('update homeworks set ' + ','.join(f) + ' where id = ?', v)
         self.conn.commit()
@@ -381,8 +391,11 @@ class Database:
                 from homeworks h
                     join lessons l on h.lesson_id = l.id
                     join schedules s on l.schedule_id = s.id
-                where (h.week_num >= ? and h.year = ? and l.day >= ?) or h.year > ?
+                where 
+                    (h.week_num = ? and h.year = ? and l.day >= ?)
+                    or (h.week_num > ? and h.year = ?) 
+                    or h.year > ?
                 order by h.year, h.week_num, l.day, (case when l.time_start = "" then 1 else 0 end), l.time_start'''
-        v = [kwargs['week_num'], kwargs['year'], kwargs['day'], kwargs['year']]
+        v = [kwargs['week_num'], kwargs['year'], kwargs['day'], kwargs['week_num'], kwargs['year'], kwargs['year']]
         self.cursor.execute(q, v)
         return [dict(row) for row in self.cursor.fetchall()]

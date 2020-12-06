@@ -1,0 +1,49 @@
+Screen:
+    name: "add_lesson_homework"
+    BoxLayout:
+        id: add_lesson_homework_layout
+        orientation: 'vertical'
+        MDToolbar:
+            id: add_lesson_homework_top_toolbar
+            title: "Add Homework"
+            md_bg_color: app.theme_cls.primary_color
+            elevation: 8
+        ScrollView:
+            do_scroll_x: False
+            GridLayout:
+                padding: dp(30)
+                spacing: dp(20)
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    id: add_lesson_homework_subtitle
+                    font_style: 'Subtitle1'
+                    font_size: 18
+                    theme_text_color: 'Custom'
+                    text_color: app.theme_cls.accent_color
+                    text: "French on Sat 05 Dec, 2020"
+
+                MDTextField:
+                    id: add_lesson_homework_desc_text
+                    hint_text: 'Describe your Task'
+#                    text_max: app.get_config_item('homework_desc_max_len')
+                    fill_color: 0, 0, 0, .1
+                    mode: 'fill'
+                    helper_text_mode: "on_focus"
+#                    helper_text: f'maximum {app.get_config_item("homework_desc_max_len")} chars length'
+                GridLayout:
+                    cols: 2
+
+                    MDLabel:
+                        font_style: 'Subtitle1'
+                        theme_text_color: 'Custom'
+                        text_color: app.theme_cls.primary_color
+                        text: "Enable reminder"
+                        size_hint_x: 0.8
+
+                    MDSwitch:
+                        id: add_lesson_homework_notifiable
+                        active: True
+                        size_hint_x: None
