@@ -1,3 +1,4 @@
+from kivy.utils import platform
 from Config import config
 if config['env'] == 'dev_home':
     import os
@@ -25,8 +26,6 @@ from os.path import join, dirname
 import gettext
 from kivymd.color_definitions import colors
 from kivymd.uix.selectioncontrol import MDCheckbox
-# from plyer import notification
-# from plyer.utils import platform
 from osc.osc_app_server import OscAppServer
 from service.utils import start_service
 from kivymd.uix.bottomsheet import MDGridBottomSheet
@@ -44,6 +43,9 @@ from decorators import log_time
 from demo_data import lesson_names, time_ranges
 from kivy.uix.recycleview import RecycleView
 from kivymd.uix.textfield import MDTextField
+from plyer import notification
+if platform == 'android':
+    from DroidNotification import DroidNotification
 
 
 KIVY_FONTS = [
@@ -221,6 +223,7 @@ class MainApp(MDApp):
         self.confirm_delete_schedule_dialog = None
         self.confirm_delete_lesson_dialog = None
         self.db = None
+        self.history = []
         super(MainApp, self).__init__(**kwargs)
         print("User data dir: %s" % self.user_data_dir)
         Window.bind(on_keyboard=self.on_key)
@@ -307,6 +310,7 @@ class MainApp(MDApp):
         self.load_homeworks()
 
     def switch_screen(self, screen, previous_screen=None):
+        self.history.append(self.root.current)
         self.root.current = screen
         self.previous_screen = previous_screen
 
@@ -1142,6 +1146,7 @@ class MainApp(MDApp):
                 self.back_to_main(1)
             else:
                 self.open_schedule(schedule_id, day, week_num, year)
+            self.do_notify(f'{lesson["name"]} - a new task added')
 
         top_toolbar.right_action_items = [[
             'check',
@@ -1389,6 +1394,19 @@ class MainApp(MDApp):
         done = 1 if val == 'down' else 0
         self.db.update_homework(id=homework_id, done=done)
         self.load_homeworks()
+
+    def do_notify(self, message_text):
+        ticker = "Schedules Reminder"
+        title = 'Schedules Notification'
+        message = message_text
+        kwargs = {'title': title, 'message': message, 'ticker': ticker}
+        if platform == 'android':
+            kwargs['app_icon'] = ''
+            kwargs['toast'] = False
+            noti = DroidNotification()
+            noti._notify(**kwargs)
+        else:
+            notification.notify(**kwargs)
 
 
 db = Database()

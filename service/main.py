@@ -21,6 +21,7 @@ from plyer import notification
 from osc.osc_app_client import OscAppClient
 from Util import Util
 from Database import Database
+from DroidNotification import DroidNotification
 
 
 class MyApp(App):
@@ -67,10 +68,6 @@ class Service:
             MyApp()
 
     def run(self):
-        """
-        Blocking pull loop call.
-        Service will stop after a period of time with no roll activity.
-        """
         while True:
             self.check_homework_notify()
             sleep(10)
@@ -116,14 +113,19 @@ class Service:
         """
         Also notifies the app process via OSC.
         """
-        ticker = "Ticker"
+        ticker = "Task Reminder"
         title = 'Schedules Notification'
         message = message_text
         kwargs = {'title': title, 'message': message, 'ticker': ticker}
         if self.osc_app_client is not None:
             self.osc_app_client.send_refresh()
-        print('Sending homework notification')
-        notification.notify(**kwargs)
+        if platform == 'android':
+            kwargs['app_icon'] = ''
+            kwargs['toast'] = False
+            noti = DroidNotification()
+            noti._notify(**kwargs)
+        else:
+            notification.notify(**kwargs)
 
 
 def main():

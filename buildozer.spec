@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Schedules1206
+title = Schedules1212
 # (str) Package name
 package.name = schedules
 
@@ -28,7 +28,7 @@ source.include_patterns = assets/*,images/*.png
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.12.06
+version = 0.12.12
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -47,6 +47,7 @@ requirements.source.kivymd = ./kivymd
 #garden_requirements =
 
 # (str) Presplash of the application
+#presplash.filename = %(source.dir)s/data/presplash.png
 presplash.filename = ./schedules_splash.png
 
 # (str) Icon of the application
