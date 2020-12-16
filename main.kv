@@ -229,7 +229,7 @@ ScreenManager:
                 title: tr._('Settings')
                 md_bg_color: app.theme_cls.primary_color
                 elevation: 8
-                left_action_items: [['arrow-left', lambda x: app.back_to_main()]]
+                left_action_items: [['arrow-left', lambda x: app.go_back()]]
 
             MDStackLayout:
                 spacing: dp(10)
@@ -370,7 +370,7 @@ ScreenManager:
                 title: "Schedule"
                 elevation: 8
                 md_bg_color: app.theme_cls.primary_color
-                left_action_items: [['arrow-left', lambda x: app.back_to_main()]]
+                left_action_items: [['arrow-left', lambda x: app.go_back()]]
 
             MDTabs:
                 id: schedule_tabs

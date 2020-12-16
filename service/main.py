@@ -21,7 +21,8 @@ from plyer import notification
 from osc.osc_app_client import OscAppClient
 from Util import Util
 from Database import Database
-from DroidNotification import DroidNotification
+if platform == 'android':
+    from DroidNotification import DroidNotification
 
 
 class MyApp(App):

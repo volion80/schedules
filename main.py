@@ -43,6 +43,7 @@ from decorators import log_time
 from demo_data import lesson_names, time_ranges
 from kivy.uix.recycleview import RecycleView
 from kivymd.uix.textfield import MDTextField
+from ScheduleToast import schedule_toast
 from plyer import notification
 if platform == 'android':
     from DroidNotification import DroidNotification
@@ -168,6 +169,13 @@ class TitleTextField(MDTextField):
             self.text = val[:self.text_max]
         super().on_text(instance, val)
 
+    def on_focus(self, *args):
+        app = MainApp.get_running_app()
+        app.add_schedule_title_on_focus(args[1])
+        super().on_focus()
+
+
+
 
 class Lang(Observable):
     observers = []
@@ -218,7 +226,6 @@ class MainApp(MDApp):
         self.current_schedule_id = None
         self.current_week_num = None
         self.current_year = None
-        self.previous_screen= None
         self.cfg = config
         self.confirm_delete_schedule_dialog = None
         self.confirm_delete_lesson_dialog = None
@@ -226,7 +233,6 @@ class MainApp(MDApp):
         self.history = []
         super(MainApp, self).__init__(**kwargs)
         print("User data dir: %s" % self.user_data_dir)
-        Window.bind(on_keyboard=self.on_key)
 
     def build(self):
         super(MainApp, self).build()
@@ -269,6 +275,7 @@ class MainApp(MDApp):
         return self.cfg[key]
 
     def on_start(self):
+        Window.bind(on_keyboard=self.on_key)
         self.load_start_screen()
 
     def on_pause(self):
@@ -276,20 +283,11 @@ class MainApp(MDApp):
 
     def on_key(self, window, key, *args):
         if key == 27:
+            schedule_toast('Back button pressed')
             if self.root.current == 'start':
                 return True
-            elif self.root.current in ['add_schedule', 'add_homework', 'schedule', 'settings']:
-                index = 1 if self.root.current == 'add_homework' else 0
-                self.back_to_main(index)
-                return True
-            elif self.root.current in ['add_lesson']:
-                self.switch_screen('schedule')
-                return True
-            elif self.root.current == 'add_lesson_homework':
-                if self.previous_screen is not None:
-                    self.back_to_main(1) if self.previous_screen == 'homeworks' else self.switch_screen(self.previous_screen)
-                else:
-                    self.switch_screen('schedule')
+            else:
+                self.go_back()
                 return True
 
     def change_lang(self, btn):
@@ -308,11 +306,6 @@ class MainApp(MDApp):
         self.db.update_setting('theme_style', theme_style)
         self.set_theme_style(cb=self.refresh_settings)
         self.load_homeworks()
-
-    def switch_screen(self, screen, previous_screen=None):
-        self.history.append(self.root.current)
-        self.root.current = screen
-        self.previous_screen = previous_screen
 
     def check_settings(self):
         for setting in SETTINGS_DEFAULTS:
@@ -355,13 +348,12 @@ class MainApp(MDApp):
         start_tab_panel.background_color = self.get_tabs_color()
         self.load_schedules()
         self.load_homeworks()
-        self.switch_screen('start')
 
     def on_screen_pre_enter(self, screen):
         if screen.name == 'start':
             self.root.ids.start_tabs.background_color = self.get_tabs_color()
 
-    @log_time
+    # @log_time
     def load_schedules(self):
         schedule_list = self.root.ids.schedule_list
         Util.clear_list_items(schedule_list)
@@ -500,7 +492,7 @@ class MainApp(MDApp):
         )
         homework_menu.open()
 
-    @log_time
+    # @log_time
     def open_schedule(self, schedule_id, day_index=0, week_num=None, year=None):
         if week_num is None:
             week_num = Util.calc_week_num(0)
@@ -644,13 +636,6 @@ class MainApp(MDApp):
     def sort_homeworks(homeworks):
         return sorted(homeworks, key=lambda i: (i['homework_date'], datetime.datetime.strptime((i['lesson_time_start'] if i['lesson_time_start'] != '' else '23:59'), '%H:%M')))
 
-    def back_to_main(self, tab_index = 0):
-        self.reset_active_schedule_id()
-        self.reset_active_week_num()
-        self.reset_active_year()
-        self.root.ids.start_tabs.ids.carousel.index = tab_index
-        self.switch_screen('start')
-
     def get_active_week_num(self):
         return self.current_week_num
 
@@ -695,7 +680,6 @@ class MainApp(MDApp):
             else:
                 self.db.add_schedule(name=title)
 
-            self.load_schedules()
             if 'cb' in kwargs:
                 kwargs['cb']()
 
@@ -820,10 +804,18 @@ class MainApp(MDApp):
         title_field.text = '' if not schedule else schedule['name']
         title_field.focus = True
 
-        top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main()]]
-        top_toolbar.right_action_items = [['check', lambda x: self.save_schedule(schedule_id=schedule_id, title=title_field.text, cb=self.back_to_main)]]
+        def cb():
+            self.load_schedules()
+            self.go_back()
+
+        top_toolbar.left_action_items = [['arrow-left', lambda x: self.go_back()]]
+        top_toolbar.right_action_items = [['check', lambda x: self.save_schedule(schedule_id=schedule_id, title=title_field.text, cb=cb)]]
         top_toolbar.title = tr._('Edit Schedule') if schedule is not None else tr._('Add Schedule')
         self.switch_screen('add_schedule')
+
+    def add_schedule_title_on_focus(self, focused):
+        if not focused:
+            self.request_focus_for_main_view()
 
     def add_homework(self):
         top_toolbar = self.root.ids.add_homework_top_toolbar
@@ -831,7 +823,7 @@ class MainApp(MDApp):
         today = datetime.datetime.today().date()
         hw_date.text = str(today)
         self.add_homework_load_schedules(today)
-        top_toolbar.left_action_items = [['arrow-left', lambda x: self.back_to_main(1)]]
+        top_toolbar.left_action_items = [['arrow-left', lambda x: self.go_back()]]
         self.switch_screen('add_homework')
 
     def open_add_homework(self):
@@ -1093,9 +1085,6 @@ class MainApp(MDApp):
         self.refresh_settings_notify_homework()
 
     def add_lesson_homework(self, lesson_id, schedule_id=None, week_num=None, year=None):
-        screen_from = 'schedule' if schedule_id is None and week_num is None and year is None else 'homeworks'
-        previous_screen = None
-
         if schedule_id is None:
             schedule_id = self.get_active_schedule_id()
         lesson = self.db.get_lesson(schedule_id=schedule_id, id=lesson_id)
@@ -1112,8 +1101,6 @@ class MainApp(MDApp):
         if homework is None:
             desc = ''
             notifiable = True
-            if screen_from == 'homeworks':
-                previous_screen = 'add_homework'
         elif homework is False:
             toast(f'warning: duplicated homeworks found. lesson_id: {lesson_id}, week_num: {week_num}, year: {year}')
             desc = ''
@@ -1121,8 +1108,6 @@ class MainApp(MDApp):
         else:
             desc = homework['desc']
             notifiable = homework['notifiable']
-            if screen_from == 'homeworks':
-                previous_screen = 'homeworks'
 
         desc_field.text = desc
         desc_field.focus = True
@@ -1137,13 +1122,14 @@ class MainApp(MDApp):
 
         top_toolbar.left_action_items = [[
             'arrow-left',
-            lambda x: self.open_schedule(schedule_id, day, week_num, year) if screen_from == 'schedule' else self.switch_screen(previous_screen) if previous_screen == 'add_homework' else self.back_to_main(1)
+            lambda x: self.go_back()
         ]]
 
         def cb ():
             self.load_homeworks()
-            if screen_from == 'homeworks':
-                self.back_to_main(1)
+            if self.history[-1] == 'add_homework':
+                del self.history[-1]
+                self.go_back()
             else:
                 self.open_schedule(schedule_id, day, week_num, year)
             self.do_notify(f'{lesson["name"]} - a new task added')
@@ -1165,7 +1151,7 @@ class MainApp(MDApp):
         title = 'Add Homework' if homework_id is None else 'Edit Homework'
         top_toolbar.title = title
 
-        self.switch_screen('add_lesson_homework', previous_screen)
+        self.switch_screen('add_lesson_homework')
 
     def save_lesson_homework(self, **kwargs):
         homework_id = kwargs['id']
@@ -1408,6 +1394,37 @@ class MainApp(MDApp):
         else:
             notification.notify(**kwargs)
 
+    def reset_active_states(self):
+        self.reset_active_schedule_id()
+        self.reset_active_week_num()
+        self.reset_active_year()
+
+    def switch_screen(self, screen):
+        self.history.append(self.root.current)
+        Snackbar(text=f'Switch "{screen}". History::: ' + '->'.join(self.history)).open()
+        self.root.current = screen
+
+    def go_back(self):
+        # index = 1 if self.root.current == 'add_homework' else 0
+        # self.root.ids.start_tabs.ids.carousel.index = tab_index
+
+        if len(self.history) == 0:
+            Snackbar(text='Empty History!').open()
+            return
+        back_screen = self.history[-1]
+        del self.history[-1]
+        Snackbar(text=f'Back to "{back_screen}". History::: ' + '->'.join(self.history)).open()
+        if back_screen == 'start':
+            self.reset_active_states()
+        self.root.current = back_screen
+
+    def request_focus_for_main_view(self):
+        if platform != 'android':
+            return
+
+        from jnius import autoclass
+        PythonActivity = autoclass('org.kivy.android.PythonActivity')
+        PythonActivity.requestFocusForMainView()
 
 db = Database()
 lang = None
