@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Schedules1215
+title = Schedules1216
 # (str) Package name
 package.name = schedules
 
@@ -28,7 +28,7 @@ source.include_patterns = assets/*,images/*.png
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.12.15
+version = 0.12.16
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -36,7 +36,8 @@ version = 0.12.15
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,sqlite3,kivy==7de031428746e8b83712a565fd8b460643746805,oscpy,git+https://github.com/kivy/plyer.git,kivymd,pillow,pygments,android,sdl2_ttf==2.0.15
+# requirements = python3,sqlite3,kivy==7de031428746e8b83712a565fd8b460643746805,oscpy,git+https://github.com/kivy/plyer.git,kivymd,pillow,pygments,android,sdl2_ttf==2.0.15
+requirements = python3,sqlite3,kivy==7de031428746e8b83712a565fd8b460643746805,oscpy,git+https://github.com/kivy/plyer.git,kivymd,pillow,pygments,android,sdl2_ttf==2.0.15,sentry_sdk,openssl,urllib3
 
 
 # (str) Custom source folders for requirements

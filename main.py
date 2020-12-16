@@ -48,6 +48,8 @@ from plyer import notification
 if platform == 'android':
     from DroidNotification import DroidNotification
 
+import sentry_sdk
+
 
 KIVY_FONTS = [
     {
@@ -231,8 +233,8 @@ class MainApp(MDApp):
         self.confirm_delete_lesson_dialog = None
         self.db = None
         self.history = []
+        self.init_sentry()
         super(MainApp, self).__init__(**kwargs)
-        print("User data dir: %s" % self.user_data_dir)
 
     def build(self):
         super(MainApp, self).build()
@@ -250,6 +252,9 @@ class MainApp(MDApp):
         self.start_services()
 
         return self.root
+
+    def init_sentry(self):
+        sentry_sdk.init("https://02810d9a4a0547408822ce2500480a32@o492578.ingest.sentry.io/5560168", traces_sample_rate=1.0)
 
     @staticmethod
     def start_services():
@@ -283,7 +288,7 @@ class MainApp(MDApp):
 
     def on_key(self, window, key, *args):
         if key == 27:
-            schedule_toast('Back button pressed')
+            toast('Back button pressed')
             if self.root.current == 'start':
                 return True
             else:
