@@ -43,7 +43,6 @@ from decorators import log_time
 from demo_data import lesson_names, time_ranges
 from kivy.uix.recycleview import RecycleView
 from kivymd.uix.textfield import MDTextField
-from ScheduleToast import schedule_toast
 from plyer import notification
 if platform == 'android':
     from DroidNotification import DroidNotification
@@ -288,7 +287,6 @@ class MainApp(MDApp):
 
     def on_key(self, window, key, *args):
         if key == 27:
-            toast('Back button pressed')
             if self.root.current == 'start':
                 return True
             else:
@@ -998,8 +996,12 @@ class MainApp(MDApp):
             del_homeworks_wrapper.add_widget(del_chkbx_lbl)
             grid_layout.add_widget(del_homeworks_wrapper)
 
+        def cb():
+            self.open_schedule(schedule_id, day, week_num, year)
+            self.clear_recent_history('add_lesson', 'schedule')
+
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.switch_screen('schedule')]]
-        top_toolbar.right_action_items = [['check', lambda x: self.save_lesson(cb=lambda: self.open_schedule(schedule_id, day, week_num, year), schedule_id=schedule_id, lesson_id=lesson_id, day=day, title=title_field.text, del_homeworks=(del_chkbx.state == 'down' if del_chkbx is not None else False))]]
+        top_toolbar.right_action_items = [['check', lambda x: self.save_lesson(cb=cb, schedule_id=schedule_id, lesson_id=lesson_id, day=day, title=title_field.text, del_homeworks=(del_chkbx.state == 'down' if del_chkbx is not None else False))]]
         top_toolbar.title = f'{"Edit" if lesson is not None else "Add"} Lesson for {WEEK_DAYS[day]}'
         self.switch_screen('add_lesson')
 
@@ -1133,11 +1135,11 @@ class MainApp(MDApp):
         def cb ():
             self.load_homeworks()
             if self.history[-1] == 'add_homework':
-                del self.history[-1]
+                self.clear_recent_history('add_homework')
                 self.go_back()
             else:
                 self.open_schedule(schedule_id, day, week_num, year)
-            self.do_notify(f'{lesson["name"]} - a new task added')
+                self.clear_recent_history('add_lesson_homework', 'schedule')
 
         top_toolbar.right_action_items = [[
             'check',
@@ -1406,7 +1408,7 @@ class MainApp(MDApp):
 
     def switch_screen(self, screen):
         self.history.append(self.root.current)
-        Snackbar(text=f'Switch "{screen}". History::: ' + '->'.join(self.history)).open()
+        # Snackbar(text=f'Switch "{screen}". History::: ' + '->'.join(self.history)).open()
         self.root.current = screen
 
     def go_back(self):
@@ -1418,10 +1420,19 @@ class MainApp(MDApp):
             return
         back_screen = self.history[-1]
         del self.history[-1]
-        Snackbar(text=f'Back to "{back_screen}". History::: ' + '->'.join(self.history)).open()
+        # Snackbar(text=f'Back to "{back_screen}". History::: ' + '->'.join(self.history)).open()
         if back_screen == 'start':
             self.reset_active_states()
         self.root.current = back_screen
+
+    def clear_recent_history(self, *args):
+        if len(args)>= len(self.history):
+            toast('Clear History failed. History:::' + '->'.join(self.history)) + ' Requested to remove:::' + '->'.join(args)
+        for screen in args:
+            if screen == self.history[-1]:
+                del self.history[-1]
+            else:
+                break
 
     def request_focus_for_main_view(self):
         if platform != 'android':
