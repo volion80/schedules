@@ -1407,7 +1407,8 @@ class MainApp(MDApp):
         self.reset_active_year()
 
     def switch_screen(self, screen):
-        self.history.append(self.root.current)
+        if self.root.current != screen:
+            self.history.append(self.root.current)
         # Snackbar(text=f'Switch "{screen}". History::: ' + '->'.join(self.history)).open()
         self.root.current = screen
 
