@@ -159,7 +159,7 @@ ScreenManager:
                             font_name: app.get_app_font()
                             on_release: app.open_add_homework_datepicker()
 
-                    MDSeparator:
+#                    MDSeparator:
 
                     MDStackLayout:
                         id: add_homework_schedules_wrapper
@@ -168,7 +168,7 @@ ScreenManager:
                         spacing: dp(12)
                         size_hint: (1, None)
 
-                    MDSeparator:
+#                    MDSeparator:
 
                     MDStackLayout:
                         id: add_homework_lessons_wrapper
@@ -177,7 +177,7 @@ ScreenManager:
                         spacing: dp(12)
                         size_hint: (1, None)
 
-                    MDSeparator:
+#                    MDSeparator:
 
                     MDBoxLayout:
                         orientation: "vertical"
@@ -186,7 +186,7 @@ ScreenManager:
 
                         MDFillRoundFlatProceedButton:
                             id: add_homework_next_btn
-                            text: "Proceed"
+                            text: "Next"
                             spacing: dp(12)
                             pos_hint: {"center_x": .5, "center_y": 1}
                             font_name: app.get_app_font()
@@ -359,6 +359,19 @@ ScreenManager:
                     id: notify_select
                     text: ""
                     on_release: app.set_notify_time_setting(self.text)
+
+                MDSeparator:
+
+                MDLabel:
+                    text: "Generate Demo Schedule:"
+                    size_hint_y: None
+                    size_hint_x: 1
+                    size: [0, 20]
+
+                MDFillRoundFlatButton:
+                    id: create_demo_btn
+                    text: "Create Demo"
+                    on_release: app.generate_demo_schedule()
 
     Screen:
         name: "schedule"

@@ -1,49 +1,91 @@
 Screen:
-    name: "add_lesson_homework"
+    name: "add_homework"
     BoxLayout:
-        id: add_lesson_homework_layout
+        id: add_homework_layout
         orientation: 'vertical'
         MDToolbar:
-            id: add_lesson_homework_top_toolbar
-            title: "Add Homework"
-            md_bg_color: app.theme_cls.primary_color
+            id: add_homework_top_toolbar
+            title: "Select Date / Schedule / Lesson"
             elevation: 8
         ScrollView:
-            do_scroll_x: False
-            GridLayout:
-                padding: dp(30)
-                spacing: dp(20)
-                cols: 1
+            MDBoxLayout:
+                orientation: "vertical"
+#                padding: dp(48)
+#                spacing: 10
                 size_hint_y: None
                 height: self.minimum_height
 
-                MDLabel:
-                    id: add_lesson_homework_subtitle
-                    font_style: 'Subtitle1'
-                    font_size: 18
-                    theme_text_color: 'Custom'
-                    text_color: app.theme_cls.accent_color
-                    text: "French on Sat 05 Dec, 2020"
+                MDStackLayout:
+                    adaptive_size: True
+#                    pos_hint: {"center_x": 1}
+                    spacing: dp(12)
+                    size_hint: (1, None)
+                    MDRoundFlatIconButton:
+                        id: add_homework_date
+                        _radius: dp(5)
+                        icon: "calendar"
+                        text: "2020-12-20"
+                        spacing: dp(12)
+    #                        font_name: app.get_app_font()
+                        on_release: None
 
-                MDTextField:
-                    id: add_lesson_homework_desc_text
-                    hint_text: 'Describe your Task'
-#                    text_max: app.get_config_item('homework_desc_max_len')
-                    fill_color: 0, 0, 0, .1
-                    mode: 'fill'
-                    helper_text_mode: "on_focus"
-#                    helper_text: f'maximum {app.get_config_item("homework_desc_max_len")} chars length'
-                GridLayout:
-                    cols: 2
+                MDSeparator:
 
-                    MDLabel:
-                        font_style: 'Subtitle1'
-                        theme_text_color: 'Custom'
-                        text_color: app.theme_cls.primary_color
-                        text: "Enable reminder"
-                        size_hint_x: 0.8
+                MDStackLayout:
+                    id: add_homework_schedules_wrapper
+                    adaptive_size: True
+                    pos_hint: {"center_x": .5}
+                    spacing: dp(12)
+                    size_hint: (1, None)
 
-                    MDSwitch:
-                        id: add_lesson_homework_notifiable
-                        active: True
-                        size_hint_x: None
+                    RoundFlatToggleButton:
+                        text: "Demo 1"
+                        icon: "view-list"
+                        group: "schedule"
+                    RoundFlatToggleButton:
+                        text: "Demo 2"
+                        icon: "view-list"
+                        group: "schedule"
+
+                MDSeparator:
+
+                StackLayout:
+                    id: add_homework_lessons_wrapper
+                    adaptive_size: True
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    spacing: dp(12)
+                    size_hint: (1, None)
+
+                    RoundFlatToggleButton:
+                        text: "Lesson 1"
+                        icon: "book"
+                        group: "lesson"
+                    RoundFlatToggleButton:
+                        text: "Lesson 2"
+                        icon: "book"
+                        group: "lesson"
+                    RoundFlatToggleButton:
+                        text: "Lesson 3"
+                        icon: "book"
+                        group: "lesson"
+
+                MDSeparator:
+
+                StackLayout:
+                    adaptive_size: True
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    spacing: dp(12)
+                    size_hint: (1, None)
+
+                    MDRaisedButton:
+                        id: add_homework_next_btn
+                        text: "Proceed"
+    #                        spacing: dp(12)
+    #                        pos_hint: {"center_x": .5, "center_y": 1}
+    #                        font_name: app.get_app_font()
+                        on_release: None
+
+
+<RoundFlatToggleButton@MDFillRoundFlatIconButton,MDToggleButton>:
+    _radius: dp(5)
+    ripple_alpha: 0

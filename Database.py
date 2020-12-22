@@ -9,52 +9,58 @@ class Database:
         self.cursor = self.conn.cursor()
 
     def setup_schema(self):
-        self.cursor.execute('drop table if exists schedules')
-        self.cursor.execute('drop table if exists lessons')
-        self.cursor.execute('drop table if exists homeworks')
-        self.conn.commit()
+        self.create_data_tables()
+        self.create_settings_table()
 
+    def table_exists(self, name):
+        q = 'select count(*) as cnt from sqlite_master where type = "table" and name = ?'
+        v = [name]
+        res = self.cursor.execute(q, v).fetchone()
+        return dict(res)['cnt'] == 1
+
+    def create_data_tables(self):
         self.cursor.execute('''create table if not exists schedules 
-                                (
-                                    id integer 
-                                        constraint schedules_pk 
-                                            primary key autoincrement, 
-                                    name text
-                                )''')
+                                        (
+                                            id integer 
+                                                constraint schedules_pk 
+                                                    primary key autoincrement, 
+                                            name text
+                                        )''')
 
         self.cursor.execute('''create table if not exists lessons
-                                (
-                                    id integer
-                                        constraint lessons_pk
-                                            primary key autoincrement,
-                                    name text,
-                                    day integer,
-                                    time_start datetime,
-                                    time_end datetime,
-                                    schedule_id int not null
-                                        constraint lessons_schedules_id_fk
-                                            references schedules
-                                                on update cascade on delete cascade
-                                )''')
+                                        (
+                                            id integer
+                                                constraint lessons_pk
+                                                    primary key autoincrement,
+                                            name text,
+                                            day integer,
+                                            time_start datetime,
+                                            time_end datetime,
+                                            schedule_id int not null
+                                                constraint lessons_schedules_id_fk
+                                                    references schedules
+                                                        on update cascade on delete cascade
+                                        )''')
 
         self.cursor.execute('''create table if not exists homeworks
-                                (
-                                    id integer
-                                        constraint homeworks_pk
-                                            primary key autoincrement,
-                                    lesson_id integer not null
-                                        constraint homeworks_lessons_id_fk
-                                            references lessons
-                                                on update cascade on delete cascade,
-                                    desc text,
-                                    week_num integer not null,
-                                    year integer not null,
-                                    notifiable integer default 1 not null,
-                                    notified integer default 0 not null,
-                                    done integer default 0 not null
-                                )''')
+                                        (
+                                            id integer
+                                                constraint homeworks_pk
+                                                    primary key autoincrement,
+                                            lesson_id integer not null
+                                                constraint homeworks_lessons_id_fk
+                                                    references lessons
+                                                        on update cascade on delete cascade,
+                                            desc text,
+                                            week_num integer not null,
+                                            year integer not null,
+                                            notifiable integer default 1 not null,
+                                            notified integer default 0 not null,
+                                            done integer default 0 not null
+                                        )''')
         self.conn.commit()
 
+    def create_settings_table(self):
         if not self.table_exists('settings'):
             self.cursor.execute('''create table if not exists settings
                                         (
@@ -69,11 +75,11 @@ class Database:
                                         on settings (name)''')
         self.conn.commit()
 
-    def table_exists(self, name):
-        q = 'select count(*) as cnt from sqlite_master where type = "table" and name = ?'
-        v = [name]
-        res = self.cursor.execute(q, v).fetchone()
-        return dict(res)['cnt'] == 1
+    def drop_data_tables(self):
+        self.cursor.execute('drop table if exists schedules')
+        self.cursor.execute('drop table if exists lessons')
+        self.cursor.execute('drop table if exists homeworks')
+        self.conn.commit()
 
     '''
     SETTINGS

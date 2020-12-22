@@ -1,5 +1,5 @@
 import datetime
-
+import time
 
 class Util:
 
@@ -33,3 +33,7 @@ class Util:
     def get_date_str(year, week_num, day_index):
         date = Util.get_date(year, week_num, day_index)
         return f'{date.strftime("%a %d %b, %Y")}'
+
+    @staticmethod
+    def current_milli_time():
+        return int(round(time.time() * 1000))

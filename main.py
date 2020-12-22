@@ -148,7 +148,7 @@ class SettingsLangToggleButton(MDFillRoundFlatButton, MDToggleButton):
         super().__init__(**kwargs)
 
 
-class MDRoundFlatIconDateButton(MDRoundFlatIconButton):
+class MDRoundFlatIconDateButton(MDFillRoundFlatIconButton):
     def __init__(self, **kwargs):
         self._radius = "5dp"
         super().__init__(**kwargs)
@@ -246,8 +246,6 @@ class MainApp(MDApp):
         self.set_theme_style()
         self.set_fonts()
 
-        self.create_demo_schedules()
-
         self.start_services()
 
         return self.root
@@ -314,9 +312,9 @@ class MainApp(MDApp):
         for setting in SETTINGS_DEFAULTS:
             self.db.add_setting(name=setting['name'], val=setting['val'])
 
-    def create_demo_schedules(self):
-        for s in range(2):
-            schedule_name = 'Demo ' + str((s + 1))
+    def create_demo_schedules(self, num=1, cb=None):
+        for s in range(num):
+            schedule_name = 'Demo ' + str(Util.current_milli_time())
             schedule_id = self.db.add_schedule(name=schedule_name)
             lessons = []
             for d in range(6):
@@ -345,6 +343,9 @@ class MainApp(MDApp):
             if not homework_exists:
                 self.db.add_homework(lesson_id=lesson_row['id'], week_num=week_num, year=year,
                                      desc=f'test homework for {lesson_row["name"]}', done=randint(0, 1), notifiable=randint(0, 1))
+
+        if cb is not None:
+            cb()
 
     def load_start_screen(self):
         start_tab_panel = self.root.ids.start_tabs
@@ -1442,6 +1443,14 @@ class MainApp(MDApp):
         from jnius import autoclass
         PythonActivity = autoclass('org.kivy.android.PythonActivity')
         PythonActivity.requestFocusForMainView()
+
+    def generate_demo_schedule(self):
+        num = 1
+        def cb():
+            self.load_schedules()
+            self.load_homeworks()
+            self.go_back()
+        self.create_demo_schedules(num, cb)
 
 db = Database()
 lang = None
