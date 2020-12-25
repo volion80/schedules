@@ -803,7 +803,7 @@ class MDTabsBar(ThemableBehavior, RectangularElevationBehavior, MDBoxLayout):
 
     def __init__(self, **kwargs):
         self._trigger_update_tab_bar = Clock.schedule_once(
-            self._update_tab_bar, 0
+            self._update_tab_bar, -1
         )
         super().__init__(**kwargs)
 

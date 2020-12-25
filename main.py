@@ -8,7 +8,7 @@ from kivymd.uix.list import ThreeLineAvatarIconListItem, OneLineAvatarIconListIt
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
-from kivymd.uix.tab import MDTabsBase
+from kivymd.uix.tab import MDTabsBase, MDTabs
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.snackbar import Snackbar
 from kivy.properties import NumericProperty, ObjectProperty, StringProperty, BooleanProperty
@@ -251,7 +251,8 @@ class MainApp(MDApp):
         return self.root
 
     def init_sentry(self):
-        sentry_sdk.init("https://02810d9a4a0547408822ce2500480a32@o492578.ingest.sentry.io/5560168", traces_sample_rate=1.0)
+        if platform == 'android':
+            sentry_sdk.init("https://02810d9a4a0547408822ce2500480a32@o492578.ingest.sentry.io/5560168", traces_sample_rate=1.0)
 
     @staticmethod
     def start_services():
@@ -1380,7 +1381,7 @@ class MainApp(MDApp):
             year += 1
         self.root.ids.schedule_toolbar.title = f'{schedule["name"]} [{Util.get_date_str(year, week_num, day_index)}]'
 
-    def on_start_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
+    def on_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
         pass
 
     def mark_homework(self, homework_id, checkbox):
