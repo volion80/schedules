@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Schedules1226
+title = Schedules1229
 # (str) Package name
 package.name = schedules
 
@@ -28,7 +28,7 @@ source.include_patterns = assets/*,images/*.png
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.12.26
+version = 0.12.29
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]

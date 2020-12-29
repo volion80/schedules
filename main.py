@@ -58,7 +58,6 @@ KIVY_FONTS = [
     }
 ]
 
-WEEK_DAYS = {0: 'Mon', 1: 'Tue', 2: 'Wed', 3: 'Thu', 4: 'Fri', 5: 'Sat', 6: 'Sun'}
 SETTINGS_DEFAULTS = [
     {'name': 'lang', 'val': 'en'},
     {'name': 'remind_homework_time', 'val': '16:00'},
@@ -385,7 +384,7 @@ class MainApp(MDApp):
                 'id': str(homework['id']),
                 'text': f'{homework["lesson_name"]} ({homework["schedule_name"]}) {homework["lesson_time_start"]}',
                 'font_style': 'Body1',
-                'secondary_text': homework_date.strftime("%a %d %b, %Y"),
+                'secondary_text': self.translate_date(homework_date.strftime("%a %d %b, %Y"), '%a %d %b, %Y'),
                 'secondary_theme_text_color': 'Custom',
                 'secondary_text_color': self.theme_cls.primary_dark if not is_today else self.theme_cls.accent_dark,
                 'secondary_font_style': 'Subtitle1',
@@ -483,7 +482,7 @@ class MainApp(MDApp):
             ),
             icon_src='delete',
         )
-        mark_text = 'Undone' if instance.done else 'Done'
+        mark_text = tr._('Undone') if instance.done else tr._('Done')
         mark_icon = 'checkbox-blank-off' if instance.done else 'checkbox-marked'
         homework_menu.add_item(
             mark_text,
@@ -512,9 +511,10 @@ class MainApp(MDApp):
 
         tab_list = schedule_tab_panel.get_tab_list()
 
-        for i in range(len(WEEK_DAYS)):
+        week_days = self.week_days()
+        for i in range(len(week_days)):
             tab = tab_list[(len(tab_list) - 1) - i]
-            tab.text = WEEK_DAYS[i]
+            tab.text = week_days[i]
             lesson_list = self.root.ids[f'lesson_list_day_{i}']
             lessons = self.db.get_lessons(schedule_id=schedule_id, day=i, homework_week_num=week_num, homework_year=year)
             lessons_data = []
@@ -533,7 +533,8 @@ class MainApp(MDApp):
         schedule = self.db.get_schedule(schedule_id)
         schedule_tab_panel.ids.carousel.index = day_index
         date_range = self.get_week_date_range(week_num=week_num, year=year)
-        self.root.ids.schedule_toolbar.title = f'{schedule["name"]} [{Util.get_date_str(year, week_num, day_index)}]'
+        date_str = Util.get_date_str(year, week_num, day_index)
+        self.root.ids.schedule_toolbar.title = f'{schedule["name"]} ({self.translate_date(date_str, "%a %d %b, %Y")})'
         self.root.ids.bottom_schedule_toolbar.title = date_range
         self.switch_screen('schedule')
 
@@ -565,16 +566,16 @@ class MainApp(MDApp):
         homework_exists = False
         homework = self.db.find_homework(lesson_id=instance.id, week_num=week_num, year=year)
         if homework is None:
-            hw_action_name = 'Add'
+            hw_action_name = tr._('Add')
         elif homework is False:
             toast(f'warning: duplicated homeworks found. lesson_id: {instance.id}, week_num: {week_num}, year: {year}')
-            hw_action_name = 'Add'
+            hw_action_name = tr._('Add')
         else:
-            hw_action_name = 'Edit'
+            hw_action_name = tr._('Edit')
             homework_exists = True
 
         lesson_menu.add_item(
-            f'{hw_action_name} Homework',
+            f'{hw_action_name} ' + tr._('Task'),
             lambda x: self.callback_for_lesson_menu_items(
                 lesson_id=instance.id,
                 action='add_homework'
@@ -583,7 +584,7 @@ class MainApp(MDApp):
         )
         if homework_exists:
             lesson_menu.add_item(
-                'Clear Homework',
+                tr._('Clear Task'),
                 lambda x: self.callback_for_lesson_menu_items(
                     lesson_id=instance.id,
                     action='clear_homework'
@@ -592,7 +593,7 @@ class MainApp(MDApp):
             )
 
         lesson_menu.add_item(
-            'Edit',
+            tr._('Edit'),
             lambda x: self.callback_for_lesson_menu_items(
                 lesson_id=instance.id,
                 action='edit'
@@ -601,7 +602,7 @@ class MainApp(MDApp):
         )
 
         lesson_menu.add_item(
-            'Delete',
+            tr._('Delete'),
             lambda x: self.callback_for_lesson_menu_items(
                 lesson_id=instance.id,
                 action='delete'
@@ -609,7 +610,7 @@ class MainApp(MDApp):
             icon_src='delete',
         )
         lesson_menu.add_item(
-            'Set Time Start',
+            tr._('Set Time Start'),
             lambda x: self.callback_for_lesson_menu_items(
                 lesson_id=instance.id,
                 action='set_start_time'
@@ -617,7 +618,7 @@ class MainApp(MDApp):
             icon_src='clock-in',
         )
         lesson_menu.add_item(
-            'Set Time End',
+            tr._('Set Time End'),
             lambda x: self.callback_for_lesson_menu_items(
                 lesson_id=instance.id,
                 action='set_end_time'
@@ -909,13 +910,13 @@ class MainApp(MDApp):
             schedules_wrapper.add_widget(schedule_button)
 
         if len(schedules_wrapper.children) == 0:
-            not_found_btn = MDTextButton(text="No Schedules available")
+            not_found_btn = MDTextButton(text=tr._("No Schedules available"))
             schedules_wrapper.add_widget(not_found_btn)
 
         self.add_homework_add_lessons_hint()
 
     def add_homework_add_lessons_hint(self):
-        hint_btn = MDTextButton(text="Select a Schedule...", font_name=self.get_app_font())
+        hint_btn = MDTextButton(text=tr._("Select a Schedule..."), font_name=self.get_app_font())
         self.root.ids.add_homework_lessons_wrapper.add_widget(hint_btn)
 
     def add_homework_reset_lessons(self):
@@ -991,7 +992,7 @@ class MainApp(MDApp):
                 unselected_color=self.theme_cls.text_color
             )
             del_chkbx_lbl = MDLabel(
-                text='delete all related homeworks',
+                text=tr._('delete all related homeworks'),
                 color=self.theme_cls.text_color
             )
             del_homeworks_wrapper.add_widget(del_chkbx)
@@ -1002,9 +1003,11 @@ class MainApp(MDApp):
             self.open_schedule(schedule_id, day, week_num, year)
             self.clear_recent_history('add_lesson', 'schedule')
 
-        top_toolbar.left_action_items = [['arrow-left', lambda x: self.switch_screen('schedule')]]
+        top_toolbar.left_action_items = [['arrow-left', lambda x: self.go_back()]]
         top_toolbar.right_action_items = [['check', lambda x: self.save_lesson(cb=cb, schedule_id=schedule_id, lesson_id=lesson_id, day=day, title=title_field.text, del_homeworks=(del_chkbx.state == 'down' if del_chkbx is not None else False))]]
-        top_toolbar.title = f'{"Edit" if lesson is not None else "Add"} Lesson for {WEEK_DAYS[day]}'
+        lesson_mode = tr._("Edit") if lesson is not None else tr._("Add")
+        week_days = self.week_days()
+        top_toolbar.title = f'{lesson_mode} ' + tr._('Lesson for') + f' {week_days[day]}'
         self.switch_screen('add_lesson')
 
     def get_current_tab_index(self, tabs_name):
@@ -1127,7 +1130,8 @@ class MainApp(MDApp):
         done = 0 if homework is None else homework['done']
         notified = 0 if homework is None else homework['notified']
         day = lesson['day']
-        subtitle.text = f'{lesson["name"]} on {Util.get_date_str(year, week_num, day)}'
+        date_str = Util.get_date_str(year, week_num, day)
+        subtitle.text = f'{lesson["name"]} on {self.translate_date(date_str, "%a %d %b, %Y")}'
 
         top_toolbar.left_action_items = [[
             'arrow-left',
@@ -1157,7 +1161,7 @@ class MainApp(MDApp):
                 cb=cb
             )]]
 
-        title = 'Add Homework' if homework_id is None else 'Edit Homework'
+        title = tr._('Add Task') if homework_id is None else tr._('Edit Task')
         top_toolbar.title = title
 
         self.switch_screen('add_lesson_homework')
@@ -1203,7 +1207,7 @@ class MainApp(MDApp):
         day = self.get_current_tab_index('schedule')
         week_num = self.get_active_week_num() - 1
         year = self.get_active_year()
-        if week_num == -1:
+        if week_num <= -1:
             week_num += 52
             year -= 1
         self.open_schedule(schedule_id, day, week_num, year)
@@ -1213,7 +1217,7 @@ class MainApp(MDApp):
         day = self.get_current_tab_index('schedule')
         week_num = self.get_active_week_num() + 1
         year = self.get_active_year()
-        if week_num == 52:
+        if week_num >= 52:
             week_num -= 52
             year += 1
         self.open_schedule(schedule_id, day, week_num, year)
@@ -1367,19 +1371,21 @@ class MainApp(MDApp):
         return get_color_from_hex(colors[self.theme_cls.primary_palette]['700'])
 
     def on_schedule_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
+        week_days = self.week_days()
         schedule_id = self.get_active_schedule_id()
         schedule = self.db.get_schedule(schedule_id)
         day_index = None
-        for index, day in WEEK_DAYS.items():
-            if day.lower() == tab_text.lower():
-                day_index = index
+        for i in week_days:
+            if i.lower() == tab_text.lower():
+                day_index = week_days.index(i)
 
         week_num = self.get_active_week_num()
         year = self.get_active_year()
-        if week_num == 52:
+        if week_num >= 52:
             week_num -= 52
             year += 1
-        self.root.ids.schedule_toolbar.title = f'{schedule["name"]} [{Util.get_date_str(year, week_num, day_index)}]'
+        date_str = Util.get_date_str(year, week_num, day_index)
+        self.root.ids.schedule_toolbar.title = f'{schedule["name"]} ({self.translate_date(date_str, "%a %d %b, %Y")})'
 
     def on_tab_switch(self, instance_tabs, instance_tab, instance_tab_label, tab_text):
         pass
@@ -1453,6 +1459,35 @@ class MainApp(MDApp):
             self.go_back()
         self.create_demo_schedules(num, cb)
 
+    def week_days(self):
+        week_days = self.week_days_config()
+        values = week_days.values()
+        return list(values)
+
+    @staticmethod
+    def week_days_config():
+        return {'Mon': tr._('Mon'), 'Tue': tr._('Tue'), 'Wed': tr._('Wed'), 'Thu': tr._('Thu'), 'Fri': tr._('Fri'), 'Sat': tr._('Sat'), 'Sun': tr._('Sun')}
+
+    @staticmethod
+    def months_config():
+        return {'Jan': tr._('Jan'), 'Feb': tr._('Feb'), 'Mar': tr._('Mar'), 'Apr': tr._('Apr'), 'May': tr._('May'),
+                'Jun': tr._('Jun'), 'Jul': tr._('Jul'), 'Aug': tr._('Aug'), 'Sep': tr._('Sep'), 'Oct': tr._('Oct'),
+                'Nov': tr._('Nov'), 'Dec': tr._('Dec')}
+
+    def translate_date(self, date_str, format=None):
+        week_days = self.week_days_config()
+        months = self.months_config()
+        if format == '%a %d %b, %Y':
+            day_name = date_str[:3]
+            if day_name in week_days:
+                date_str = date_str[:3].replace(day_name, week_days[day_name]) + date_str[3:]
+            month_name = date_str[-9:-6]
+            if month_name in months:
+                date_str = date_str[:-9] + date_str[-9:-6].replace(month_name, months[month_name]) + date_str[-6:]
+
+        return date_str
+
+
 db = Database()
 lang = None
 if db.table_exists('settings'):
@@ -1460,6 +1495,7 @@ if db.table_exists('settings'):
 if lang is None:
     lang = SETTINGS_DEFAULTS[0]['val']
 db.conn.close()
+
 tr = Lang(lang)
 
 MainApp().run()

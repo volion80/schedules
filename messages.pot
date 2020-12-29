@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-20 00:00+0200\n"
+"POT-Creation-Date: 2020-12-29 23:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,24 +17,152 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.py:440
+#: main.py:441
 msgid "Open"
 msgstr ""
 
-#: main.py:448 main.py:468
+#: main.py:449 main.py:469 main.py:574 main.py:596 main.py:1008
 msgid "Edit"
 msgstr ""
 
-#: main.py:456 main.py:476
+#: main.py:457 main.py:477 main.py:605
 msgid "Delete"
 msgstr ""
 
-#: main.py:820
+#: main.py:485
+msgid "Undone"
+msgstr ""
+
+#: main.py:485
+msgid "Done"
+msgstr ""
+
+#: main.py:569 main.py:572 main.py:1008
+msgid "Add"
+msgstr ""
+
+#: main.py:578
+msgid "Task"
+msgstr ""
+
+#: main.py:587
+msgid "Clear Task"
+msgstr ""
+
+#: main.py:613
+msgid "Set Time Start"
+msgstr ""
+
+#: main.py:621
+msgid "Set Time End"
+msgstr ""
+
+#: main.py:819
 msgid "Edit Schedule"
 msgstr ""
 
-#: main.py:820 main.kv:110
+#: main.py:819 main.kv:110
 msgid "Add Schedule"
+msgstr ""
+
+#: main.py:913
+msgid "No Schedules available"
+msgstr ""
+
+#: main.py:919
+msgid "Select a Schedule..."
+msgstr ""
+
+#: main.py:995
+msgid "delete all related homeworks"
+msgstr ""
+
+#: main.py:1010
+msgid "Lesson for"
+msgstr ""
+
+#: main.py:1163 main.kv:451
+msgid "Add Task"
+msgstr ""
+
+#: main.py:1163
+msgid "Edit Task"
+msgstr ""
+
+#: main.py:1468
+msgid "Mon"
+msgstr ""
+
+#: main.py:1468
+msgid "Tue"
+msgstr ""
+
+#: main.py:1468
+msgid "Wed"
+msgstr ""
+
+#: main.py:1468
+msgid "Thu"
+msgstr ""
+
+#: main.py:1468
+msgid "Fri"
+msgstr ""
+
+#: main.py:1468
+msgid "Sat"
+msgstr ""
+
+#: main.py:1468
+msgid "Sun"
+msgstr ""
+
+#: main.py:1472
+msgid "Jan"
+msgstr ""
+
+#: main.py:1472
+msgid "Feb"
+msgstr ""
+
+#: main.py:1472
+msgid "Mar"
+msgstr ""
+
+#: main.py:1472
+msgid "Apr"
+msgstr ""
+
+#: main.py:1472
+msgid "May"
+msgstr ""
+
+#: main.py:1473
+msgid "Jun"
+msgstr ""
+
+#: main.py:1473
+msgid "Jul"
+msgstr ""
+
+#: main.py:1473
+msgid "Aug"
+msgstr ""
+
+#: main.py:1473
+msgid "Sep"
+msgstr ""
+
+#: main.py:1473
+msgid "Oct"
+msgstr ""
+
+#: main.py:1474
+msgid "Nov"
+msgstr ""
+
+#: main.py:1474
+msgid "Dec"
 msgstr ""
 
 #: main.kv:84
@@ -42,21 +170,65 @@ msgid "Schedules"
 msgstr ""
 
 #: main.kv:91
-msgid "Homeworks"
+msgid "Tasks"
 msgstr ""
 
-#: main.kv:123
+#: main.kv:123 main.kv:216
 msgid "Title"
 msgstr ""
 
-#: main.kv:128
+#: main.kv:128 main.kv:221 main.kv:476
 msgid "maximum"
 msgstr ""
 
-#: main.kv:128
+#: main.kv:128 main.kv:221 main.kv:476
 msgid "chars length"
+msgstr ""
+
+#: main.kv:138
+msgid "Select Lesson"
+msgstr ""
+
+#: main.kv:189
+msgid "Next"
+msgstr ""
+
+#: main.kv:202
+msgid "Add Lesson"
 msgstr ""
 
 #: main.kv:229
 msgid "Settings"
+msgstr ""
+
+#: main.kv:239
+msgid "Theme Color:"
+msgstr ""
+
+#: main.kv:321
+msgid "Theme Style:"
+msgstr ""
+
+#: main.kv:337
+msgid "Language:"
+msgstr ""
+
+#: main.kv:353
+msgid "Task Reminder:"
+msgstr ""
+
+#: main.kv:366
+msgid "Generate Demo Schedule:"
+msgstr ""
+
+#: main.kv:373
+msgid "Create Demo"
+msgstr ""
+
+#: main.kv:471
+msgid "Describe your Task"
+msgstr ""
+
+#: main.kv:484
+msgid "Enable reminder"
 msgstr ""

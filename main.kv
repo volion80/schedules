@@ -88,7 +88,7 @@ ScreenManager:
                             id: schedule_list
                 Tab:
                     id: homeworks_tab
-                    text: tr._('Homeworks')
+                    text: tr._('Tasks')
                     HomeworkListRV:
                         id: homework_list
 
@@ -135,7 +135,7 @@ ScreenManager:
             orientation: 'vertical'
             MDToolbar:
                 id: add_homework_top_toolbar
-                title: "Select Date / Schedule / Lesson"
+                title: tr._("Select Lesson")
                 elevation: 8
 
             ScrollView:
@@ -186,7 +186,7 @@ ScreenManager:
 
                         MDFillRoundFlatProceedButton:
                             id: add_homework_next_btn
-                            text: "Next"
+                            text: tr._("Next")
                             spacing: dp(12)
                             pos_hint: {"center_x": .5, "center_y": 1}
                             font_name: app.get_app_font()
@@ -199,7 +199,7 @@ ScreenManager:
             orientation: 'vertical'
             MDToolbar:
                 id: add_lesson_top_toolbar
-                title: "Add Lesson"
+                title: tr._("Add Lesson")
                 elevation: 8
             ScrollView:
                 do_scroll_x: False
@@ -213,12 +213,12 @@ ScreenManager:
 
                     TitleTextField:
                         id: add_lesson_title
-                        hint_text: 'Title'
+                        hint_text: tr._('Title')
                         text_max: app.get_config_item('lesson_title_max_len')
                         fill_color: 0, 0, 0, .1
                         mode: 'fill'
                         helper_text_mode: "on_focus"
-                        helper_text: f'maximum {app.get_config_item("lesson_title_max_len")} chars length'
+                        helper_text: tr._("maximum") + f' {app.get_config_item("lesson_title_max_len")} ' + tr._("chars length")
 
     Screen:
         name: "settings"
@@ -236,7 +236,7 @@ ScreenManager:
                 padding: dp(10)
 
                 MDLabel:
-                    text: "Theme Color:"
+                    text: tr._("Theme Color:")
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
@@ -318,7 +318,7 @@ ScreenManager:
                     setting_value: "BlueGray"
 
                 MDLabel:
-                    text: "Theme Style:"
+                    text: tr._("Theme Style:")
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
@@ -334,7 +334,7 @@ ScreenManager:
                 MDSeparator:
 
                 MDLabel:
-                    text: "Language:"
+                    text: tr._("Language:")
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
@@ -350,7 +350,7 @@ ScreenManager:
                 MDSeparator:
 
                 MDLabel:
-                    text: "Homework Reminder:"
+                    text: tr._("Task Reminder:")
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
@@ -363,14 +363,14 @@ ScreenManager:
                 MDSeparator:
 
                 MDLabel:
-                    text: "Generate Demo Schedule:"
+                    text: tr._("Generate Demo Schedule:")
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
 
                 MDFillRoundFlatButton:
                     id: create_demo_btn
-                    text: "Create Demo"
+                    text: tr._("Create Demo")
                     on_release: app.generate_demo_schedule()
 
     Screen:
@@ -448,7 +448,7 @@ ScreenManager:
             orientation: 'vertical'
             MDToolbar:
                 id: add_lesson_homework_top_toolbar
-                title: "Add Homework"
+                title: tr._("Add Task")
                 md_bg_color: app.theme_cls.primary_color
                 elevation: 8
             ScrollView:
@@ -468,12 +468,12 @@ ScreenManager:
 
                     TitleTextField:
                         id: add_lesson_homework_desc_text
-                        hint_text: 'Describe your Homework'
+                        hint_text: tr._('Describe your Task')
                         text_max: app.get_config_item('homework_desc_max_len')
                         fill_color: 0, 0, 0, .1
                         mode: 'fill'
                         helper_text_mode: "on_focus"
-                        helper_text: f'maximum {app.get_config_item("homework_desc_max_len")} chars length'
+                        helper_text: tr._("maximum") + f' {app.get_config_item("homework_desc_max_len")} ' + tr._("chars length")
                     GridLayout:
                         cols: 2
 
@@ -481,7 +481,7 @@ ScreenManager:
                             font_style: 'Subtitle1'
                             theme_text_color: 'Custom'
                             text_color: app.theme_cls.primary_color
-                            text: "Enable reminder"
+                            text: tr._("Enable reminder")
                             size_hint_x: 0.8
 
                         MDSwitch:
