@@ -1233,7 +1233,9 @@ class MainApp(MDApp):
         try:
             monday = datetime.datetime.strptime(f'{year}-W{week_num}-1', '%Y-W%W-%w').date()
             sunday = datetime.datetime.strptime(f'{year}-W{week_num}-0', '%Y-W%W-%w').date()
-            return f'{monday.strftime("%d %b")} - {sunday.strftime("%d %b")}'
+            monday_str = monday.strftime("%d %b")
+            sunday_str = sunday.strftime("%d %b")
+            return f'{self.translate_date(monday_str, "%d %b")} - {self.translate_date(sunday_str, "%d %b")}'
         except ValueError as err:
             toast(f'Oops! Invalid date format: {err}')
             return False
@@ -1342,7 +1344,8 @@ class MainApp(MDApp):
             'bottom_schedule_toolbar',
             'add_schedule_top_toolbar',
             'add_lesson_top_toolbar',
-            'add_homework_top_toolbar'
+            'add_homework_top_toolbar',
+            'add_lesson_homework_top_toolbar'
         ]
         for tb in toolbars:
             self.root.ids[tb].ids.label_title.font_name = "Jura"
@@ -1363,6 +1366,13 @@ class MainApp(MDApp):
             tab_label.font_name = font_name
             tab_label.font_size = "16sp"
             tab_label.bold = True
+
+        # Add lesson homework screen
+        add_lesson_homework_items = ['add_lesson_homework_subtitle', 'add_lesson_homework_reminder_label']
+        for alh_item in add_lesson_homework_items:
+            self.root.ids[alh_item].font_name = font_name
+
+
 
     def get_theme_color(self, palette, hue):
         return get_color_from_hex(colors[palette][hue])
@@ -1484,7 +1494,10 @@ class MainApp(MDApp):
             month_name = date_str[-9:-6]
             if month_name in months:
                 date_str = date_str[:-9] + date_str[-9:-6].replace(month_name, months[month_name]) + date_str[-6:]
-
+        elif format == '%d %b':
+            month_name = date_str[-3:]
+            if month_name in months:
+                date_str = date_str[:-3] + date_str[-3:].replace(month_name, months[month_name])
         return date_str
 
 
