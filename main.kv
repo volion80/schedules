@@ -192,33 +192,85 @@ ScreenManager:
                             font_name: app.get_app_font()
                             on_release: app.open_add_homework()
 
+
     Screen:
         name: "add_lesson"
         BoxLayout:
             id: add_lesson_layout
-            orientation: 'vertical'
-            MDToolbar:
-                id: add_lesson_top_toolbar
-                title: tr._("Add Lesson")
-                elevation: 8
-            ScrollView:
-                do_scroll_x: False
-                GridLayout:
-                    id: add_lesson_grid_layout
-                    padding: dp(30)
-                    spacing: dp(20)
-                    cols: 1
+    #        orientation: 'vertical'
+            size_hint_y: None
+            height: root.height - add_lesson_top_toolbar.height
+
+        ScrollView:
+            GridLayout:
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: "10dp"
+                padding: "20dp"
+                cols: 1
+
+                Widget:
+                    size_hint_y: None
+                    height: app.theme_cls.standard_increment
+
+                BoxLayout:
+                    orientation: "vertical"
                     size_hint_y: None
                     height: self.minimum_height
+                    padding: "10dp"
+                    spacing: "10dp"
 
                     TitleTextField:
                         id: add_lesson_title
                         hint_text: tr._('Title')
                         text_max: app.get_config_item('lesson_title_max_len')
-                        fill_color: 0, 0, 0, .1
+                #        fill_color: 0, 0, 0, 0
                         mode: 'fill'
                         helper_text_mode: "on_focus"
                         helper_text: tr._("maximum") + f' {app.get_config_item("lesson_title_max_len")} ' + tr._("chars length")
+
+                BoxLayout:
+                    id: edit_lesson_del_homeworks_card
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: "10dp"
+                    spacing: "10dp"
+
+                    BoxLayout:
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: "5dp"
+
+                        MDLabel:
+                            font_style: 'Caption'
+                            theme_text_color: 'Custom'
+                            text_color: app.theme_cls.accent_color
+                            text: tr._("Note! Lesson has tasks assigned, use the option below to delete them on saving changes.")
+
+
+                    BoxLayout:
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: "5dp"
+
+                        MDLabel:
+                            id: edit_lesson_del_homeworks_label
+                            font_style: 'Subtitle1'
+                            theme_text_color: 'Custom'
+                            text_color: app.theme_cls.primary_color
+                            text: tr._("Delete tasks")
+
+                        MDSwitch:
+                            id: edit_lesson_del_homeworks_switch
+                            active: False
+
+        MDToolbar:
+            id: add_lesson_top_toolbar
+            title: tr._("Add Lesson")
+            elevation: 8
+            pos_hint: {"top": 1}
+
 
     Screen:
         name: "settings"

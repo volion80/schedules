@@ -964,7 +964,6 @@ class MainApp(MDApp):
     def add_lesson(self, lesson_id=None):
         title_field = self.root.ids.add_lesson_title
         top_toolbar = self.root.ids.add_lesson_top_toolbar
-        grid_layout = self.root.ids.add_lesson_grid_layout
 
         week_num = self.get_active_week_num()
         year = self.get_active_year()
@@ -975,36 +974,19 @@ class MainApp(MDApp):
         title_field.text = '' if not lesson else lesson['name']
         title_field.focus = True
 
-        for child in grid_layout.children:
-            if type(child).__name__ == 'BoxLayout' and child.id == 'add_lesson_del_homeworks_layout':
-                grid_layout.remove_widget(child)
-
-        del_chkbx = None
-        if lesson is not None:
-            del_homeworks_wrapper = BoxLayout(id='add_lesson_del_homeworks_layout')
-            del_chkbx = MDCheckbox(
-                id='add_lesson_del_homework_checkbox',
-                size_hint=[None, None],
-                size=['48dp', '48dp'],
-                pos_hint={'center_x': .5, 'center_y': .5},
-                selected_color=self.theme_cls.text_color,
-                color=self.theme_cls.text_color,
-                unselected_color=self.theme_cls.text_color
-            )
-            del_chkbx_lbl = MDLabel(
-                text=tr._('delete all related homeworks'),
-                color=self.theme_cls.text_color
-            )
-            del_homeworks_wrapper.add_widget(del_chkbx)
-            del_homeworks_wrapper.add_widget(del_chkbx_lbl)
-            grid_layout.add_widget(del_homeworks_wrapper)
+        del_homework_card = self.root.ids.edit_lesson_del_homeworks_card
+        del_homework_switch = self.root.ids.edit_lesson_del_homeworks_switch
+        del_homework_switch.active = False
+        has_homeworks = False if lesson is None else self.lesson_has_future_homeworks(lesson_id)
+        del_homework_card.disabled = not has_homeworks
+        del_homework_card.opacity = 0 if not has_homeworks else 1
 
         def cb():
             self.open_schedule(schedule_id, day, week_num, year)
             self.clear_recent_history('add_lesson', 'schedule')
 
         top_toolbar.left_action_items = [['arrow-left', lambda x: self.go_back()]]
-        top_toolbar.right_action_items = [['check', lambda x: self.save_lesson(cb=cb, schedule_id=schedule_id, lesson_id=lesson_id, day=day, title=title_field.text, del_homeworks=(del_chkbx.state == 'down' if del_chkbx is not None else False))]]
+        top_toolbar.right_action_items = [['check', lambda x: self.save_lesson(cb=cb, schedule_id=schedule_id, lesson_id=lesson_id, day=day, title=title_field.text, del_homeworks=(del_homework_switch.active == True))]]
         lesson_mode = tr._("Edit") if lesson is not None else tr._("Add")
         week_days = self.week_days()
         top_toolbar.title = f'{lesson_mode} ' + tr._('Lesson for') + f' {week_days[day]}'
@@ -1131,7 +1113,7 @@ class MainApp(MDApp):
         notified = 0 if homework is None else homework['notified']
         day = lesson['day']
         date_str = Util.get_date_str(year, week_num, day)
-        subtitle.text = f'{lesson["name"]} on {self.translate_date(date_str, "%a %d %b, %Y")}'
+        subtitle.text = f'{lesson["name"]} ' + tr._("on") + f' {self.translate_date(date_str, "%a %d %b, %Y")}'
 
         top_toolbar.left_action_items = [[
             'arrow-left',

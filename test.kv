@@ -1,91 +1,89 @@
 Screen:
-    name: "add_homework"
+    name: "add_lesson"
     BoxLayout:
-        id: add_homework_layout
-        orientation: 'vertical'
-        MDToolbar:
-            id: add_homework_top_toolbar
-            title: "Select Date / Schedule / Lesson"
-            elevation: 8
-        ScrollView:
-            MDBoxLayout:
-                orientation: "vertical"
-#                padding: dp(48)
-#                spacing: 10
-                size_hint_y: None
-                height: self.minimum_height
+        id: add_lesson_layout
+#        orientation: 'vertical'
+        size_hint_y: None
+        height: root.height - add_lesson_top_toolbar.height
 
-                MDStackLayout:
-                    adaptive_size: True
-#                    pos_hint: {"center_x": 1}
-                    spacing: dp(12)
-                    size_hint: (1, None)
-                    MDRoundFlatIconButton:
-                        id: add_homework_date
-                        _radius: dp(5)
-                        icon: "calendar"
-                        text: "2020-12-20"
-                        spacing: dp(12)
-    #                        font_name: app.get_app_font()
-                        on_release: None
+    AddLessonLayout:
 
-                MDSeparator:
-
-                MDStackLayout:
-                    id: add_homework_schedules_wrapper
-                    adaptive_size: True
-                    pos_hint: {"center_x": .5}
-                    spacing: dp(12)
-                    size_hint: (1, None)
-
-                    RoundFlatToggleButton:
-                        text: "Demo 1"
-                        icon: "view-list"
-                        group: "schedule"
-                    RoundFlatToggleButton:
-                        text: "Demo 2"
-                        icon: "view-list"
-                        group: "schedule"
-
-                MDSeparator:
-
-                StackLayout:
-                    id: add_homework_lessons_wrapper
-                    adaptive_size: True
-                    pos_hint: {"center_x": .5, "center_y": .5}
-                    spacing: dp(12)
-                    size_hint: (1, None)
-
-                    RoundFlatToggleButton:
-                        text: "Lesson 1"
-                        icon: "book"
-                        group: "lesson"
-                    RoundFlatToggleButton:
-                        text: "Lesson 2"
-                        icon: "book"
-                        group: "lesson"
-                    RoundFlatToggleButton:
-                        text: "Lesson 3"
-                        icon: "book"
-                        group: "lesson"
-
-                MDSeparator:
-
-                StackLayout:
-                    adaptive_size: True
-                    pos_hint: {"center_x": .5, "center_y": .5}
-                    spacing: dp(12)
-                    size_hint: (1, None)
-
-                    MDRaisedButton:
-                        id: add_homework_next_btn
-                        text: "Proceed"
-    #                        spacing: dp(12)
-    #                        pos_hint: {"center_x": .5, "center_y": 1}
-    #                        font_name: app.get_app_font()
-                        on_release: None
+    MDToolbar:
+        id: add_lesson_top_toolbar
+        title: "Add Lesson"
+        elevation: 8
+        pos_hint: {"top": 1}
 
 
-<RoundFlatToggleButton@MDFillRoundFlatIconButton,MDToggleButton>:
-    _radius: dp(5)
-    ripple_alpha: 0
+<AddLessonLayout@ScrollView>:
+    GridLayout:
+        size_hint_y: None
+        height: self.minimum_height
+        spacing: "10dp"
+        padding: "10dp"
+        cols: 1
+
+        Widget:
+            size_hint_y: None
+            height: app.theme_cls.standard_increment
+
+        CardLessonTitle:
+
+        CardDelTasks:
+            id: edit_lesson_del_homeworks_card
+
+
+<CardLessonTitle@BoxLayout>:
+    orientation: "vertical"
+    size_hint_y: None
+    height: self.minimum_height
+    padding: "10dp"
+    spacing: "10dp"
+
+    MDTextField:
+        id: add_lesson_title
+        hint_text: "Title"
+        text_max: 50
+#        fill_color: 0, 0, 0, 0
+        mode: 'fill'
+        helper_text_mode: "on_focus"
+        helper_text: "maximum 50 chars length"
+
+
+
+
+<CardDelTasks@BoxLayout>:
+    orientation: "vertical"
+    size_hint_y: None
+    height: self.minimum_height
+    padding: "10dp"
+    spacing: "10dp"
+
+    BoxLayout:
+        size_hint_y: None
+        height: self.minimum_height
+        spacing: "5dp"
+
+        MDLabel:
+            id: note_label
+            font_style: 'Caption'
+            theme_text_color: 'Custom'
+            text_color: app.theme_cls.accent_color
+            text: "Note! Lesson has tasks assigned, use the option below to delete them on saving changes."
+
+
+    BoxLayout:
+        size_hint_y: None
+        height: self.minimum_height
+        spacing: "5dp"
+
+        MDLabel:
+            id: edit_lesson_del_homeworks_label
+            font_style: 'Subtitle1'
+            theme_text_color: 'Custom'
+            text_color: app.theme_cls.primary_color
+            text: "Delete related tasks"
+
+        MDSwitch:
+            id: edit_lesson_del_homeworks_switch
+            active: False

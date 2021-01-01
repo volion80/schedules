@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-29 23:57+0200\n"
+"POT-Creation-Date: 2021-01-01 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: main.py:449 main.py:469 main.py:574 main.py:596 main.py:1008
+#: main.py:449 main.py:469 main.py:574 main.py:596 main.py:990
 msgid "Edit"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: main.py:569 main.py:572 main.py:1008
+#: main.py:569 main.py:572 main.py:990
 msgid "Add"
 msgstr ""
 
@@ -73,95 +73,95 @@ msgstr ""
 msgid "Select a Schedule..."
 msgstr ""
 
-#: main.py:995
-msgid "delete all related homeworks"
-msgstr ""
-
-#: main.py:1010
+#: main.py:992
 msgid "Lesson for"
 msgstr ""
 
-#: main.py:1163 main.kv:451
+#: main.py:1116
+msgid "on"
+msgstr ""
+
+#: main.py:1146 main.kv:556
 msgid "Add Task"
 msgstr ""
 
-#: main.py:1163
+#: main.py:1146
 msgid "Edit Task"
 msgstr ""
 
-#: main.py:1468
+#: main.py:1461
 msgid "Mon"
 msgstr ""
 
-#: main.py:1468
+#: main.py:1461
 msgid "Tue"
 msgstr ""
 
-#: main.py:1468
+#: main.py:1461
 msgid "Wed"
 msgstr ""
 
-#: main.py:1468
+#: main.py:1461
 msgid "Thu"
 msgstr ""
 
-#: main.py:1468
+#: main.py:1461
 msgid "Fri"
 msgstr ""
 
-#: main.py:1468
+#: main.py:1461
 msgid "Sat"
 msgstr ""
 
-#: main.py:1468
+#: main.py:1461
 msgid "Sun"
 msgstr ""
 
-#: main.py:1472
+#: main.py:1465
 msgid "Jan"
 msgstr ""
 
-#: main.py:1472
+#: main.py:1465
 msgid "Feb"
 msgstr ""
 
-#: main.py:1472
+#: main.py:1465
 msgid "Mar"
 msgstr ""
 
-#: main.py:1472
+#: main.py:1465
 msgid "Apr"
 msgstr ""
 
-#: main.py:1472
+#: main.py:1465
 msgid "May"
 msgstr ""
 
-#: main.py:1473
+#: main.py:1466
 msgid "Jun"
 msgstr ""
 
-#: main.py:1473
+#: main.py:1466
 msgid "Jul"
 msgstr ""
 
-#: main.py:1473
+#: main.py:1466
 msgid "Aug"
 msgstr ""
 
-#: main.py:1473
+#: main.py:1466
 msgid "Sep"
 msgstr ""
 
-#: main.py:1473
+#: main.py:1466
 msgid "Oct"
 msgstr ""
 
-#: main.py:1474
+#: main.py:1467
 msgid "Nov"
 msgstr ""
 
-#: main.py:1474
+#: main.py:1467
 msgid "Dec"
 msgstr ""
 
@@ -173,15 +173,15 @@ msgstr ""
 msgid "Tasks"
 msgstr ""
 
-#: main.kv:123 main.kv:216
+#: main.kv:123 main.kv:278
 msgid "Title"
 msgstr ""
 
-#: main.kv:128 main.kv:221 main.kv:476
+#: main.kv:128 main.kv:283 main.kv:581
 msgid "maximum"
 msgstr ""
 
-#: main.kv:128 main.kv:221 main.kv:476
+#: main.kv:128 main.kv:283 main.kv:581
 msgid "chars length"
 msgstr ""
 
@@ -193,42 +193,52 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: main.kv:202
+#: main.kv:302
+msgid ""
+"Note! Lesson has tasks assigned, use the option below to delete them on "
+"saving changes."
+msgstr ""
+
+#: main.kv:315
+msgid "Delete tasks"
+msgstr ""
+
+#: main.kv:323
 msgid "Add Lesson"
 msgstr ""
 
-#: main.kv:229
+#: main.kv:334
 msgid "Settings"
 msgstr ""
 
-#: main.kv:239
+#: main.kv:344
 msgid "Theme Color:"
 msgstr ""
 
-#: main.kv:321
+#: main.kv:426
 msgid "Theme Style:"
 msgstr ""
 
-#: main.kv:337
+#: main.kv:442
 msgid "Language:"
 msgstr ""
 
-#: main.kv:353
+#: main.kv:458
 msgid "Task Reminder:"
 msgstr ""
 
-#: main.kv:366
+#: main.kv:471
 msgid "Generate Demo Schedule:"
 msgstr ""
 
-#: main.kv:373
+#: main.kv:478
 msgid "Create Demo"
 msgstr ""
 
-#: main.kv:471
+#: main.kv:576
 msgid "Describe your Task"
 msgstr ""
 
-#: main.kv:484
+#: main.kv:590
 msgid "Enable reminder"
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-29 23:57+0200\n"
+"POT-Creation-Date: 2021-01-01 18:11+0200\n"
 "PO-Revision-Date: 2020-11-19 23:14+0200\n"
 "Last-Translator: V K <volion80@gmail.com>\n"
 "Language-Team: V K <volion80@gmail.com>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Open"
 msgstr "Открыть"
 
-#: main.py:449 main.py:469 main.py:574 main.py:596 main.py:1008
+#: main.py:449 main.py:469 main.py:574 main.py:596 main.py:990
 msgid "Edit"
 msgstr "Изменить"
 
@@ -37,7 +37,7 @@ msgstr "Не сделано"
 msgid "Done"
 msgstr "Сделано"
 
-#: main.py:569 main.py:572 main.py:1008
+#: main.py:569 main.py:572 main.py:990
 msgid "Add"
 msgstr "Добавить"
 
@@ -73,95 +73,95 @@ msgstr "Нет расписаний для выбранной даты"
 msgid "Select a Schedule..."
 msgstr "Выбери Расписание..."
 
-#: main.py:995
-msgid "delete all related homeworks"
-msgstr "удалить все связанные задания"
-
-#: main.py:1010
+#: main.py:992
 msgid "Lesson for"
 msgstr "урок для"
 
-#: main.py:1163 main.kv:451
+#: main.py:1116
+msgid "on"
+msgstr "на"
+
+#: main.py:1146 main.kv:556
 msgid "Add Task"
 msgstr "Добавить задание"
 
-#: main.py:1163
+#: main.py:1146
 msgid "Edit Task"
 msgstr "Изменить задание"
 
-#: main.py:1468
+#: main.py:1461
 msgid "Mon"
 msgstr "Пн"
 
-#: main.py:1468
+#: main.py:1461
 msgid "Tue"
 msgstr "Вт"
 
-#: main.py:1468
+#: main.py:1461
 msgid "Wed"
 msgstr "Ср"
 
-#: main.py:1468
+#: main.py:1461
 msgid "Thu"
 msgstr "Чт"
 
-#: main.py:1468
+#: main.py:1461
 msgid "Fri"
 msgstr "Пт"
 
-#: main.py:1468
+#: main.py:1461
 msgid "Sat"
 msgstr "Сб"
 
-#: main.py:1468
+#: main.py:1461
 msgid "Sun"
 msgstr "Вс"
 
-#: main.py:1472
+#: main.py:1465
 msgid "Jan"
 msgstr "Янв"
 
-#: main.py:1472
+#: main.py:1465
 msgid "Feb"
 msgstr "Фев"
 
-#: main.py:1472
+#: main.py:1465
 msgid "Mar"
 msgstr "Мар"
 
-#: main.py:1472
+#: main.py:1465
 msgid "Apr"
 msgstr "Апр"
 
-#: main.py:1472
+#: main.py:1465
 msgid "May"
 msgstr "Май"
 
-#: main.py:1473
+#: main.py:1466
 msgid "Jun"
 msgstr "Июн"
 
-#: main.py:1473
+#: main.py:1466
 msgid "Jul"
 msgstr "Июл"
 
-#: main.py:1473
+#: main.py:1466
 msgid "Aug"
 msgstr "Авг"
 
-#: main.py:1473
+#: main.py:1466
 msgid "Sep"
 msgstr "Сен"
 
-#: main.py:1473
+#: main.py:1466
 msgid "Oct"
 msgstr "Окт"
 
-#: main.py:1474
+#: main.py:1467
 msgid "Nov"
 msgstr "Ноя"
 
-#: main.py:1474
+#: main.py:1467
 msgid "Dec"
 msgstr "Дек"
 
@@ -173,15 +173,15 @@ msgstr "Расписания"
 msgid "Tasks"
 msgstr "Задания"
 
-#: main.kv:123 main.kv:216
+#: main.kv:123 main.kv:278
 msgid "Title"
 msgstr "Название"
 
-#: main.kv:128 main.kv:221 main.kv:476
+#: main.kv:128 main.kv:283 main.kv:581
 msgid "maximum"
 msgstr "максимум"
 
-#: main.kv:128 main.kv:221 main.kv:476
+#: main.kv:128 main.kv:283 main.kv:581
 msgid "chars length"
 msgstr "символов"
 
@@ -193,45 +193,59 @@ msgstr "Выбери урок"
 msgid "Next"
 msgstr "Продолжить"
 
-#: main.kv:202
+#: main.kv:302
+msgid ""
+"Note! Lesson has tasks assigned, use the option below to delete them on "
+"saving changes."
+msgstr ""
+"Внимание! Для данного урока есть задания, включи данную опцию для их очистки."
+
+#: main.kv:315
+msgid "Delete tasks"
+msgstr "Удалить задания"
+
+#: main.kv:323
 msgid "Add Lesson"
 msgstr "Добавить урок"
 
-#: main.kv:229
+#: main.kv:334
 msgid "Settings"
 msgstr "Настройки"
 
-#: main.kv:239
+#: main.kv:344
 msgid "Theme Color:"
 msgstr "Цветовая тема"
 
-#: main.kv:321
+#: main.kv:426
 msgid "Theme Style:"
 msgstr "Стиль темы"
 
-#: main.kv:337
+#: main.kv:442
 msgid "Language:"
 msgstr "Язык"
 
-#: main.kv:353
+#: main.kv:458
 msgid "Task Reminder:"
 msgstr "Напоминания о заданиях:"
 
-#: main.kv:366
+#: main.kv:471
 msgid "Generate Demo Schedule:"
 msgstr "Создать демо-расписание"
 
-#: main.kv:373
+#: main.kv:478
 msgid "Create Demo"
 msgstr "Содать демо"
 
-#: main.kv:471
+#: main.kv:576
 msgid "Describe your Task"
 msgstr "Опиши задание"
 
-#: main.kv:484
+#: main.kv:590
 msgid "Enable reminder"
 msgstr "Добавить в напоминания"
+
+#~ msgid "delete all related homeworks"
+#~ msgstr "удалить все связанные задания"
 
 #~ msgid "Homeworks"
 #~ msgstr "Задания"

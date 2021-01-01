@@ -77,3 +77,11 @@ COLOR DEFINITIONS
 Palette:
 	['Red', 'Pink', 'Purple', 'DeepPurple', 'Indigo', 'Blue', 'LightBlue', 'Cyan', 'Teal', 'Green', 'LightGreen', 'Lime', 'Yellow', 'Amber', 'Orange', 'DeepOrange', 'Brown', 'Gray', 'BlueGray']
 -------------------------------
+# buildozer
+buildozer init
+buildozer -v android debug
+# or to install immediately
+buildozer -v android debug deploy
+
+adb logcat | grep "python"
+-------------------------------
