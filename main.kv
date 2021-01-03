@@ -132,72 +132,92 @@ ScreenManager:
 
         BoxLayout:
             id: add_homework_layout
-            orientation: 'vertical'
-            MDToolbar:
-                id: add_homework_top_toolbar
-                title: tr._("Select Lesson")
-                elevation: 8
+            size_hint_y: None
+            height: root.height - add_homework_top_toolbar.height
 
-            ScrollView:
-                MDBoxLayout:
+        ScrollView:
+            GridLayout:
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: "10dp"
+                padding: "10dp"
+                cols: 1
+
+                Widget:
+                    size_hint_y: None
+                    height: app.theme_cls.standard_increment
+
+                BoxLayout:
                     orientation: "vertical"
-                    padding: dp(48)
-                    spacing: 10
                     size_hint_y: None
                     height: self.minimum_height
 
-                    MDBoxLayout:
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        orientation: "vertical"
+                    AddHomeworkDateButton:
+                        id: add_homework_date
+                        icon: "calendar"
+                        text: ""
+                        pos_hint: {"center_x": .5}
+                        font_name: app.get_app_font()
+                        on_release: app.open_add_homework_datepicker()
 
-                        MDRoundFlatIconDateButton:
-                            id: add_homework_date
-                            icon: "calendar"
-                            text: ""
-                            pos_hint: {"center_x": .5}
-                            spacing: dp(12)
-                            font_name: app.get_app_font()
-                            on_release: app.open_add_homework_datepicker()
+                MDCard:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: "20dp"
+                    spacing: "20dp"
 
-#                    MDSeparator:
+                    MDLabel:
+                        text: tr._("Schedule:")
+                        font_name: app.get_app_font()
 
                     MDStackLayout:
                         id: add_homework_schedules_wrapper
-                        adaptive_size: True
-                        pos_hint: {"center_x": .5}
-                        spacing: dp(12)
-                        size_hint: (1, None)
-
-#                    MDSeparator:
-
-                    MDStackLayout:
-                        id: add_homework_lessons_wrapper
-                        adaptive_size: True
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        spacing: dp(12)
-                        size_hint: (1, None)
-
-#                    MDSeparator:
-
-                    MDBoxLayout:
-                        orientation: "vertical"
+                        spacing: "10dp"
                         size_hint_y: None
                         height: self.minimum_height
 
-                        MDFillRoundFlatProceedButton:
-                            id: add_homework_next_btn
-                            text: tr._("Next")
-                            spacing: dp(12)
-                            pos_hint: {"center_x": .5, "center_y": 1}
-                            font_name: app.get_app_font()
-                            on_release: app.open_add_homework()
+                MDCard:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: "20dp"
+                    spacing: "20dp"
+
+                    MDLabel:
+                        text: tr._("Lesson:")
+                        font_name: app.get_app_font()
+
+                    MDStackLayout:
+                        id: add_homework_lessons_wrapper
+                        spacing: "10dp"
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: "10dp"
+
+                    MDFillRoundFlatProceedButton:
+                        id: add_homework_next_btn
+                        text: tr._("Continue")
+                        pos_hint: {"center_x": .5}
+                        font_name: app.get_app_font()
+                        on_release: app.open_add_homework()
+
+        MDToolbar:
+            id: add_homework_top_toolbar
+            title: tr._("Select Lesson")
+            elevation: 8
+            pos_hint: {"top": 1}
 
 
     Screen:
         name: "add_lesson"
         BoxLayout:
             id: add_lesson_layout
-    #        orientation: 'vertical'
             size_hint_y: None
             height: root.height - add_lesson_top_toolbar.height
 
@@ -292,6 +312,7 @@ ScreenManager:
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
+                    font_name: app.get_app_font()
 
                 SettingsThemeColorToggleButton:
                     text: "Red"
@@ -374,6 +395,7 @@ ScreenManager:
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
+                    font_name: app.get_app_font()
 
                 SettingsThemeStyleToggleButton:
                     text: "Light"
@@ -390,6 +412,7 @@ ScreenManager:
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
+                    font_name: app.get_app_font()
 
                 SettingsLangToggleButton:
                     text: "En"
@@ -406,10 +429,12 @@ ScreenManager:
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
+                    font_name: app.get_app_font()
 
                 MDFillRoundFlatButton:
                     id: notify_select
                     text: ""
+                    font_name: app.get_app_font()
                     on_release: app.set_notify_time_setting(self.text)
 
                 MDSeparator:
@@ -419,10 +444,12 @@ ScreenManager:
                     size_hint_y: None
                     size_hint_x: 1
                     size: [0, 20]
+                    font_name: app.get_app_font()
 
                 MDFillRoundFlatButton:
                     id: create_demo_btn
                     text: tr._("Create Demo")
+                    font_name: app.get_app_font()
                     on_release: app.generate_demo_schedule()
 
     Screen:
@@ -517,6 +544,7 @@ ScreenManager:
                         font_style: 'Subtitle1'
                         theme_text_color: 'Custom'
                         text_color: app.theme_cls.accent_color
+                        font_name: app.get_app_font()
 
                     TitleTextField:
                         id: add_lesson_homework_desc_text
@@ -536,6 +564,7 @@ ScreenManager:
                             text_color: app.theme_cls.primary_color
                             text: tr._("Enable reminder")
                             size_hint_x: 0.8
+                            font_name: app.get_app_font()
 
                         MDSwitch:
                             id: add_lesson_homework_notifiable

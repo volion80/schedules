@@ -1,0 +1,112 @@
+Screen:
+    name: "add_homework"
+
+    BoxLayout:
+        id: add_homework_layout
+        size_hint_y: None
+        height: root.height - add_homework_top_toolbar.height
+
+    ScrollView:
+        GridLayout:
+            size_hint_y: None
+            height: self.minimum_height
+            spacing: "10dp"
+            padding: "10dp"
+            cols: 1
+
+            Widget:
+                size_hint_y: None
+                height: app.theme_cls.standard_increment
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDFillRoundFlatIconButton:
+#                MDRoundFlatIconButton:
+                    id: add_homework_date
+                    _radius: dp(5)
+                    icon: "calendar"
+                    text: "2020-12-20"
+                    pos_hint: {"center_x": .5}
+                    on_release: None
+
+            MDCard:
+                id: add_homework_schedules_wrapper
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: "20dp"
+                spacing: "20dp"
+
+                MDLabel:
+                    text: "Schedule:"
+
+                StackLayout:
+                    spacing: "10dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    RoundFlatToggleButton:
+                        text: "Demo 1"
+                        icon: "view-list"
+                        group: "schedule"
+                    RoundFlatToggleButton:
+                        text: "Demo 2"
+                        icon: "view-list"
+                        group: "schedule"
+
+
+            MDCard:
+                id: add_homework_lessons_wrapper
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: "20dp"
+                spacing: "20dp"
+
+                MDLabel:
+                    text: "Lesson:"
+
+                StackLayout:
+                    spacing: "10dp"
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    RoundFlatToggleButton:
+                        text: "Lesson 1"
+                        icon: "book"
+                        group: "lesson"
+                    RoundFlatToggleButton:
+                        text: "Lesson 2"
+                        icon: "book"
+                        group: "lesson"
+                    RoundFlatToggleButton:
+                        text: "Lesson 3"
+                        icon: "book"
+                        group: "lesson"
+
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: "10dp"
+
+                MDRaisedButton:
+                    id: add_homework_next_btn
+                    text: "Next"
+                    pos_hint: {"center_x": .5}
+                    on_release: None
+
+    MDToolbar:
+        id: add_homework_top_toolbar
+        title: "Select Lesson"
+        elevation: 8
+        pos_hint: {"top": 1}
+
+
+<RoundFlatToggleButton@MDFillRoundFlatIconButton,MDToggleButton>:
+    _radius: dp(5)
+    ripple_alpha: 0

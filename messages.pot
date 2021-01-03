@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-01 18:11+0200\n"
+"POT-Creation-Date: 2021-01-02 00:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,7 +81,7 @@ msgstr ""
 msgid "on"
 msgstr ""
 
-#: main.py:1146 main.kv:556
+#: main.py:1146 main.kv:530
 msgid "Add Task"
 msgstr ""
 
@@ -89,79 +89,79 @@ msgstr ""
 msgid "Edit Task"
 msgstr ""
 
-#: main.py:1461
+#: main.py:1455
 msgid "Mon"
 msgstr ""
 
-#: main.py:1461
+#: main.py:1455
 msgid "Tue"
 msgstr ""
 
-#: main.py:1461
+#: main.py:1455
 msgid "Wed"
 msgstr ""
 
-#: main.py:1461
+#: main.py:1455
 msgid "Thu"
 msgstr ""
 
-#: main.py:1461
+#: main.py:1455
 msgid "Fri"
 msgstr ""
 
-#: main.py:1461
+#: main.py:1455
 msgid "Sat"
 msgstr ""
 
-#: main.py:1461
+#: main.py:1455
 msgid "Sun"
 msgstr ""
 
-#: main.py:1465
+#: main.py:1459
 msgid "Jan"
 msgstr ""
 
-#: main.py:1465
+#: main.py:1459
 msgid "Feb"
 msgstr ""
 
-#: main.py:1465
+#: main.py:1459
 msgid "Mar"
 msgstr ""
 
-#: main.py:1465
+#: main.py:1459
 msgid "Apr"
 msgstr ""
 
-#: main.py:1465
+#: main.py:1459
 msgid "May"
 msgstr ""
 
-#: main.py:1466
+#: main.py:1460
 msgid "Jun"
 msgstr ""
 
-#: main.py:1466
+#: main.py:1460
 msgid "Jul"
 msgstr ""
 
-#: main.py:1466
+#: main.py:1460
 msgid "Aug"
 msgstr ""
 
-#: main.py:1466
+#: main.py:1460
 msgid "Sep"
 msgstr ""
 
-#: main.py:1466
+#: main.py:1460
 msgid "Oct"
 msgstr ""
 
-#: main.py:1467
+#: main.py:1461
 msgid "Nov"
 msgstr ""
 
-#: main.py:1467
+#: main.py:1461
 msgid "Dec"
 msgstr ""
 
@@ -173,72 +173,80 @@ msgstr ""
 msgid "Tasks"
 msgstr ""
 
-#: main.kv:123 main.kv:278
+#: main.kv:123 main.kv:245
 msgid "Title"
 msgstr ""
 
-#: main.kv:128 main.kv:283 main.kv:581
+#: main.kv:128 main.kv:250 main.kv:556
 msgid "maximum"
 msgstr ""
 
-#: main.kv:128 main.kv:283 main.kv:581
+#: main.kv:128 main.kv:250 main.kv:556
 msgid "chars length"
 msgstr ""
 
-#: main.kv:138
+#: main.kv:171
+msgid "Schedule:"
+msgstr ""
+
+#: main.kv:188
+msgid "Lesson:"
+msgstr ""
+
+#: main.kv:205
+msgid "Continue"
+msgstr ""
+
+#: main.kv:212
 msgid "Select Lesson"
 msgstr ""
 
-#: main.kv:189
-msgid "Next"
-msgstr ""
-
-#: main.kv:302
+#: main.kv:269
 msgid ""
 "Note! Lesson has tasks assigned, use the option below to delete them on "
 "saving changes."
 msgstr ""
 
-#: main.kv:315
+#: main.kv:282
 msgid "Delete tasks"
 msgstr ""
 
-#: main.kv:323
+#: main.kv:290
 msgid "Add Lesson"
 msgstr ""
 
-#: main.kv:334
+#: main.kv:301
 msgid "Settings"
 msgstr ""
 
-#: main.kv:344
+#: main.kv:311
 msgid "Theme Color:"
 msgstr ""
 
-#: main.kv:426
+#: main.kv:394
 msgid "Theme Style:"
 msgstr ""
 
-#: main.kv:442
+#: main.kv:411
 msgid "Language:"
 msgstr ""
 
-#: main.kv:458
+#: main.kv:428
 msgid "Task Reminder:"
 msgstr ""
 
-#: main.kv:471
+#: main.kv:443
 msgid "Generate Demo Schedule:"
 msgstr ""
 
-#: main.kv:478
+#: main.kv:451
 msgid "Create Demo"
 msgstr ""
 
-#: main.kv:576
+#: main.kv:551
 msgid "Describe your Task"
 msgstr ""
 
-#: main.kv:590
+#: main.kv:565
 msgid "Enable reminder"
 msgstr ""

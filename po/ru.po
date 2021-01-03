@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-01 18:11+0200\n"
+"POT-Creation-Date: 2021-01-02 00:48+0200\n"
 "PO-Revision-Date: 2020-11-19 23:14+0200\n"
 "Last-Translator: V K <volion80@gmail.com>\n"
 "Language-Team: V K <volion80@gmail.com>\n"
@@ -81,7 +81,7 @@ msgstr "урок для"
 msgid "on"
 msgstr "на"
 
-#: main.py:1146 main.kv:556
+#: main.py:1146 main.kv:530
 msgid "Add Task"
 msgstr "Добавить задание"
 
@@ -89,79 +89,79 @@ msgstr "Добавить задание"
 msgid "Edit Task"
 msgstr "Изменить задание"
 
-#: main.py:1461
+#: main.py:1455
 msgid "Mon"
 msgstr "Пн"
 
-#: main.py:1461
+#: main.py:1455
 msgid "Tue"
 msgstr "Вт"
 
-#: main.py:1461
+#: main.py:1455
 msgid "Wed"
 msgstr "Ср"
 
-#: main.py:1461
+#: main.py:1455
 msgid "Thu"
 msgstr "Чт"
 
-#: main.py:1461
+#: main.py:1455
 msgid "Fri"
 msgstr "Пт"
 
-#: main.py:1461
+#: main.py:1455
 msgid "Sat"
 msgstr "Сб"
 
-#: main.py:1461
+#: main.py:1455
 msgid "Sun"
 msgstr "Вс"
 
-#: main.py:1465
+#: main.py:1459
 msgid "Jan"
 msgstr "Янв"
 
-#: main.py:1465
+#: main.py:1459
 msgid "Feb"
 msgstr "Фев"
 
-#: main.py:1465
+#: main.py:1459
 msgid "Mar"
 msgstr "Мар"
 
-#: main.py:1465
+#: main.py:1459
 msgid "Apr"
 msgstr "Апр"
 
-#: main.py:1465
+#: main.py:1459
 msgid "May"
 msgstr "Май"
 
-#: main.py:1466
+#: main.py:1460
 msgid "Jun"
 msgstr "Июн"
 
-#: main.py:1466
+#: main.py:1460
 msgid "Jul"
 msgstr "Июл"
 
-#: main.py:1466
+#: main.py:1460
 msgid "Aug"
 msgstr "Авг"
 
-#: main.py:1466
+#: main.py:1460
 msgid "Sep"
 msgstr "Сен"
 
-#: main.py:1466
+#: main.py:1460
 msgid "Oct"
 msgstr "Окт"
 
-#: main.py:1467
+#: main.py:1461
 msgid "Nov"
 msgstr "Ноя"
 
-#: main.py:1467
+#: main.py:1461
 msgid "Dec"
 msgstr "Дек"
 
@@ -173,76 +173,93 @@ msgstr "Расписания"
 msgid "Tasks"
 msgstr "Задания"
 
-#: main.kv:123 main.kv:278
+#: main.kv:123 main.kv:245
 msgid "Title"
 msgstr "Название"
 
-#: main.kv:128 main.kv:283 main.kv:581
+#: main.kv:128 main.kv:250 main.kv:556
 msgid "maximum"
 msgstr "максимум"
 
-#: main.kv:128 main.kv:283 main.kv:581
+#: main.kv:128 main.kv:250 main.kv:556
 msgid "chars length"
 msgstr "символов"
 
-#: main.kv:138
+#: main.kv:171
+msgid "Schedule:"
+msgstr "Расписание:"
+
+#: main.kv:188
+msgid "Lesson:"
+msgstr "Урок:"
+
+#: main.kv:205
+msgid "Continue"
+msgstr "Продолжить"
+
+#: main.kv:212
 msgid "Select Lesson"
 msgstr "Выбери урок"
 
-#: main.kv:189
-msgid "Next"
-msgstr "Продолжить"
-
-#: main.kv:302
+#: main.kv:269
 msgid ""
 "Note! Lesson has tasks assigned, use the option below to delete them on "
 "saving changes."
 msgstr ""
 "Внимание! Для данного урока есть задания, включи данную опцию для их очистки."
 
-#: main.kv:315
+#: main.kv:282
 msgid "Delete tasks"
 msgstr "Удалить задания"
 
-#: main.kv:323
+#: main.kv:290
 msgid "Add Lesson"
 msgstr "Добавить урок"
 
-#: main.kv:334
+#: main.kv:301
 msgid "Settings"
 msgstr "Настройки"
 
-#: main.kv:344
+#: main.kv:311
 msgid "Theme Color:"
 msgstr "Цветовая тема"
 
-#: main.kv:426
+#: main.kv:394
 msgid "Theme Style:"
 msgstr "Стиль темы"
 
-#: main.kv:442
+#: main.kv:411
 msgid "Language:"
 msgstr "Язык"
 
-#: main.kv:458
+#: main.kv:428
 msgid "Task Reminder:"
 msgstr "Напоминания о заданиях:"
 
-#: main.kv:471
+#: main.kv:443
 msgid "Generate Demo Schedule:"
 msgstr "Создать демо-расписание"
 
-#: main.kv:478
+#: main.kv:451
 msgid "Create Demo"
 msgstr "Содать демо"
 
-#: main.kv:576
+#: main.kv:551
 msgid "Describe your Task"
 msgstr "Опиши задание"
 
-#: main.kv:590
+#: main.kv:565
 msgid "Enable reminder"
 msgstr "Добавить в напоминания"
+
+#~ msgid "Schedule"
+#~ msgstr "Расписание"
+
+#~ msgid "Lesson"
+#~ msgstr "Урок"
+
+#~ msgid "Next"
+#~ msgstr "Продолжить"
 
 #~ msgid "delete all related homeworks"
 #~ msgstr "удалить все связанные задания"

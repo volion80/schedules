@@ -147,7 +147,7 @@ class SettingsLangToggleButton(MDFillRoundFlatButton, MDToggleButton):
         super().__init__(**kwargs)
 
 
-class MDRoundFlatIconDateButton(MDFillRoundFlatIconButton):
+class AddHomeworkDateButton(MDFillRoundFlatIconButton):
     def __init__(self, **kwargs):
         self._radius = "5dp"
         super().__init__(**kwargs)
@@ -910,7 +910,7 @@ class MainApp(MDApp):
             schedules_wrapper.add_widget(schedule_button)
 
         if len(schedules_wrapper.children) == 0:
-            not_found_btn = MDTextButton(text=tr._("No Schedules available"))
+            not_found_btn = MDTextButton(text=tr._("No Schedules available"), font_name=self.get_app_font())
             schedules_wrapper.add_widget(not_found_btn)
 
         self.add_homework_add_lessons_hint()
@@ -1348,12 +1348,6 @@ class MainApp(MDApp):
             tab_label.font_name = font_name
             tab_label.font_size = "16sp"
             tab_label.bold = True
-
-        # Add lesson homework screen
-        add_lesson_homework_items = ['add_lesson_homework_subtitle', 'add_lesson_homework_reminder_label']
-        for alh_item in add_lesson_homework_items:
-            self.root.ids[alh_item].font_name = font_name
-
 
 
     def get_theme_color(self, palette, hue):
