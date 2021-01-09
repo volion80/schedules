@@ -4,7 +4,7 @@ import datetime
 
 class Database:
     def __init__(self):
-        self.conn = sqlite3.connect('Schedules.db')
+        self.conn = sqlite3.connect('../Schedules.db')
         self.conn.row_factory = sqlite3.Row
         self.cursor = self.conn.cursor()
 

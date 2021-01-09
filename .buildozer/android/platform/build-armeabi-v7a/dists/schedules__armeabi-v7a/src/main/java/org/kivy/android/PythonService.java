@@ -91,7 +91,7 @@ public class PythonService extends Service implements Runnable {
 
     protected void removeBackgroundProcess() {
         ActivityManager amgr = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-        amgr.killBackgroundProcesses("org.test.schedules");
+        amgr.killBackgroundProcesses("com.volion.schedules");
     }
 
     protected int getServiceId() {
@@ -134,7 +134,7 @@ public class PythonService extends Service implements Runnable {
 
             Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID);
             builder.setContentTitle(serviceTitle);
-            builder.setContentText(serviceDescription);
+            builder.setContentText("Schedules service is running"); // serviceDescription
             builder.setContentIntent(pIntent);
             builder.setSmallIcon(context.getApplicationInfo().icon);
             notification = builder.build();

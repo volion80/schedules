@@ -8,9 +8,6 @@ RECENT CHANGES, IN PROCESS
 FIXES, IMPROVEMENTS
 -------------------------------
 
-Add Lesson Homework:
-    fix fonts
-
 Service:
     review Service code, client - server communication
 
@@ -23,17 +20,12 @@ Generic:
 Config:
 	use built-in Config implementation (?)
 
-Schedule:
-    change text color for Lesson homework
-
 Notification:
     add buttons, navigation to target screen
 
 Homeworks:
     add priority
-
-Edit Lesson:
-    Delete related homeworks checkbox - add a note with explanation, show the homeworks related, change to switch like for Add Lesson Homework
+    add item option - go to the day in schedule
 
 -------------------------------
 NEW FEATURES
@@ -72,12 +64,9 @@ msgfmt -c -o data/locales/en/LC_MESSAGES/mainapp.mo po/en.po
 msgfmt -c -o data/locales/ru/LC_MESSAGES/mainapp.mo po/ru.po
 
 -------------------------------
-COLOR DEFINITIONS
--------------------------------
-Palette:
-	['Red', 'Pink', 'Purple', 'DeepPurple', 'Indigo', 'Blue', 'LightBlue', 'Cyan', 'Teal', 'Green', 'LightGreen', 'Lime', 'Yellow', 'Amber', 'Orange', 'DeepOrange', 'Brown', 'Gray', 'BlueGray']
--------------------------------
 # buildozer
+buildozer android clean
+
 buildozer init
 buildozer -v android debug
 # or to install immediately

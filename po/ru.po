@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-02 00:48+0200\n"
+"POT-Creation-Date: 2021-01-09 21:27+0200\n"
 "PO-Revision-Date: 2020-11-19 23:14+0200\n"
 "Last-Translator: V K <volion80@gmail.com>\n"
 "Language-Team: V K <volion80@gmail.com>\n"
@@ -21,11 +21,11 @@ msgstr ""
 msgid "Open"
 msgstr "Открыть"
 
-#: main.py:449 main.py:469 main.py:574 main.py:596 main.py:990
+#: main.py:449 main.py:469 main.py:576 main.py:598 main.py:992
 msgid "Edit"
 msgstr "Изменить"
 
-#: main.py:457 main.py:477 main.py:605
+#: main.py:457 main.py:477 main.py:607 main.py:722
 msgid "Delete"
 msgstr "Удалить"
 
@@ -37,220 +37,263 @@ msgstr "Не сделано"
 msgid "Done"
 msgstr "Сделано"
 
-#: main.py:569 main.py:572 main.py:990
+#: main.py:571 main.py:574 main.py:992
 msgid "Add"
 msgstr "Добавить"
 
-#: main.py:578
+#: main.py:580
 msgid "Task"
 msgstr "Задание"
 
-#: main.py:587
+#: main.py:589
 msgid "Clear Task"
 msgstr "Удалить задание"
 
-#: main.py:613
+#: main.py:615
 msgid "Set Time Start"
 msgstr "Время начала"
 
-#: main.py:621
+#: main.py:623
 msgid "Set Time End"
 msgstr "Время окончания"
 
-#: main.py:819
+#: main.py:684
+msgid "Missing Schedule name!"
+msgstr "Не указано название!"
+
+#: main.py:706
+msgid "Missing Lesson title!"
+msgstr "Не указано название урока!"
+
+#: main.py:724
+msgid "There are tasks assigned related to the schedule."
+msgstr "По данному расписанию есть назначенные задания."
+
+#: main.py:724 main.py:746
+msgid "Delete anyway?"
+msgstr "Все равно удалить?"
+
+#: main.py:728 main.py:750
+msgid "CANCEL"
+msgstr "ОТМЕНА"
+
+#: main.py:733 main.py:755 main.py:765 main.py:774
+msgid "ACCEPT"
+msgstr "ПРИНЯТЬ"
+
+#: main.py:746
+msgid "There are tasks assigned to the lesson."
+msgstr "По данному уроку есть назначенные задания."
+
+#: main.py:821
 msgid "Edit Schedule"
 msgstr "Редактировать Расписание"
 
-#: main.py:819 main.kv:110
+#: main.py:821 main.kv:111
 msgid "Add Schedule"
 msgstr "Добавить Расписание"
 
-#: main.py:913
+#: main.py:915
 msgid "No Schedules available"
 msgstr "Нет расписаний для выбранной даты"
 
-#: main.py:919
+#: main.py:921
 msgid "Select a Schedule..."
 msgstr "Выбери Расписание..."
 
-#: main.py:992
+#: main.py:994
 msgid "Lesson for"
 msgstr "урок для"
 
-#: main.py:1116
+#: main.py:1118
 msgid "on"
 msgstr "на"
 
-#: main.py:1146 main.kv:530
+#: main.py:1148 main.kv:576
 msgid "Add Task"
 msgstr "Добавить задание"
 
-#: main.py:1146
+#: main.py:1148
 msgid "Edit Task"
 msgstr "Изменить задание"
 
-#: main.py:1455
+#: main.py:1458
 msgid "Mon"
 msgstr "Пн"
 
-#: main.py:1455
+#: main.py:1458
 msgid "Tue"
 msgstr "Вт"
 
-#: main.py:1455
+#: main.py:1458
 msgid "Wed"
 msgstr "Ср"
 
-#: main.py:1455
+#: main.py:1458
 msgid "Thu"
 msgstr "Чт"
 
-#: main.py:1455
+#: main.py:1458
 msgid "Fri"
 msgstr "Пт"
 
-#: main.py:1455
+#: main.py:1458
 msgid "Sat"
 msgstr "Сб"
 
-#: main.py:1455
+#: main.py:1458
 msgid "Sun"
 msgstr "Вс"
 
-#: main.py:1459
+#: main.py:1462
 msgid "Jan"
 msgstr "Янв"
 
-#: main.py:1459
+#: main.py:1462
 msgid "Feb"
 msgstr "Фев"
 
-#: main.py:1459
+#: main.py:1462
 msgid "Mar"
 msgstr "Мар"
 
-#: main.py:1459
+#: main.py:1462
 msgid "Apr"
 msgstr "Апр"
 
-#: main.py:1459
+#: main.py:1462
 msgid "May"
 msgstr "Май"
 
-#: main.py:1460
+#: main.py:1463
 msgid "Jun"
 msgstr "Июн"
 
-#: main.py:1460
+#: main.py:1463
 msgid "Jul"
 msgstr "Июл"
 
-#: main.py:1460
+#: main.py:1463
 msgid "Aug"
 msgstr "Авг"
 
-#: main.py:1460
+#: main.py:1463
 msgid "Sep"
 msgstr "Сен"
 
-#: main.py:1460
+#: main.py:1463
 msgid "Oct"
 msgstr "Окт"
 
-#: main.py:1461
+#: main.py:1464
 msgid "Nov"
 msgstr "Ноя"
 
-#: main.py:1461
+#: main.py:1464
 msgid "Dec"
 msgstr "Дек"
 
-#: main.kv:84
+#: main.kv:85
 msgid "Schedules"
 msgstr "Расписания"
 
-#: main.kv:91
+#: main.kv:92
 msgid "Tasks"
 msgstr "Задания"
 
-#: main.kv:123 main.kv:245
+#: main.kv:124 main.kv:246
 msgid "Title"
 msgstr "Название"
 
-#: main.kv:128 main.kv:250 main.kv:556
+#: main.kv:129 main.kv:251 main.kv:602
 msgid "maximum"
 msgstr "максимум"
 
-#: main.kv:128 main.kv:250 main.kv:556
+#: main.kv:129 main.kv:251 main.kv:602
 msgid "chars length"
 msgstr "символов"
 
-#: main.kv:171
+#: main.kv:172
 msgid "Schedule:"
 msgstr "Расписание:"
 
-#: main.kv:188
+#: main.kv:189
 msgid "Lesson:"
 msgstr "Урок:"
 
-#: main.kv:205
+#: main.kv:206
 msgid "Continue"
 msgstr "Продолжить"
 
-#: main.kv:212
+#: main.kv:213
 msgid "Select Lesson"
 msgstr "Выбери урок"
 
-#: main.kv:269
+#: main.kv:270
 msgid ""
 "Note! Lesson has tasks assigned, use the option below to delete them on "
 "saving changes."
 msgstr ""
 "Внимание! Для данного урока есть задания, включи данную опцию для их очистки."
 
-#: main.kv:282
+#: main.kv:283
 msgid "Delete tasks"
 msgstr "Удалить задания"
 
-#: main.kv:290
+#: main.kv:291
 msgid "Add Lesson"
 msgstr "Добавить урок"
 
-#: main.kv:301
-msgid "Settings"
-msgstr "Настройки"
-
-#: main.kv:311
-msgid "Theme Color:"
+#: main.kv:322
+msgid "Theme Color"
 msgstr "Цветовая тема"
 
-#: main.kv:394
-msgid "Theme Style:"
+#: main.kv:409
+msgid "Theme Style"
 msgstr "Стиль темы"
 
-#: main.kv:411
-msgid "Language:"
+#: main.kv:433
+msgid "Language"
 msgstr "Язык"
 
-#: main.kv:428
-msgid "Task Reminder:"
-msgstr "Напоминания о заданиях:"
+#: main.kv:457
+msgid "Task Reminder"
+msgstr "Напоминания о заданиях"
 
-#: main.kv:443
-msgid "Generate Demo Schedule:"
+#: main.kv:479
+msgid "Generate Demo Schedule"
 msgstr "Создать демо-расписание"
 
-#: main.kv:451
+#: main.kv:489
 msgid "Create Demo"
 msgstr "Содать демо"
 
-#: main.kv:551
+#: main.kv:495
+msgid "Settings"
+msgstr "Настройки"
+
+#: main.kv:597
 msgid "Describe your Task"
 msgstr "Опиши задание"
 
-#: main.kv:565
+#: main.kv:611
 msgid "Enable reminder"
 msgstr "Добавить в напоминания"
+
+#~ msgid "Theme Color:"
+#~ msgstr "Цветовая тема"
+
+#~ msgid "Theme Style:"
+#~ msgstr "Стиль темы"
+
+#~ msgid "Language:"
+#~ msgstr "Язык"
+
+#~ msgid "Task Reminder:"
+#~ msgstr "Напоминания о заданиях:"
+
+#~ msgid "Generate Demo Schedule:"
+#~ msgstr "Создать демо-расписание"
 
 #~ msgid "Schedule"
 #~ msgstr "Расписание"

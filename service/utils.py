@@ -11,7 +11,7 @@ def start_service(arguments=None):
     if platform == 'android':
         from jnius import autoclass
         package_name = 'schedules'
-        package_domain = 'org.test'
+        package_domain = 'com.volion'
         service_name = 'service'
         service_class = '{}.{}.Service{}'.format(package_domain, package_name, service_name.title())
         service = autoclass(service_class)

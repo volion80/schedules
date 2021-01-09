@@ -1,7 +1,8 @@
 #:import tr __main__.tr
-#:import WipeTransition kivy.uix.screenmanager.WipeTransition
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
 #:import SwapTransition kivy.uix.screenmanager.SwapTransition
 #:import NoTransition kivy.uix.screenmanager.NoTransition
+#:import RiseInTransition kivy.uix.screenmanager.RiseInTransition
 
 
 <OneLineScheduleListItem>:
@@ -57,7 +58,7 @@
 
 ScreenManager:
     id: screen_manager
-    transition: NoTransition()
+    transition: SwapTransition()
 
     Screen:
         name: "start"
@@ -67,7 +68,7 @@ ScreenManager:
             orientation: 'vertical'
             MDToolbar:
                 id: start_top_toolbar
-                title: "The Schedules"
+                title: "Schedules"
                 elevation: 8
                 md_bg_color: app.theme_cls.primary_color
                 right_action_items: [['cog', lambda x: app.open_settings()]]
@@ -295,162 +296,207 @@ ScreenManager:
     Screen:
         name: "settings"
         BoxLayout:
-            orientation: 'vertical'
-            MDToolbar:
-                id: settings_toolbar
-                title: tr._('Settings')
-                md_bg_color: app.theme_cls.primary_color
-                elevation: 8
-                left_action_items: [['arrow-left', lambda x: app.go_back()]]
+            size_hint_y: None
+            height: root.height - settings_toolbar.height
 
-            MDStackLayout:
-                spacing: dp(10)
-                padding: dp(10)
+        ScrollView:
+            GridLayout:
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: "10dp"
+                padding: "10dp"
+                cols: 1
 
-                MDLabel:
-                    text: tr._("Theme Color:")
+                Widget:
                     size_hint_y: None
-                    size_hint_x: 1
-                    size: [0, 20]
-                    font_name: app.get_app_font()
+                    height: app.theme_cls.standard_increment
 
-                SettingsThemeColorToggleButton:
-                    text: "Red"
-                    setting_value: "Red"
-
-                SettingsThemeColorToggleButton:
-                    text: "Pink"
-                    setting_value: "Pink"
-
-                SettingsThemeColorToggleButton:
-                    text: "Purple"
-                    setting_value: "Purple"
-
-                SettingsThemeColorToggleButton:
-                    text: "Deep Purple"
-                    setting_value: "DeepPurple"
-
-                SettingsThemeColorToggleButton:
-                    text: "Indigo"
-                    setting_value: "Indigo"
-
-                SettingsThemeColorToggleButton:
-                    text: "Blue"
-                    setting_value: "Blue"
-
-                SettingsThemeColorToggleButton:
-                    text: "LightBlue"
-                    setting_value: "LightBlue"
-
-                SettingsThemeColorToggleButton:
-                    text: "Cyan"
-                    setting_value: "Cyan"
-
-                SettingsThemeColorToggleButton:
-                    text: "Teal"
-                    setting_value: "Teal"
-
-                SettingsThemeColorToggleButton:
-                    text: "Green"
-                    setting_value: "Green"
-
-                SettingsThemeColorToggleButton:
-                    text: "Light Green"
-                    setting_value: "LightGreen"
-
-                SettingsThemeColorToggleButton:
-                    text: "Lime"
-                    setting_value: "Lime"
-
-                SettingsThemeColorToggleButton:
-                    text: "Yellow"
-                    setting_value: "Yellow"
-
-                SettingsThemeColorToggleButton:
-                    text: "Amber"
-                    setting_value: "Amber"
-
-                SettingsThemeColorToggleButton:
-                    text: "Orange"
-                    setting_value: "Orange"
-
-                SettingsThemeColorToggleButton:
-                    text: "Deep Orange"
-                    setting_value: "DeepOrange"
-
-                SettingsThemeColorToggleButton:
-                    text: "Brown"
-                    setting_value: "Brown"
-
-                SettingsThemeColorToggleButton:
-                    text: "Gray"
-                    setting_value: "Gray"
-
-                SettingsThemeColorToggleButton:
-                    text: "Blue Gray"
-                    setting_value: "BlueGray"
-
-                MDLabel:
-                    text: tr._("Theme Style:")
+                MDCard:
+                    orientation: "vertical"
                     size_hint_y: None
-                    size_hint_x: 1
-                    size: [0, 20]
-                    font_name: app.get_app_font()
+                    height: self.minimum_height
+                    padding: "20dp"
+                    spacing: "20dp"
 
-                SettingsThemeStyleToggleButton:
-                    text: "Light"
-                    setting_value: "Light"
+                    MDLabel:
+                        text: tr._("Theme Color")
+                        font_name: app.get_app_font()
 
-                SettingsThemeStyleToggleButton:
-                    text: "Dark"
-                    setting_value: "Dark"
+                    MDStackLayout:
+                        spacing: "10dp"
+                        size_hint_y: None
+                        height: self.minimum_height
 
-                MDSeparator:
+                        SettingsThemeColorToggleButton:
+                            text: "Red"
+                            setting_value: "Red"
 
-                MDLabel:
-                    text: tr._("Language:")
+                        SettingsThemeColorToggleButton:
+                            text: "Pink"
+                            setting_value: "Pink"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Purple"
+                            setting_value: "Purple"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Deep Purple"
+                            setting_value: "DeepPurple"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Indigo"
+                            setting_value: "Indigo"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Blue"
+                            setting_value: "Blue"
+
+#                        SettingsThemeColorToggleButton:
+#                            text: "LightBlue"
+#                            setting_value: "LightBlue"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Cyan"
+                            setting_value: "Cyan"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Teal"
+                            setting_value: "Teal"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Green"
+                            setting_value: "Green"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Light Green"
+                            setting_value: "LightGreen"
+
+#                        SettingsThemeColorToggleButton:
+#                            text: "Lime"
+#                            setting_value: "Lime"
+
+#                        SettingsThemeColorToggleButton:
+#                            text: "Yellow"
+#                            setting_value: "Yellow"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Amber"
+                            setting_value: "Amber"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Orange"
+                            setting_value: "Orange"
+
+#                        SettingsThemeColorToggleButton:
+#                            text: "Deep Orange"
+#                            setting_value: "DeepOrange"
+
+#                        SettingsThemeColorToggleButton:
+#                            text: "Brown"
+#                            setting_value: "Brown"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Gray"
+                            setting_value: "Gray"
+
+                        SettingsThemeColorToggleButton:
+                            text: "Blue Gray"
+                            setting_value: "BlueGray"
+
+                    MDSeparator:
+
+                    MDLabel:
+                        text: tr._("Theme Style")
+                        font_name: app.get_app_font()
+
+                    MDStackLayout:
+                        spacing: "10dp"
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        SettingsThemeStyleToggleButton:
+                            text: "Light"
+                            setting_value: "Light"
+
+                        SettingsThemeStyleToggleButton:
+                            text: "Dark"
+                            setting_value: "Dark"
+
+                MDCard:
+                    orientation: "vertical"
                     size_hint_y: None
-                    size_hint_x: 1
-                    size: [0, 20]
-                    font_name: app.get_app_font()
+                    height: self.minimum_height
+                    padding: "20dp"
+                    spacing: "20dp"
 
-                SettingsLangToggleButton:
-                    text: "En"
-                    setting_value: "en"
+                    MDLabel:
+                        text: tr._("Language")
+                        font_name: app.get_app_font()
 
-                SettingsLangToggleButton:
-                    text: "Ru"
-                    setting_value: "ru"
+                    MDStackLayout:
+                        spacing: "10dp"
+                        size_hint_y: None
+                        height: self.minimum_height
 
-                MDSeparator:
+                        SettingsLangToggleButton:
+                            text: "En"
+                            setting_value: "en"
 
-                MDLabel:
-                    text: tr._("Task Reminder:")
+                        SettingsLangToggleButton:
+                            text: "Ru"
+                            setting_value: "ru"
+
+                MDCard:
+                    orientation: "vertical"
                     size_hint_y: None
-                    size_hint_x: 1
-                    size: [0, 20]
-                    font_name: app.get_app_font()
+                    height: self.minimum_height
+                    padding: "20dp"
+                    spacing: "20dp"
 
-                MDFillRoundFlatButton:
-                    id: notify_select
-                    text: ""
-                    font_name: app.get_app_font()
-                    on_release: app.set_notify_time_setting(self.text)
+                    MDLabel:
+                        text: tr._("Task Reminder")
+                        font_name: app.get_app_font()
 
-                MDSeparator:
+                    MDStackLayout:
+                        spacing: "10dp"
+                        size_hint_y: None
+                        height: self.minimum_height
 
-                MDLabel:
-                    text: tr._("Generate Demo Schedule:")
+                        MDFillRoundFlatButton:
+                            id: notify_select
+                            text: ""
+                            font_name: app.get_app_font()
+                            on_release: app.set_notify_time_setting(self.text)
+
+                MDCard:
+                    orientation: "vertical"
                     size_hint_y: None
-                    size_hint_x: 1
-                    size: [0, 20]
-                    font_name: app.get_app_font()
+                    height: self.minimum_height
+                    padding: "20dp"
+                    spacing: "20dp"
 
-                MDFillRoundFlatButton:
-                    id: create_demo_btn
-                    text: tr._("Create Demo")
-                    font_name: app.get_app_font()
-                    on_release: app.generate_demo_schedule()
+                    MDLabel:
+                        text: tr._("Generate Demo Schedule")
+                        font_name: app.get_app_font()
+
+                    MDStackLayout:
+                        spacing: "10dp"
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDFillRoundFlatButton:
+                            id: create_demo_btn
+                            text: tr._("Create Demo")
+                            font_name: app.get_app_font()
+                            on_release: app.generate_demo_schedule()
+
+        MDToolbar:
+            id: settings_toolbar
+            title: tr._('Settings')
+            md_bg_color: app.theme_cls.primary_color
+            elevation: 8
+            left_action_items: [['arrow-left', lambda x: app.go_back()]]
+            pos_hint: {"top": 1}
 
     Screen:
         name: "schedule"

@@ -1,12 +1,12 @@
 [app]
 
 # (str) Title of your application
-title = Schedules0101
+title = Schedules
 # (str) Package name
 package.name = schedules
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.test
+package.domain = com.volion
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -28,7 +28,7 @@ source.include_patterns = assets/*,images/*.png
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.01.01
+version = 0.21.01.09
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -92,7 +92,7 @@ fullscreen = 0
 
 # (list) Permissions
 #android.permissions = INTERNET
-android.permissions = INTERNET,FOREGROUND_SERVICE,KILL_BACKGROUND_PROCESSES
+android.permissions = INTERNET,FOREGROUND_SERVICE,KILL_BACKGROUND_PROCESSES,WRITE_EXTERNAL_STORAGE
 
 # (int) Target Android API, should be as high as possible.
 android.api = 28

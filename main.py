@@ -286,7 +286,7 @@ class MainApp(MDApp):
     def on_key(self, window, key, *args):
         if key == 27:
             if self.root.current == 'start':
-                return True
+                return False
             else:
                 self.go_back()
                 return True
@@ -526,7 +526,9 @@ class MainApp(MDApp):
                     'id': str(lesson['id']),
                     'text': lesson['name'],
                     'secondary_text': f'{time_start} - {time_end}',
-                    'tertiary_text': ' ' if lesson['homework_desc'] is None else lesson['homework_desc']
+                    'tertiary_text': ' ' if lesson['homework_desc'] is None else lesson['homework_desc'],
+                    'tertiary_theme_text_color': 'Custom',
+                    'tertiary_text_color': self.theme_cls.primary_color
                 })
             lesson_list.update(lessons_data)
 
@@ -679,7 +681,7 @@ class MainApp(MDApp):
 
         if title.strip() == '':
             title_field.text = ''
-            self.show_error(text='Missing Schedule name!')
+            self.show_error(text=tr._('Missing Schedule name!'))
         else:
             if schedule_id is not None:
                 self.db.update_schedule(id=schedule_id, name=title)
@@ -701,7 +703,7 @@ class MainApp(MDApp):
         title = title[:title_limit]
         if title.strip() == '':
             title_field.text = ''
-            self.show_error(text='Title cannot be empty!')
+            self.show_error(text=tr._('Missing Lesson title!'))
         else:
             if lesson_id is not None:
                 self.db.update_lesson(id=lesson_id, name=title)
@@ -717,18 +719,18 @@ class MainApp(MDApp):
     def show_confirm_del_schedule_dialog(self, schedule_id):
         schedule = self.db.get_schedule(schedule_id)
         self.confirm_delete_schedule_dialog = ConfirmDeleteScheduleDialog(
-            title=f'Delete {schedule["name"]}?',
+            title=tr._("Delete") + f' {schedule["name"]}?',
             size_hint=(0.8, 0.4),
-            text=f'There are homeworks assigned related to the schedule.\n\nDelete anyway?',
+            text=tr._("There are tasks assigned related to the schedule.") + '\n\n' + tr._("Delete anyway?"),
             schedule_id=schedule_id,
             buttons=[
                 MDFlatButton(
-                    text="CANCEL",
+                    text=tr._("CANCEL"),
                     text_color=self.theme_cls.primary_color,
                     on_release=self.callback_confirm_del_schedule
                 ),
                 MDFlatButton(
-                    text="ACCEPT",
+                    text=tr._("ACCEPT"),
                     text_color=self.theme_cls.primary_color,
                     on_release=self.callback_confirm_del_schedule
                 ),
@@ -741,16 +743,16 @@ class MainApp(MDApp):
         self.confirm_delete_lesson_dialog = ConfirmDeleteLessonDialog(
             title=f'Delete {lesson["name"]}?',
             size_hint=(0.8, 0.4),
-            text=f'There are homeworks assigned to the lesson.\n\nDelete anyway?',
+            text=tr._('There are tasks assigned to the lesson.') + '\n\n' + tr._('Delete anyway?'),
             lesson_id=lesson_id,
             buttons=[
                 MDFlatButton(
-                    text="CANCEL",
+                    text=tr._("CANCEL"),
                     text_color=self.theme_cls.primary_color,
                     on_release=self.callback_confirm_del_lesson
                 ),
                 MDFlatButton(
-                    text="ACCEPT",
+                    text=tr._("ACCEPT"),
                     text_color=self.theme_cls.primary_color,
                     on_release=self.callback_confirm_del_lesson
                 ),
@@ -760,7 +762,7 @@ class MainApp(MDApp):
 
     def callback_confirm_del_schedule(self, *args):
         button = args[0]
-        confirm = button.text == 'ACCEPT'
+        confirm = button.text == tr._('ACCEPT')
         if confirm:
             schedule_id = self.confirm_delete_schedule_dialog.schedule_id
             self.delete_schedule(schedule_id)
@@ -769,7 +771,7 @@ class MainApp(MDApp):
 
     def callback_confirm_del_lesson(self, *args):
         button = args[0]
-        confirm = button.text == 'ACCEPT'
+        confirm = button.text == tr._('ACCEPT')
         if confirm:
             lesson_id = self.confirm_delete_lesson_dialog.lesson_id
             self.delete_lesson(lesson_id)
@@ -1439,6 +1441,7 @@ class MainApp(MDApp):
 
     def generate_demo_schedule(self):
         num = 1
+
         def cb():
             self.load_schedules()
             self.load_homeworks()
