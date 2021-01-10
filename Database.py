@@ -157,9 +157,11 @@ class Database:
     def get_lessons(self, **kwargs):
         w = []
         v = []
-        q = 'select l.*, h.desc as homework_desc from lessons l left join homeworks h on l.id = h.lesson_id'
+        j = []
+        s = ['l.*']
         if 'homework_week_num' in kwargs and 'homework_year' in kwargs:
-            q += ' and h.week_num = ? and year = ?'
+            s.append('h.desc as homework_desc')
+            j.append('left join homeworks h on l.id = h.lesson_id and h.week_num = ? and year = ?')
             v.append(kwargs['homework_week_num'])
             v.append(kwargs['homework_year'])
         if 'schedule_id' in kwargs:
@@ -168,6 +170,10 @@ class Database:
         if 'day' in kwargs:
             w.append('l.day = ?')
             v.append(kwargs['day'])
+
+        q = 'select ' + ','.join(s) + ' from lessons l '
+        if len(j) > 0:
+            q += ' '.join(j)
         if len(w) > 0:
             q += ' where ' + ' and '.join(w)
         q += ' order by l.day, (case when l.time_start = "" then 1 else 0 end), l.time_start'

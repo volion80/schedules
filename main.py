@@ -331,18 +331,18 @@ class MainApp(MDApp):
 
             self.db.add_lessons(lessons)
 
-        lesson_rows = self.db.get_lessons()
-        for i in range(20):
-            lesson_row = lesson_rows[randrange(len(lesson_rows))]
-            week_num = Util.calc_week_num(randrange(1, 10))
-            year = Util.calc_year()
-            if week_num >= 52:
-                week_num -= 52
-                year += 1
-            homework_exists = self.db.homework_exists(lesson_id=lesson_row['id'], week_num=week_num, year=year)
-            if not homework_exists:
-                self.db.add_homework(lesson_id=lesson_row['id'], week_num=week_num, year=year,
-                                     desc=f'test homework for {lesson_row["name"]}', done=randint(0, 1), notifiable=randint(0, 1))
+            lesson_rows = self.db.get_lessons(schedule_id=schedule_id)
+            for i in range(20):
+                lesson_row = lesson_rows[randrange(len(lesson_rows))]
+                week_num = Util.calc_week_num(randrange(1, 10))
+                year = Util.calc_year()
+                if week_num >= 52:
+                    week_num -= 52
+                    year += 1
+                homework_exists = self.db.homework_exists(lesson_id=lesson_row['id'], week_num=week_num, year=year)
+                if not homework_exists:
+                    self.db.add_homework(lesson_id=lesson_row['id'], week_num=week_num, year=year,
+                                         desc=f'test homework for {lesson_row["name"]}', done=randint(0, 1), notifiable=randint(0, 1))
 
         if cb is not None:
             cb()
