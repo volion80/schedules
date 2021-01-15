@@ -713,8 +713,8 @@ class MainApp(MDApp):
                 lessons = [{'name': title, 'day': day, 'time_start': '', 'time_end': '', 'schedule_id': schedule_id}]
                 self.db.add_lessons(lessons)
 
-                if 'cb' in kwargs:
-                    kwargs['cb']()
+            if 'cb' in kwargs:
+                kwargs['cb']()
 
     def show_confirm_del_schedule_dialog(self, schedule_id):
         schedule = self.db.get_schedule(schedule_id)
